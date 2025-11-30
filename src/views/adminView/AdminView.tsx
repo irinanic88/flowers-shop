@@ -3,7 +3,8 @@
 import { JSX, useState } from "react";
 import { Box, Tabs, Tab, Typography } from "@mui/material";
 import * as R from "ramda";
-import ProductsTab from "@/src/adminView/ProductsTab";
+import ProductsTab from "@/src/views/adminView/ProductsTab";
+import PreordersTab from "@/src/views/adminView/PreordersTab";
 
 interface TabItem {
   label: string;
@@ -19,7 +20,7 @@ export default function AdminView() {
 
   const tabs = [
     { label: "Productos", content: <ProductsTab /> },
-    { label: "Preorders", content: <Typography>Aún vacío</Typography> },
+    { label: "Preorders", content: <PreordersTab /> },
   ];
 
   const currentTab = R.nth(tab, tabs) ?? { label: "", content: null };

@@ -1,14 +1,16 @@
 import { Box, Stack } from "@mui/material";
-import { PrimaryButton } from "@/app/styledComponents";
+import { PrimaryButton } from "@/src/styledComponents";
 import { useState } from "react";
-import AdminProductForm from "@/src/adminView/AdminProductForm";
-import ProductsPage from "@/src/products/ProductsPage";
-import { Product } from "@/app/types";
+import AdminProductForm from "@/src/views/adminView/AdminProductForm";
+import ProductsPage from "@/src/views/products/ProductsPage";
+import { ProductType } from "@/src/types";
+import AddIcon from "@mui/icons-material/Add";
+import { userRolesDict } from "@/src/constants";
 
 export default function ProductsTab() {
   const [showForm, setShowForm] = useState(false);
 
-  const handleAddProduct = (p: Product) => {
+  const handleAddProduct = (p: ProductType) => {
     console.log("Nuevo producto:", p);
 
     setShowForm(false);
@@ -22,14 +24,15 @@ export default function ProductsTab() {
           onAdded={handleAddProduct}
         />
       ) : (
-        <Stack spacing={2} alignItems="flex-end">
+        <Stack spacing={2} alignItems="flex-start">
           <PrimaryButton
             onClick={() => setShowForm(true)}
             sx={{ width: "fit-content" }}
+            endIcon={<AddIcon />}
           >
             Añadir
           </PrimaryButton>
-          <ProductsPage />
+          <ProductsPage userRole={userRolesDict.ADMIN} />
         </Stack>
       )}
     </Box>

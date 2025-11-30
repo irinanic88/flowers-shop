@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   Box,
   TextField,
@@ -9,23 +9,24 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  Snackbar,
+  Alert,
 } from "@mui/material";
-import { PrimaryButton } from "@/app/styledComponents";
+import { PrimaryButton } from "@/src/styledComponents";
 import { supabase } from "@/lib/supabase";
-import { Product } from "@/app/types";
+import { ProductType } from "@/src/types";
 import ImageUploader from "@/src/components/ImageUploader";
 
 interface AdminProductFormProps {
   onClose: () => void;
-  onAdded?: (product: Product) => void;
+  onAdded?: (product: ProductType) => void;
 }
 
 interface ProductForm {
   title: string;
-  price: number | "";
+  price: number | string;
   comment: string;
-  flowers_count: number | "";
-  pots_count: number | "";
+  pots_count: number;
   images: string[];
 }
 
@@ -33,8 +34,7 @@ const initialForm: ProductForm = {
   title: "",
   price: "",
   comment: "",
-  flowers_count: "",
-  pots_count: "",
+  pots_count: 0,
   images: [],
 };
 
@@ -46,26 +46,41 @@ export default function AdminProductForm({
   const [fileNames, setFileNames] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
 
+  const [alertOpen, setAlertOpen] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
+  const [alertSeverity, setAlertSeverity] = useState<"success" | "error">(
+    "success",
+  );
+
   useEffect(() => {
-    setForm((prev) => ({
-      ...prev,
-      images: fileNames,
-    }));
+    setForm((prev) => ({ ...prev, images: fileNames }));
   }, [fileNames]);
 
   const handleChange = (key: keyof ProductForm, value: string | number) => {
     setForm((prev) => ({ ...prev, [key]: value }));
   };
 
+  const showAlert = (message: string, severity: "success" | "error") => {
+    setAlertMessage(message);
+    setAlertSeverity(severity);
+    setAlertOpen(true);
+  };
+
   const handleAddProduct = async () => {
-    if (!form.title || form.price === "") {
-      alert("Por favor, completa todos los campos obligatorios");
+    if (!form.title.trim()) {
+      showAlert("El título es obligatorio.", "error");
+      return;
+    }
+    if (+form.price <= 0) {
+      showAlert("El precio debe ser mayor que 0.", "error");
+      return;
+    }
+    if (form.pots_count <= 0) {
+      showAlert("Selecciona la cantidad de macetas.", "error");
       return;
     }
 
     setLoading(true);
-
-    console.log("Новый ПРОДУКТ = ", form);
 
     const { data, error } = await supabase
       .from("products")
@@ -74,10 +89,10 @@ export default function AdminProductForm({
       .single();
 
     if (error) {
-      alert(`Error: ${error.message}`);
+      showAlert(`Error: ${error.message}`, "error");
     } else {
-      alert("Producto agregado con éxito!");
-      if (onAdded) onAdded(data as Product);
+      showAlert("Producto agregado con éxito!", "success");
+      if (onAdded) onAdded(data as ProductType);
       onClose();
     }
 
@@ -127,15 +142,6 @@ export default function AdminProductForm({
           </Select>
         </FormControl>
         <TextField
-          label="Cantidad de flores"
-          type="number"
-          value={form.flowers_count}
-          onChange={(e) =>
-            handleChange("flowers_count", Number(e.target.value))
-          }
-          fullWidth
-        />
-        <TextField
           label="Comentario"
           value={form.comment}
           onChange={(e) => handleChange("comment", e.target.value)}
@@ -152,6 +158,22 @@ export default function AdminProductForm({
           Cancelar
         </PrimaryButton>
       </Stack>
+
+      {/* Snackbar */}
+      <Snackbar
+        open={alertOpen}
+        autoHideDuration={4000}
+        onClose={() => setAlertOpen(false)}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert
+          onClose={() => setAlertOpen(false)}
+          severity={alertSeverity}
+          sx={{ width: "100%" }}
+        >
+          {alertMessage}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }

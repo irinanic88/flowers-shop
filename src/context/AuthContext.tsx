@@ -1,67 +1,114 @@
-'use client';
+"use client";
 
-import { createContext, useContext, useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabase';
-import { UserType } from '@/app/types';
+import { createContext, useContext, useEffect, useState } from "react";
+import { supabase } from "@/lib/supabase";
+import { UserType } from "@/src/types";
+import { equals, anyPass } from "ramda";
 
 type AuthContextType = {
+  userId: string | null;
   user: UserType | null;
-  role: string | null;
   name: string | null;
   loading: boolean;
+  isAdmin: boolean;
+  isUser: boolean;
+  isUnknownUser: boolean;
 };
 
 const AuthContext = createContext<AuthContextType>({
   user: null,
-  role: null,
+  userId: null,
   name: null,
   loading: true,
+  isAdmin: false,
+  isUser: false,
+  isUnknownUser: true,
 });
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<UserType | null>(null);
-  const [role, setRole] = useState<string | null>(null);
   const [name, setName] = useState<string | null>(null);
+
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [isUser, setIsUser] = useState(false);
+  const [isUnknownUser, setIsUnknownUser] = useState(true);
+
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    async function loadAuth() {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+  const applyRole = (role: string | null) => {
+    const safeRole = role ?? "none";
+    const isAdminRole = equals(safeRole, "admin");
+    const isUserRole = equals(safeRole, "user");
+    const isNone = !anyPass([equals("admin"), equals("user")])(safeRole);
 
-      if (user) {
-        const formattedUser: UserType = {
-          id: user.id,
-          email: user.email,
-          name: user.user_metadata?.name ?? null,
-          role: user.user_metadata?.role === 'admin' ? 'admin' : 'user',
-          created_at: user.created_at,
-        };
+    setIsAdmin(isAdminRole);
+    setIsUser(isUserRole);
+    setIsUnknownUser(isNone);
+  };
 
-        setUser(formattedUser);
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('role, name')
-          .eq('id', user.id)
-          .single();
+  async function loadAuth() {
+    const {
+      data: { user: supabaseUser },
+    } = await supabase.auth.getUser();
 
-        setRole(profile?.role ?? null);
-        setName(profile?.name ?? null);
-      }
+    if (supabaseUser) {
+      const formattedUser: UserType = {
+        id: supabaseUser.id,
+        email: supabaseUser.email,
+        name: supabaseUser.user_metadata?.name ?? null,
+        role: supabaseUser.user_metadata?.role ?? "none",
+        created_at: supabaseUser.created_at,
+      };
 
-      setLoading(false);
+      setUser(formattedUser);
+
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("role, name")
+        .eq("id", supabaseUser.id)
+        .single();
+
+      const dbRole = profile?.role ?? "none";
+
+      applyRole(dbRole);
+      setName(profile?.name ?? null);
+    } else {
+      setUser(null);
+      applyRole("none");
+      setName(null);
     }
 
+    setLoading(false);
+  }
+
+  useEffect(() => {
     void loadAuth();
 
-    supabase.auth.onAuthStateChange(() => {
+    supabase.auth.onAuthStateChange((event, session) => {
+      if (equals(event, "SIGNED_OUT") || !session) {
+        setUser(null);
+        applyRole("none");
+        setName(null);
+        setLoading(false);
+        return;
+      }
+
       void loadAuth();
     });
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, role, loading, name }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        userId: user?.id ?? null,
+        name,
+        loading,
+        isAdmin,
+        isUser,
+        isUnknownUser,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

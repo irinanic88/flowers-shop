@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { Box, Stack, Typography, IconButton } from "@mui/material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import CloseIcon from "@mui/icons-material/Close";
-import { SecondaryButton, VisuallyHiddenInput } from "@/app/styledComponents";
+import { SecondaryButton, VisuallyHiddenInput } from "@/src/styledComponents";
 import { supabase } from "@/lib/supabase";
 
 interface ImageUploaderProps {
