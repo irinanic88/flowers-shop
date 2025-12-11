@@ -1,33 +1,30 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { Typography, Box, Button, Modal, Stack, Collapse } from "@mui/material";
-import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import React, { useState } from "react";
+import { Typography, Box, Modal, Stack, Chip } from "@mui/material";
 import Image from "next/image";
-import { ProductType, UserRoleTypes } from "@/src/types";
+import { ProductType } from "@/src/types";
 import ProductInfo from "@/src/views/products/ProductInfo";
 import IncrementDecrementButtons from "@/src/views/products/IncrementDecrementButtons";
 import { supabase } from "@/lib/supabase";
 import { PanelCard, RoundIconButton } from "@/src/styledComponents";
-import { equals } from "ramda";
-import { userRolesDict } from "@/src/constants";
 import { useCart } from "@/src/context/CartContext";
 import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
 import { useOrders } from "@/src/context/OrdersContext";
+import { useAuth } from "@/src/context/AuthContext";
+import AdminProductForm from "@/src/views/adminView/AdminProductForm";
+import ProductImages from "@/src/views/products/ProductImages";
 
 interface ProductCardProps {
   product: ProductType;
-  onDeleted: () => void;
-  userRole: UserRoleTypes;
 }
 
-export default function ProductCard({
-  product,
-  onDeleted,
-  userRole,
-}: ProductCardProps) {
-  const [openImages, setOpenImages] = useState(false);
+export default function ProductCard({ product }: ProductCardProps) {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [openUpdate, setOpenUpdate] = useState(false);
+
+  const { isAdmin = false, isUser = false, isUnknownUser = true } = useAuth();
 
   const { items, updateItemQuantity } = useCart();
   const itemInCart = items.find((i) => i.id === product.id);
@@ -41,15 +38,7 @@ export default function ProductCard({
     return sum + (item?.quantity ?? 0);
   }, 0);
 
-  useEffect(() => {
-    console.log("ORDENADO", orders);
-  }, [orders]);
-
-  const handleOpenImage = (img: string) => setSelectedImage(img);
   const handleCloseModal = () => setSelectedImage(null);
-
-  const hasImages = product.images && product.images.length > 0;
-  const moreThanOne = hasImages && product.images.length > 1;
 
   const handleDeleteProduct = async () => {
     if (!confirm("Eliminar este producto?")) return;
@@ -76,113 +65,26 @@ export default function ProductCard({
       }
 
       alert("Producto eliminado.");
-
-      await onDeleted();
     } catch (err) {
       console.error(err);
     }
   };
 
   return (
-    <>
+    <Box sx={{ height: "100%" }}>
       <PanelCard
-        sx={{
-          borderRadius: 3,
-          overflow: "hidden",
-          display: "flex",
-          flexDirection: "column",
-          height: "100%",
-          p: 2,
-        }}
+        sx={{ height: "100%", display: "flex", flexDirection: "column" }}
       >
-        {hasImages ? (
-          <Box sx={{ width: "100%", pt: "100%", position: "relative" }}>
-            <Image
-              src={product.images[0]}
-              alt={product.title}
-              fill
-              style={{
-                objectFit: "cover",
-                cursor: "pointer",
-                position: "absolute",
-              }}
-              onClick={() => handleOpenImage(product.images![0])}
-            />
-          </Box>
-        ) : (
-          <Box
-            sx={{
-              width: "100%",
-              pt: "100%",
-              position: "relative",
-              backgroundColor: "#f0f0f0",
-              color: "#888",
-              fontSize: 14,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              textAlign: "center",
-            }}
-          >
-            <Typography
-              sx={{
-                position: "absolute",
-                top: "50%",
-                left: "50%",
-                transform: "translate(-50%, -50%)",
-              }}
-            >
-              No hay imágenes disponibles
-            </Typography>
-          </Box>
-        )}
-
-        {moreThanOne && (
-          <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 0.5 }}>
-            <Button
-              size="small"
-              onClick={() => setOpenImages(!openImages)}
-              endIcon={<ArrowDropDownIcon />}
-              variant="text"
-              sx={{ color: "#555", borderColor: "#ccc" }}
-            >
-              {openImages
-                ? "Ocultar imágenes"
-                : `Ver ${product.images!.length - 1} imágenes más`}
-            </Button>
-          </Box>
-        )}
-
-        <Collapse in={openImages}>
-          <Stack spacing={1} mt={1}>
-            {product.images!.slice(1).map((img, i) => (
-              <Box
-                key={i}
-                sx={{ width: "100%", pt: "100%", position: "relative" }}
-              >
-                <Image
-                  src={img}
-                  alt={`${product.title}-${i}`}
-                  fill
-                  style={{
-                    objectFit: "cover",
-                    cursor: "pointer",
-                    position: "absolute",
-                  }}
-                  onClick={() => handleOpenImage(img)}
-                />
-              </Box>
-            ))}
-          </Stack>
-        </Collapse>
-
-        <ProductInfo
-          product={product}
-          showPrice={!equals(userRole, userRolesDict.NONE)}
+        <ProductImages
+          images={product.images ?? []}
+          title={product.title}
+          onSelectImage={(img) => setSelectedImage(img)}
         />
 
-        {equals(userRole, userRolesDict.USER) && (
-          <Stack direction="row" spacing={1}>
+        <ProductInfo product={product} showPrice={!isUnknownUser} />
+
+        {isUser && (
+          <Stack direction="row" spacing={1} sx={{ mt: "auto" }}>
             <Typography>Preordenar: </Typography>
             <IncrementDecrementButtons
               onChange={(q) =>
@@ -200,7 +102,17 @@ export default function ProductCard({
           </Stack>
         )}
 
-        {equals(userRole, userRolesDict.ADMIN) && (
+        {!isUnknownUser && (
+          <Chip
+            sx={{ mt: isUser ? 1 : "auto", width: 150 }}
+            color="primary"
+            size="small"
+            label={`disponible: ${product.available} u.`}
+            variant="outlined"
+          />
+        )}
+
+        {isAdmin && (
           <Stack
             direction="row"
             justifyContent="space-between"
@@ -210,9 +122,17 @@ export default function ProductCard({
             <Typography variant="body2" color="text.secondary">
               Total preordenado: {totalOrdered ?? 0}
             </Typography>
-            <RoundIconButton onClick={handleDeleteProduct} color="error">
-              <DeleteIcon fontSize="small" />
-            </RoundIconButton>
+            <Stack direction="row" spacing={1}>
+              <RoundIconButton
+                onClick={() => setOpenUpdate(true)}
+                color="error"
+              >
+                <EditIcon fontSize="small" />
+              </RoundIconButton>
+              <RoundIconButton onClick={handleDeleteProduct} color="error">
+                <DeleteIcon fontSize="small" />
+              </RoundIconButton>
+            </Stack>
           </Stack>
         )}
       </PanelCard>
@@ -236,6 +156,14 @@ export default function ProductCard({
           <Box />
         )}
       </Modal>
-    </>
+
+      {openUpdate && (
+        <AdminProductForm
+          open={openUpdate}
+          onClose={() => setOpenUpdate(false)}
+          product={product}
+        />
+      )}
+    </Box>
   );
 }

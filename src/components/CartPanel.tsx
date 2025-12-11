@@ -73,6 +73,7 @@ export default function CartPanel({ open, onClose }: CartPanelProps) {
     setComment("");
     setSuccess(true);
     setLoading(false);
+    onClose();
   };
 
   return (

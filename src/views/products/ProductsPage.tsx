@@ -2,17 +2,16 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
-import { Box, Grid, Stack, Typography } from "@mui/material";
-import { ProductType, UserRoleTypes } from "@/src/types";
+import { Box, Stack, Typography, Grid } from "@mui/material";
+import { ProductType } from "@/src/types";
 import ProductCard from "@/src/views/products/ProductCard";
 import { isEmpty } from "ramda";
+import { useAuth } from "@/src/context/AuthContext";
 
-export default function ProductsPage({
-  userRole,
-}: {
-  userRole: UserRoleTypes;
-}) {
+export default function ProductsPage() {
   const [products, setProducts] = useState<ProductType[]>([]);
+
+  const { isUnknownUser } = useAuth();
 
   async function fetchProducts() {
     const { data, error } = await supabase
@@ -25,6 +24,21 @@ export default function ProductsPage({
 
   useEffect(() => {
     void fetchProducts();
+
+    const channel = supabase
+      .channel("products-realtime")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "products" },
+        () => {
+          void fetchProducts();
+        },
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   if (isEmpty(products)) {
@@ -38,22 +52,20 @@ export default function ProductsPage({
   }
 
   return (
-    <Box>
-      <Grid container spacing={2}>
+    <Box sx={{ width: "100%" }}>
+      {!isEmpty(products) && isUnknownUser && (
+        <Typography
+          sx={{ textAlign: "center", mt: 4 }}
+          variant="h4"
+          color="text.primary"
+        >
+          Disponible para preordenar
+        </Typography>
+      )}
+      <Grid container spacing={2} justifyContent="flex-start">
         {products.map((product) => (
-          <Grid
-            key={product.id}
-            component="div"
-            sx={{
-              width: { xs: "100%", sm: "50%", md: "33.33%" },
-              minHeight: { md: 400 },
-            }}
-          >
-            <ProductCard
-              product={product}
-              onDeleted={fetchProducts}
-              userRole={userRole}
-            />
+          <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
+            <ProductCard key={product.id} product={product} />
           </Grid>
         ))}
       </Grid>

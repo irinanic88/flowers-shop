@@ -1,14 +1,14 @@
 "use client";
 
-import { Stack } from "@mui/material";
+import { Box, Stack, Typography } from "@mui/material";
 import { useAuth } from "@/src/context/AuthContext";
 import ProductsPage from "@/src/views/products/ProductsPage";
 import Loader from "@/src/components/Loader";
-import AdminView from "@/src/views/adminView/AdminView";
 import UserView from "@/src/views/userView/UserView";
 import {
   RoundIconButton,
   SecondaryRoundIconButton,
+  WelcomeBox,
 } from "@/src/styledComponents";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { supabase } from "@/lib/supabase";
@@ -16,10 +16,11 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import PersonIcon from "@mui/icons-material/Person";
 import Layout from "@/src/components/Layout";
+import UsersTabs from "@/src/views/tabs/UsersTabs";
 
 export default function Page() {
   const {
-    name,
+    loading,
     isAdmin = false,
     isUser = false,
     isUnknownUser = true,
@@ -43,15 +44,11 @@ export default function Page() {
     }
   }, [router]);
 
-  useEffect(() => {
-    console.log("NAME is", name);
-  }, []);
-
   const handleSignOut = async () => {
     await supabase.auth.signOut();
   };
 
-  if (!useAuth) {
+  if (loading) {
     return <Loader />;
   }
 
@@ -72,9 +69,37 @@ export default function Page() {
         </Stack>
       }
     >
-      {isAdmin && <AdminView />}
+      {isAdmin && <UsersTabs />}
       {isUser && <UserView />}
-      {isUnknownUser && <ProductsPage userRole="none" />}
+      {isUnknownUser && (
+        <Box>
+          <WelcomeBox spacing={2}>
+            <Typography variant="h5" color="text.primary">
+              ¡Bienvenido a Andrés Plant Select! 🌿
+            </Typography>
+
+            <Typography variant="body1" color="text.secondary">
+              Esta aplicación fue creada para que nuestra comunicación sea más
+              simple y cómoda.
+            </Typography>
+
+            <Typography variant="body1" color="text.secondary">
+              Ahora puedes{" "}
+              <strong>explorar la lista de productos disponibles</strong>, que
+              se actualiza con cada nueva llegada.
+            </Typography>
+
+            <Typography variant="body1" color="text.secondary">
+              Si quieres{" "}
+              <strong>ver los precios y realizar un pedido anticipado</strong>,
+              por favor <strong>regístrate</strong> o{" "}
+              <strong>inicia sesión</strong>.
+            </Typography>
+          </WelcomeBox>
+
+          <ProductsPage />
+        </Box>
+      )}
     </Layout>
   );
 }

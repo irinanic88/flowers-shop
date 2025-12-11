@@ -5,45 +5,53 @@ import {
   Box,
   TextField,
   Stack,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
   Snackbar,
   Alert,
+  Drawer,
+  IconButton,
+  Typography,
 } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
 import { PrimaryButton } from "@/src/styledComponents";
 import { supabase } from "@/lib/supabase";
 import { ProductType } from "@/src/types";
 import ImageUploader from "@/src/components/ImageUploader";
+import { isEmpty } from "ramda";
 
 interface AdminProductFormProps {
+  open: boolean;
   onClose: () => void;
-  onAdded?: (product: ProductType) => void;
+  product?: ProductType | null;
 }
 
 interface ProductForm {
   title: string;
   price: number | string;
   comment: string;
-  pots_count: number;
+  pots_count: number | string;
   images: string[];
+  available: number | string;
+  height: string;
 }
 
-const initialForm: ProductForm = {
+const emptyForm: ProductForm = {
   title: "",
   price: "",
   comment: "",
-  pots_count: 0,
+  pots_count: "",
   images: [],
+  available: "",
+  height: "",
 };
 
 export default function AdminProductForm({
+  open,
   onClose,
-  onAdded,
+  product = null,
 }: AdminProductFormProps) {
-  const [form, setForm] = useState<ProductForm>(initialForm);
-  const [fileNames, setFileNames] = useState<string[]>([]);
+  const isEdit = !!product;
+
+  const [form, setForm] = useState<ProductForm>(emptyForm);
   const [loading, setLoading] = useState(false);
 
   const [alertOpen, setAlertOpen] = useState(false);
@@ -53,10 +61,22 @@ export default function AdminProductForm({
   );
 
   useEffect(() => {
-    setForm((prev) => ({ ...prev, images: fileNames }));
-  }, [fileNames]);
+    if (product) {
+      setForm({
+        title: product.title,
+        price: product.price,
+        comment: product.comment ?? "",
+        pots_count: product.pots_count ?? "",
+        images: product.images ?? [],
+        available: product.available,
+        height: product.height ?? "",
+      });
+    } else {
+      setForm(emptyForm);
+    }
+  }, []);
 
-  const handleChange = (key: keyof ProductForm, value: string | number) => {
+  const handleChange = (key: keyof ProductForm, value: string) => {
     setForm((prev) => ({ ...prev, [key]: value }));
   };
 
@@ -66,23 +86,20 @@ export default function AdminProductForm({
     setAlertOpen(true);
   };
 
-  const handleAddProduct = async () => {
-    if (!form.title.trim()) {
-      showAlert("El título es obligatorio.", "error");
-      return;
-    }
-    if (+form.price <= 0) {
-      showAlert("El precio debe ser mayor que 0.", "error");
-      return;
-    }
-    if (form.pots_count <= 0) {
-      showAlert("Selecciona la cantidad de macetas.", "error");
+  const handleCreate = async () => {
+    if (
+      isEmpty(form.title.trim()) ||
+      isEmpty(form.price) ||
+      isEmpty(form.pots_count) ||
+      isEmpty(form.available)
+    ) {
+      showAlert("Completa todos los campos correctamente.", "error");
       return;
     }
 
     setLoading(true);
 
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from("products")
       .insert([form])
       .select()
@@ -91,8 +108,27 @@ export default function AdminProductForm({
     if (error) {
       showAlert(`Error: ${error.message}`, "error");
     } else {
-      showAlert("Producto agregado con éxito!", "success");
-      if (onAdded) onAdded(data as ProductType);
+      showAlert("Producto agregado!", "success");
+      onClose();
+    }
+
+    setLoading(false);
+  };
+
+  const handleUpdate = async () => {
+    setLoading(true);
+
+    const { error } = await supabase
+      .from("products")
+      .update(form)
+      .eq("id", product!.id)
+      .select()
+      .single();
+
+    if (error) {
+      showAlert(`Error: ${error.message}`, "error");
+    } else {
+      showAlert("Producto actualizado!", "success");
       onClose();
     }
 
@@ -100,66 +136,122 @@ export default function AdminProductForm({
   };
 
   return (
-    <Box
-      sx={{
-        maxWidth: 400,
-        mx: "auto",
-        mt: 2,
-        p: 2,
-        border: "1px solid #ccc",
-        borderRadius: 2,
-      }}
-    >
-      <Stack spacing={2}>
-        <TextField
-          label="Título"
-          value={form.title}
-          onChange={(e) => handleChange("title", e.target.value)}
-          fullWidth
-          required
-        />
-        <TextField
-          label="Precio"
-          type="number"
-          value={form.price}
-          onChange={(e) => handleChange("price", Number(e.target.value))}
-          fullWidth
-          required
-        />
-        <FormControl fullWidth>
-          <InputLabel id="pots-label">Cantidad de macetas</InputLabel>
-          <Select
-            labelId="pots-label"
-            value={form.pots_count}
-            label="Cantidad de macetas"
-            onChange={(e) => handleChange("pots_count", Number(e.target.value))}
-          >
-            {[1, 2, 3, 4, 5, 6].map((num) => (
-              <MenuItem key={num} value={num}>
-                {num}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-        <TextField
-          label="Comentario"
-          value={form.comment}
-          onChange={(e) => handleChange("comment", e.target.value)}
-          fullWidth
-          multiline
-          rows={3}
-        />
-        <ImageUploader onChange={setFileNames} />
+    <>
+      <Drawer
+        anchor="right"
+        open={open}
+        onClose={onClose}
+        slotProps={{
+          paper: {
+            sx: {
+              width: "100%",
+              maxWidth: "100%",
+              bgcolor: "#fff",
+            },
+          },
+        }}
+      >
+        <Box
+          sx={{
+            p: 2,
+            borderBottom: "1px solid #eee",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            position: "sticky",
+            top: 0,
+            bgcolor: "white",
+            zIndex: 10,
+          }}
+        >
+          <Typography variant="h6">
+            {isEdit ? "Editar producto" : "Agregar producto"}
+          </Typography>
 
-        <PrimaryButton onClick={handleAddProduct} disabled={loading}>
-          Agregar producto
-        </PrimaryButton>
-        <PrimaryButton onClick={onClose} disabled={loading} variant="outlined">
-          Cancelar
-        </PrimaryButton>
-      </Stack>
+          <IconButton onClick={onClose}>
+            <CloseIcon />
+          </IconButton>
+        </Box>
 
-      {/* Snackbar */}
+        <Box sx={{ p: 2, overflowY: "auto" }}>
+          <Stack spacing={2}>
+            <TextField
+              label="Título"
+              value={form.title}
+              onChange={(e) => handleChange("title", e.target.value)}
+              fullWidth
+              required
+            />
+
+            <TextField
+              label="Precio"
+              type="number"
+              value={form.price}
+              onChange={(e) => handleChange("price", e.target.value)}
+              fullWidth
+              required
+            />
+
+            <TextField
+              label="Cantidad de macetas"
+              type="number"
+              value={form.pots_count}
+              onChange={(e) => handleChange("pots_count", e.target.value)}
+              fullWidth
+              required
+            />
+
+            <TextField
+              label="Disponible"
+              type="number"
+              value={form.available}
+              onChange={(e) => handleChange("available", e.target.value)}
+              fullWidth
+              required
+            />
+
+            <TextField
+              label="Altura"
+              value={form.height}
+              onChange={(e) => handleChange("height", e.target.value)}
+              fullWidth
+            />
+
+            <TextField
+              label="Comentario"
+              value={form.comment}
+              onChange={(e) => handleChange("comment", e.target.value)}
+              fullWidth
+              multiline
+              rows={3}
+            />
+
+            <ImageUploader
+              initialImages={form.images}
+              onChange={(urls) =>
+                setForm((prev) => ({ ...prev, images: urls }))
+              }
+            />
+
+            <PrimaryButton
+              onClick={isEdit ? handleUpdate : handleCreate}
+              disabled={loading}
+              sx={{ mt: 2 }}
+            >
+              {isEdit ? "Guardar cambios" : "Agregar producto"}
+            </PrimaryButton>
+
+            <PrimaryButton
+              onClick={onClose}
+              disabled={loading}
+              variant="outlined"
+            >
+              Cancelar
+            </PrimaryButton>
+          </Stack>
+        </Box>
+      </Drawer>
+
       <Snackbar
         open={alertOpen}
         autoHideDuration={4000}
@@ -174,6 +266,6 @@ export default function AdminProductForm({
           {alertMessage}
         </Alert>
       </Snackbar>
-    </Box>
+    </>
   );
 }

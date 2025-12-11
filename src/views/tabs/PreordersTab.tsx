@@ -8,9 +8,7 @@ import {
   Divider,
   Chip,
   Dialog,
-  DialogActions,
   DialogContent,
-  DialogTitle,
   TextField,
 } from "@mui/material";
 import { useOrders } from "@/src/context/OrdersContext";
@@ -23,6 +21,8 @@ import {
 } from "@/src/styledComponents";
 import { OrderType, OrderItem } from "@/src/types";
 import { supabase } from "@/lib/supabase";
+import Loader from "@/src/components/Loader";
+import { equals } from "ramda";
 
 export default function PreordersTab() {
   const { orders, loading, refreshOrders } = useOrders();
@@ -67,9 +67,13 @@ export default function PreordersTab() {
     }
   };
 
-  if (loading) return <Typography>Cargando...</Typography>;
+  if (loading) return <Loader />;
   if (orders.length === 0)
-    return <Typography>No hay preordenes aún.</Typography>;
+    return (
+      <Stack mt={20} alignItems="center" justifyContent="center">
+        <Typography color="text.secondary">No hay preordenes aún.</Typography>
+      </Stack>
+    );
 
   return (
     <>
@@ -78,7 +82,7 @@ export default function PreordersTab() {
           <PanelCard key={order.id}>
             <Stack spacing={1}>
               <Row>
-                <Typography variant="h6">Orden #{order.id}</Typography>
+                <Typography variant="h6">{order.profiles?.name}</Typography>
                 <Chip
                   label={order.status}
                   color={statusColor(order.status)}
@@ -120,11 +124,10 @@ export default function PreordersTab() {
                     mt: 1,
                     p: 1.5,
                     borderRadius: 2,
-                    border: "1px solid #eee",
                     background: "#fafafa",
                   }}
                 >
-                  <Typography variant="subtitle2">
+                  <Typography variant="body2" sx={{ fontWeight: "bold" }}>
                     Comentario del cliente:
                   </Typography>
                   <Typography variant="body2">{order.comment}</Typography>
@@ -137,12 +140,11 @@ export default function PreordersTab() {
                     mt: 1,
                     p: 1.5,
                     borderRadius: 2,
-                    border: "1px solid #dbe9ff",
-                    background: "#f4f8ff",
+                    background: (theme) => theme.palette.secondary.main,
                   }}
                 >
-                  <Typography variant="subtitle2">
-                    Comentario del administrador:
+                  <Typography variant="body2" sx={{ fontWeight: "bold" }}>
+                    Nota del vendedor:
                   </Typography>
                   <Typography variant="body2">{order.admin_comment}</Typography>
                 </Box>
@@ -150,6 +152,7 @@ export default function PreordersTab() {
 
               <Stack direction="row" spacing={1} mt={2}>
                 <PrimaryButton
+                  disabled={equals(selectedStatus, "approved")}
                   fullWidth
                   variant="outlined"
                   onClick={() => openStatusDialog(order.id, "approved")}
@@ -169,9 +172,7 @@ export default function PreordersTab() {
         ))}
       </Stack>
 
-      <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
-        <DialogTitle>Cambiar estado</DialogTitle>
-
+      <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)} fullWidth>
         <DialogContent>
           <Typography sx={{ mb: 1 }}>Comentario del administrador:</Typography>
           <TextField
@@ -184,13 +185,13 @@ export default function PreordersTab() {
           />
         </DialogContent>
 
-        <DialogActions>
+        <Stack direction="row" px={3} pb={3} justifyContent="flex-end">
           <SecondaryButton onClick={() => setDialogOpen(false)}>
             Cancelar
           </SecondaryButton>
 
           <PrimaryButton onClick={applyStatus}>Guardar</PrimaryButton>
-        </DialogActions>
+        </Stack>
       </Dialog>
     </>
   );

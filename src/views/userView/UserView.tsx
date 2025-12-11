@@ -1,11 +1,10 @@
 "use client";
 
-import ProductsPage from "@/src/views/products/ProductsPage";
 import { Box, Fab } from "@mui/material";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import { useState } from "react";
-import { userRolesDict } from "@/src/constants";
 import CartPanel from "@/src/components/CartPanel";
+import UsersTabs from "@/src/views/tabs/UsersTabs";
 
 export default function UserView() {
   const [cartOpen, setCartOpen] = useState(false);
@@ -13,8 +12,8 @@ export default function UserView() {
   const handleToggleCart = () => setCartOpen((prev) => !prev);
 
   return (
-    <Box sx={{ mt: 2, position: "relative" }}>
-      <ProductsPage userRole={userRolesDict.USER} />
+    <Box sx={{ position: "relative" }}>
+      <UsersTabs />
 
       <Fab
         color="primary"

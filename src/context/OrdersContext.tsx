@@ -9,6 +9,7 @@ import {
 } from "react";
 import { supabase } from "@/lib/supabase";
 import { OrderType } from "@/src/types";
+import { useAuth } from "@/src/context/AuthContext";
 
 interface OrdersContextType {
   orders: OrderType[];
@@ -25,28 +26,44 @@ const OrdersContext = createContext<OrdersContextType>({
 export const useOrders = () => useContext(OrdersContext);
 
 export const OrdersProvider = ({ children }: { children: ReactNode }) => {
+  const { userId, isAdmin } = useAuth();
   const [orders, setOrders] = useState<OrderType[]>([]);
   const [loading, setLoading] = useState(true);
 
   const loadOrders = async () => {
-    console.log("Load orders 1");
+    if (!userId) {
+      setOrders([]);
+      setLoading(false);
+      return;
+    }
+
     setLoading(true);
 
-    const { data, error } = await supabase
+    let query = supabase
       .from("orders")
-      .select("*")
+      .select("*, profiles(name)")
       .order("created_at", { ascending: false });
+
+    if (!isAdmin) query = query.eq("user_id", userId);
+
+    const { data, error } = await query;
 
     if (error) {
       console.error("Error loading orders:", error);
     } else if (data) {
-      setOrders(data);
+      setOrders(data as OrderType[]);
     }
 
     setLoading(false);
   };
 
   useEffect(() => {
+    if (!userId) {
+      setOrders([]);
+      setLoading(false);
+      return;
+    }
+
     void loadOrders();
 
     const channel = supabase
@@ -55,23 +72,20 @@ export const OrdersProvider = ({ children }: { children: ReactNode }) => {
         "postgres_changes",
         { event: "*", schema: "public", table: "orders" },
         (payload) => {
+          const newOrder = payload.new as OrderType;
+          const oldOrder = payload.old as OrderType;
+
           switch (payload.eventType) {
             case "INSERT":
-              setOrders((prev) => [payload.new as OrderType, ...prev]);
+              setOrders((prev) => [newOrder, ...prev]);
               break;
             case "UPDATE":
               setOrders((prev) =>
-                prev.map((o) =>
-                  o.id === (payload.new as OrderType).id
-                    ? (payload.new as OrderType)
-                    : o,
-                ),
+                prev.map((o) => (o.id === newOrder.id ? newOrder : o)),
               );
               break;
             case "DELETE":
-              setOrders((prev) =>
-                prev.filter((o) => o.id !== (payload.old as OrderType).id),
-              );
+              setOrders((prev) => prev.filter((o) => o.id !== oldOrder.id));
               break;
           }
         },
@@ -80,9 +94,9 @@ export const OrdersProvider = ({ children }: { children: ReactNode }) => {
     void channel.subscribe();
 
     return () => {
-      supabase.removeChannel(channel);
+      void supabase.removeChannel(channel);
     };
-  }, []);
+  }, [userId, isAdmin]);
 
   return (
     <OrdersContext.Provider

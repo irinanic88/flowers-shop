@@ -1,19 +1,20 @@
 "use client";
-import { useState } from "react";
 import {
   CardContent,
   Typography,
   Stack,
-  Button,
-  Collapse,
   Chip,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
 } from "@mui/material";
 import GrassIcon from "@mui/icons-material/Grass";
-import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import { Product } from "@/src/types";
+import { ProductType } from "@/src/types";
+import HeightIcon from "@mui/icons-material/Height";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 interface ProductInfoProps {
-  product: Product;
+  product: ProductType;
   showPrice: boolean;
 }
 
@@ -21,50 +22,78 @@ export default function ProductInfo({
   product,
   showPrice = false,
 }: ProductInfoProps) {
-  const [openComment, setOpenComment] = useState(false);
-
   return (
-    <CardContent sx={{ flexGrow: 1, px: 0, py: 1 }}>
-      <Stack
-        direction="row"
-        alignItems="baseline"
-        justifyContent="space-between"
-      >
-        <Typography variant="h6">{product.title}</Typography>
-        {showPrice && (
-          <Chip
-            label={`€ ${product.price}`}
-            color="primary"
-            sx={{ fontWeight: "bold" }}
-            variant="outlined"
-          />
+    <CardContent sx={{ flexGrow: 1, px: 0, py: 1, mb: 1.5 }}>
+      <Stack spacing={1}>
+        <Stack
+          direction="row"
+          alignItems="flex-start"
+          justifyContent="space-between"
+          spacing={1}
+        >
+          <Typography
+            variant="h6"
+            sx={{
+              display: "-webkit-box",
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: "vertical",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              minHeight: "65px",
+            }}
+          >
+            {product.title}
+          </Typography>
+
+          {showPrice && (
+            <Chip
+              label={`${product.price} €`}
+              color="primary"
+              sx={{ fontWeight: "bold", fontSize: 16 }}
+              variant="outlined"
+            />
+          )}
+        </Stack>
+
+        <Stack direction="row" spacing={2} alignItems="center" sx={{ mt: 0.5 }}>
+          <Stack direction="row" spacing={0.5}>
+            <HeightIcon fontSize="small" />
+            <Typography variant="body2">
+              Altura: {product.height ? `${product.height} cm` : "--"}
+            </Typography>
+          </Stack>
+          <Stack direction="row" spacing={0.5}>
+            <GrassIcon fontSize="small" />
+            <Typography variant="body2">
+              Macetas: {product.pots_count} m/u
+            </Typography>
+          </Stack>
+        </Stack>
+
+        {product.comment && (
+          <Accordion
+            disableGutters
+            square
+            sx={{
+              mt: 1,
+              background: (theme) => theme.palette.secondary.main,
+              boxShadow: "none",
+              "&:before": {
+                display: "none",
+              },
+            }}
+          >
+            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+              <Typography variant="body2" sx={{ fontWeight: "bold" }}>
+                Nota del vendedor:
+              </Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Typography variant="body2">{product.comment}</Typography>
+            </AccordionDetails>
+          </Accordion>
         )}
       </Stack>
-
-      <Stack direction="row" spacing={2} alignItems="center" sx={{ mt: 0.5 }}>
-        <Stack direction="row" spacing={0.5}>
-          <GrassIcon fontSize="small" />
-          <Typography variant="body2">Macetas: {product.pots_count}</Typography>
-        </Stack>
-      </Stack>
-
-      {product.comment && (
-        <>
-          <Button
-            size="small"
-            onClick={() => setOpenComment(!openComment)}
-            endIcon={<ArrowDropDownIcon />}
-            sx={{ mt: 1 }}
-          >
-            {openComment ? "Ocultar comentario" : "Ver comentario"}
-          </Button>
-          <Collapse in={openComment}>
-            <Typography variant="body2" sx={{ mt: 1, whiteSpace: "pre-wrap" }}>
-              {product.comment}
-            </Typography>
-          </Collapse>
-        </>
-      )}
     </CardContent>
   );
 }

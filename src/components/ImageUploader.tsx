@@ -1,13 +1,14 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Box, Stack, Typography, IconButton } from "@mui/material";
+import { Stack, Typography, IconButton } from "@mui/material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import CloseIcon from "@mui/icons-material/Close";
 import { SecondaryButton, VisuallyHiddenInput } from "@/src/styledComponents";
 import { supabase } from "@/lib/supabase";
 
 interface ImageUploaderProps {
+  initialImages?: string[];
   onChange: (images: string[]) => void;
 }
 
@@ -16,9 +17,27 @@ interface UploadedFile {
   url: string;
 }
 
-export default function ImageUploader({ onChange }: ImageUploaderProps) {
-  const [files, setFiles] = useState<UploadedFile[]>([]);
+export default function ImageUploader({
+  onChange,
+  initialImages = [],
+}: ImageUploaderProps) {
+  const [files, setFiles] = useState<UploadedFile[]>(
+    initialImages.map((url, i) => ({
+      url,
+      name: `file-${i + 1}`,
+    })),
+  );
+
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    setFiles(
+      initialImages.map((url, i) => ({
+        url,
+        name: `file-${i + 1}`,
+      })),
+    );
+  }, []);
 
   useEffect(() => {
     onChange(files.map((f) => f.url));
@@ -44,8 +63,12 @@ export default function ImageUploader({ onChange }: ImageUploaderProps) {
         .from("product-images")
         .getPublicUrl(filePath);
 
-      if (data?.publicUrl)
-        uploaded.push({ name: file.name, url: data.publicUrl });
+      if (data?.publicUrl) {
+        uploaded.push({
+          name: file.name || `file-${Date.now()}`,
+          url: data.publicUrl,
+        });
+      }
     }
 
     return uploaded;

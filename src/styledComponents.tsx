@@ -59,6 +59,7 @@ export const PanelCard = styled(Card)(({ theme }) => ({
   borderColor: theme.palette.grey[200],
   boxShadow: "none",
   padding: 16,
+  width: "100%",
 }));
 
 export const RoundIconButton = styled(IconButton)(({ theme }) => ({
@@ -98,3 +99,23 @@ export const VisuallyHiddenInput = styled("input")({
   whiteSpace: "nowrap",
   width: 1,
 });
+
+export const WelcomeBox = styled(Stack)(({ theme }) => ({
+  width: "100%",
+  maxWidth: 600,
+  margin: "32px auto 24px",
+  padding: "24px",
+  borderRadius: (theme.shape.borderRadius as number) * 2,
+  backgroundColor: "rgba(200, 230, 201, 0.5)",
+  border: "1px solid #c8e6c9",
+  boxShadow: "0 2px 6px rgba(0,0,0,0.05)",
+
+  "& h5": {
+    fontWeight: 600,
+  },
+
+  [theme.breakpoints.down("sm")]: {
+    padding: "18px",
+    margin: "24px auto 18px",
+  },
+}));

@@ -4,10 +4,11 @@ export interface ProductType {
   price: number;
   created_at: string;
   comment?: string;
-  flowers_count: number;
   pots_count: number;
   images: string[];
   totalOrdered: number;
+  available: number;
+  height?: string;
 }
 
 export interface UserType {
@@ -45,4 +46,7 @@ export interface OrderType {
   admin_comment?: string;
   status: "pending" | "approved" | "cancelled";
   created_at: string;
+  profiles?: {
+    name: string | null;
+  } | null;
 }

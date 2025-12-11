@@ -15,7 +15,9 @@ export default function Layout({ actions, children }: LayoutProps) {
       sx={{
         height: "100vh",
         overflow: "hidden",
+        p: 2,
       }}
+      spacing={2}
     >
       <Stack
         direction="row"
@@ -23,7 +25,6 @@ export default function Layout({ actions, children }: LayoutProps) {
         sx={{
           width: "100%",
           flexShrink: 0,
-          p: 2,
         }}
       >
         <Logo />
@@ -35,7 +36,6 @@ export default function Layout({ actions, children }: LayoutProps) {
         sx={{
           flex: 1,
           overflowY: "auto",
-          p: 2,
         }}
       >
         {children}

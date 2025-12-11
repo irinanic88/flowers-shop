@@ -56,33 +56,25 @@ export default function AuthPage() {
           password,
         });
         if (error) throw error;
-        setAlert({
-          message: "Sesión iniciada con éxito!",
-          severity: "success",
-        });
+
+        router.replace("/");
       } else {
-        const { data, error } = await supabase.auth.signUp({
+        const { error } = await supabase.auth.signUp({
           email,
           password,
-          options: { emailRedirectTo: "http://localhost:3000" },
+          options: {
+            data: { name },
+            emailRedirectTo: "http://localhost:3000",
+          },
         });
+
         if (error) throw error;
 
-        const userId = data.user?.id;
-        if (userId) {
-          const { error: profileError } = await supabase
-            .from("profiles")
-            .insert({ id: userId, name, role: "user" });
-          if (profileError) throw profileError;
-        }
         setAlert({
           message: "Revisa tu correo para confirmar el registro",
           severity: "success",
         });
       }
-
-      await new Promise((res) => setTimeout(res, 500));
-      router.replace("/");
     } catch (err: any) {
       setAlert({
         message: err.message ?? "Error desconocido",
