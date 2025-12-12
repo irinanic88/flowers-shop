@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   TextField,
@@ -12,7 +12,7 @@ import {
   Typography,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import { PrimaryButton } from "@/src/styledComponents";
+import { PrimaryButton, SecondaryButton } from "@/src/styledComponents";
 import { supabase } from "@/lib/supabase";
 import { ProductType } from "@/src/types";
 import ImageUploader from "@/src/components/ImageUploader";
@@ -160,7 +160,6 @@ export default function AdminProductForm({
             alignItems: "center",
             position: "sticky",
             top: 0,
-            backgroundColor: "secondary",
             zIndex: 10,
           }}
         >
@@ -173,7 +172,14 @@ export default function AdminProductForm({
           </IconButton>
         </Box>
 
-        <Box sx={{ p: 2, overflowY: "auto" }}>
+        <Stack
+          justifyContent="space-between"
+          sx={{
+            height: "100%",
+            p: 2,
+            overflowY: "auto",
+          }}
+        >
           <Stack spacing={2}>
             <TextField
               label="Título"
@@ -232,24 +238,27 @@ export default function AdminProductForm({
                 setForm((prev) => ({ ...prev, images: urls }))
               }
             />
+          </Stack>
 
+          <Stack direction={{ xs: "column", md: "row" }} spacing={1}>
             <PrimaryButton
               onClick={isEdit ? handleUpdate : handleCreate}
               disabled={loading}
-              sx={{ mt: 2 }}
+              sx={{ width: { xs: "100%", sm: 200 } }}
             >
               {isEdit ? "Guardar cambios" : "Agregar producto"}
             </PrimaryButton>
 
-            <PrimaryButton
+            <SecondaryButton
+              sx={{ width: { xs: "100%", sm: 200 } }}
               onClick={onClose}
               disabled={loading}
               variant="outlined"
             >
               Cancelar
-            </PrimaryButton>
+            </SecondaryButton>
           </Stack>
-        </Box>
+        </Stack>
       </Drawer>
 
       <Snackbar

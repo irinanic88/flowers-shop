@@ -1,7 +1,7 @@
 "use client";
 
 import { ReactNode } from "react";
-import { Box, Stack } from "@mui/material";
+import { Stack } from "@mui/material";
 import Logo from "@/src/components/Logo";
 
 interface LayoutProps {
@@ -19,11 +19,10 @@ export default function Layout({ actions, children }: LayoutProps) {
       <Stack
         direction="row"
         justifyContent="space-between"
+        alignItems="center"
         sx={{
           width: "100%",
           flexShrink: 0,
-          borderBottom: "1px solid",
-          borderColor: (theme) => theme.palette.secondary.main,
         }}
         px={{ xs: 2, md: 5 }}
         py={2}
@@ -38,7 +37,7 @@ export default function Layout({ actions, children }: LayoutProps) {
           flex: 1,
         }}
         px={{ xs: 2, md: 5 }}
-        pb={5}
+        pb={10}
         alignItems="center"
       >
         {children}

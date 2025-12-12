@@ -108,7 +108,7 @@ export default function AuthPage() {
           px: { xs: 2, sm: 3 },
           borderRadius: 2,
           mt: 8,
-          backgroundColor: (theme) => theme.palette.secondary.main,
+          backgroundColor: (theme) => theme.palette.background.paper,
         }}
         spacing={2}
       >

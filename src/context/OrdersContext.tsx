@@ -40,8 +40,8 @@ export const OrdersProvider = ({ children }: { children: ReactNode }) => {
     setLoading(true);
 
     let query = supabase
-      .from("orders")
-      .select("*, profiles:profiles!orders_user_id_fkey(name)")
+      .from("orders_with_profiles")
+      .select("*")
 
       .order("created_at", { ascending: false });
 
@@ -72,27 +72,11 @@ export const OrdersProvider = ({ children }: { children: ReactNode }) => {
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "orders" },
-        (payload) => {
-          const newOrder = payload.new as OrderType;
-          const oldOrder = payload.old as OrderType;
-
-          switch (payload.eventType) {
-            case "INSERT":
-              setOrders((prev) => [newOrder, ...prev]);
-              break;
-            case "UPDATE":
-              setOrders((prev) =>
-                prev.map((o) => (o.id === newOrder.id ? newOrder : o)),
-              );
-              break;
-            case "DELETE":
-              setOrders((prev) => prev.filter((o) => o.id !== oldOrder.id));
-              break;
-          }
+        () => {
+          void loadOrders();
         },
-      );
-
-    void channel.subscribe();
+      )
+      .subscribe();
 
     return () => {
       void supabase.removeChannel(channel);

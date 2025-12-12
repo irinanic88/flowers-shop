@@ -85,15 +85,15 @@ export default function ImageUploader({
   };
 
   return (
-    <Stack sx={{ border: "1px solid #ccc", borderRadius: 1, p: 1 }}>
+    <Stack>
       <SecondaryButton
         as="label"
         variant="outlined"
-        sx={{ width: "100%", justifyContent: "flex-start", padding: "8px" }}
+        sx={{ width: 200, justifyContent: "flex-start", padding: "8px" }}
       >
         <Stack direction="row" spacing={1} alignItems="center">
           <CloudUploadIcon />
-          <Typography>Añadir imágenes del producto</Typography>
+          <Typography>Añadir imágenes</Typography>
         </Stack>
 
         <VisuallyHiddenInput

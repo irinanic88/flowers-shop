@@ -14,7 +14,7 @@ import { useCart } from "@/src/context/CartContext";
 import { PrimaryButton, Row, PanelCard } from "@/src/styledComponents";
 import IncrementDecrementButtons from "@/src/components/products/IncrementDecrementButtons";
 import { supabase } from "@/lib/supabase";
-import { useState } from "react";
+import React, { useState } from "react";
 
 export interface CartPanelProps {
   open: boolean;
@@ -77,22 +77,40 @@ export default function CartPanel({ open, onClose }: CartPanelProps) {
   };
 
   return (
-    <Drawer anchor="right" open={open} onClose={onClose}>
+    <Drawer
+      anchor="right"
+      open={open}
+      onClose={onClose}
+      slotProps={{
+        paper: {
+          sx: {
+            width: "100%",
+            maxWidth: "100%",
+            backgroundColor: "secondary",
+          },
+        },
+      }}
+    >
       <Box
         sx={{
-          width: "100vw",
+          p: 2,
+          borderBottom: "1px solid #eee",
           display: "flex",
-          flexDirection: "column",
-          height: "100%",
+          justifyContent: "space-between",
+          alignItems: "center",
+          position: "sticky",
+          top: 0,
+          zIndex: 10,
         }}
       >
-        <Row sx={{ p: 2 }}>
-          <Typography variant="h6">Preorden</Typography>
-          <IconButton onClick={onClose}>
-            <CloseIcon />
-          </IconButton>
-        </Row>
+        <Typography variant="h6">Preorden</Typography>
 
+        <IconButton onClick={onClose}>
+          <CloseIcon />
+        </IconButton>
+      </Box>
+
+      <Box>
         {!items.length && (
           <Stack mt={20} alignItems="center">
             <Typography color="text.secondary">

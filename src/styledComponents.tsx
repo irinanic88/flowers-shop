@@ -68,6 +68,10 @@ export const RoundIconButton = styled(IconButton)(({ theme }) => ({
   "&:hover": {
     backgroundColor: theme.palette.primary.dark,
   },
+  "&.Mui-disabled": {
+    backgroundColor: theme.palette.grey[200],
+    color: theme.palette.grey[400],
+  },
 }));
 
 export const SecondaryRoundIconButton = styled(IconButton)(({ theme }) => ({
@@ -76,13 +80,16 @@ export const SecondaryRoundIconButton = styled(IconButton)(({ theme }) => ({
   borderRadius: "50%",
   backgroundColor: "transparent",
   color: theme.palette.primary.main,
-  border: `1px solid ${theme.palette.primary.main}22`,
+  border: `2px solid ${theme.palette.primary.main}`,
   transition: "0.2s",
-
   "&:hover": {
     backgroundColor: theme.palette.primary.main + "15",
     color: theme.palette.primary.dark,
     borderColor: theme.palette.primary.main,
+  },
+  "&.Mui-disabled": {
+    borderColor: theme.palette.grey[200],
+    color: theme.palette.grey[400],
   },
 }));
 

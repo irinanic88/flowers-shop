@@ -29,6 +29,44 @@ export default function ProductCard({ product }: ProductCardProps) {
   const itemInCart = items.find((i) => i.id === product.id);
   const quantity = itemInCart?.quantity ?? 0;
 
+  const { orders } = useOrders();
+
+  const totalOrdered = orders.reduce((sum, order) => {
+    if (!order.items) return sum;
+    const item = order.items.find((i) => i.product_id === product.id);
+    return sum + (item?.quantity ?? 0);
+  }, 0);
+
+  const handleDeleteProduct = async () => {
+    if (!confirm("Eliminar este producto?")) return;
+
+    try {
+      const { error } = await supabase
+        .from("products")
+        .delete()
+        .eq("id", product.id);
+
+      if (error) {
+        console.error("Error deleting product:", error.message);
+        alert("No se pudo eliminar el producto.");
+        return;
+      }
+
+      if (product.images && product.images.length > 0) {
+        const filePaths = product.images.map((url) => {
+          const parts = url.split("product-images/");
+          return parts[1];
+        });
+
+        await supabase.storage.from("product-images").remove(filePaths);
+      }
+
+      alert("Producto eliminado.");
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   return (
     <PanelCard>
       <Stack direction="row" spacing={2} alignItems="center">
@@ -77,7 +115,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           {isAdmin && (
             <Stack spacing={1}>
               <Typography variant="body2" color="text.secondary">
-                Total preordenado: {/* можно оставить */}
+                Total preordenado: {totalOrdered ?? 0}
               </Typography>
 
               <Stack direction="row" spacing={1}>
@@ -87,12 +125,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                 >
                   <EditIcon fontSize="small" />
                 </RoundIconButton>
-                <RoundIconButton
-                  onClick={() => {
-                    /* delete */
-                  }}
-                  color="error"
-                >
+                <RoundIconButton onClick={handleDeleteProduct} color="error">
                   <DeleteIcon fontSize="small" />
                 </RoundIconButton>
               </Stack>

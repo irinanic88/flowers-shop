@@ -19,8 +19,6 @@ export interface UserType {
   email?: string;
 }
 
-export type UserRoleTypes = "admin" | "user" | "none";
-
 export type AuthFormType = { email: string; password: string; name: string };
 
 export interface CartItem {
@@ -48,7 +46,5 @@ export interface OrderType {
   admin_comment?: string;
   status: OrderStatusType;
   created_at: string;
-  profiles?: {
-    name: string | null;
-  } | null;
+  profile_name?: string;
 }
