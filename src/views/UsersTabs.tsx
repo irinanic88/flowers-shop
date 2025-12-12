@@ -3,8 +3,8 @@
 import React, { JSX, useState } from "react";
 import { Box, Tabs, Tab } from "@mui/material";
 import * as R from "ramda";
-import ProductsTab from "@/src/views/tabs/ProductsTab";
-import PreordersTab from "@/src/views/tabs/PreordersTab";
+import ProductsTab from "@/src/views/ProductsTab";
+import PreordersTab from "@/src/views/PreordersTab";
 
 interface TabItem {
   label: string;

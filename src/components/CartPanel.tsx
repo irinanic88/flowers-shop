@@ -12,7 +12,7 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import { useCart } from "@/src/context/CartContext";
 import { PrimaryButton, Row, PanelCard } from "@/src/styledComponents";
-import IncrementDecrementButtons from "@/src/views/products/IncrementDecrementButtons";
+import IncrementDecrementButtons from "@/src/components/products/IncrementDecrementButtons";
 import { supabase } from "@/lib/supabase";
 import { useState } from "react";
 

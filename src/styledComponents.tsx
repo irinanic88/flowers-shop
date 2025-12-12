@@ -17,31 +17,28 @@ export const PrimaryButton = styled(Button)(({ theme }) => ({
   },
   "&.Mui-disabled": {
     backgroundColor: theme.palette.grey[200],
+    borderColor: theme.palette.grey[200],
     color: theme.palette.grey[400],
   },
 }));
 
-export const ErrorButton = styled(PrimaryButton)(({ theme }) => ({
-  color: theme.palette.error.main,
-  borderColor: theme.palette.error.main,
-  backgroundColor: "transparent",
-  "&:hover": {
-    backgroundColor: theme.palette.error.dark,
-  },
-  "&.Mui-disabled": {
-    backgroundColor: theme.palette.grey[200],
-  },
-}));
-
 export const SecondaryButton = styled(Button)(({ theme }) => ({
+  borderRadius: "25px",
+  border: "2px solid",
   color: theme.palette.primary.main,
+  borderColor: theme.palette.primary.main,
   textTransform: "none",
   padding: "5px 15px",
   fontWeight: 600,
   fontSize: "16px",
   transition: "0.3s",
-
+  "&:hover": {
+    color: theme.palette.primary.light,
+    borderColor: theme.palette.primary.light,
+  },
   "&.Mui-disabled": {
+    backgroundColor: theme.palette.grey[200],
+    borderColor: theme.palette.grey[200],
     color: theme.palette.grey[400],
   },
 }));
@@ -106,8 +103,9 @@ export const WelcomeBox = styled(Stack)(({ theme }) => ({
   margin: "32px auto 24px",
   padding: "24px",
   borderRadius: (theme.shape.borderRadius as number) * 2,
-  backgroundColor: "rgba(200, 230, 201, 0.5)",
-  border: "1px solid #c8e6c9",
+  backgroundColor: theme.palette.secondary.main,
+  border: "1px solid",
+  borderColor: theme.palette.primary.light,
   boxShadow: "0 2px 6px rgba(0,0,0,0.05)",
 
   "& h5": {

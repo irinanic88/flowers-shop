@@ -2,9 +2,9 @@
 
 import { Box, Stack, Typography } from "@mui/material";
 import { useAuth } from "@/src/context/AuthContext";
-import ProductsPage from "@/src/views/products/ProductsPage";
+import ProductsPage from "@/src/components/products/ProductsPage";
 import Loader from "@/src/components/Loader";
-import UserView from "@/src/views/userView/UserView";
+import UserView from "@/src/views/UserView";
 import {
   RoundIconButton,
   SecondaryRoundIconButton,
@@ -16,7 +16,7 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import PersonIcon from "@mui/icons-material/Person";
 import Layout from "@/src/components/Layout";
-import UsersTabs from "@/src/views/tabs/UsersTabs";
+import UsersTabs from "@/src/views/UsersTabs";
 
 export default function Page() {
   const {

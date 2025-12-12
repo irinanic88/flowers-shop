@@ -37,6 +37,8 @@ export interface OrderItem {
   quantity: number;
 }
 
+export type OrderStatusType = "pending" | "approved" | "cancelled";
+
 export interface OrderType {
   id: string;
   user_id: string;
@@ -44,7 +46,7 @@ export interface OrderType {
   total: number;
   comment?: string;
   admin_comment?: string;
-  status: "pending" | "approved" | "cancelled";
+  status: OrderStatusType;
   created_at: string;
   profiles?: {
     name: string | null;

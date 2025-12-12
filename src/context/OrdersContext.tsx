@@ -41,7 +41,8 @@ export const OrdersProvider = ({ children }: { children: ReactNode }) => {
 
     let query = supabase
       .from("orders")
-      .select("*, profiles(name)")
+      .select("*, profiles:profiles!orders_user_id_fkey(name)")
+
       .order("created_at", { ascending: false });
 
     if (!isAdmin) query = query.eq("user_id", userId);

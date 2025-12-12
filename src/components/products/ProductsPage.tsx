@@ -2,24 +2,22 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
-import { Box, Stack, Typography, Grid } from "@mui/material";
+import { Stack, Typography, Grid } from "@mui/material";
 import { ProductType } from "@/src/types";
-import ProductCard from "@/src/views/products/ProductCard";
-import { isEmpty } from "ramda";
+import ProductCard from "@/src/components/products/ProductCard";
 import { useAuth } from "@/src/context/AuthContext";
 
 export default function ProductsPage() {
   const [products, setProducts] = useState<ProductType[]>([]);
-
   const { isUnknownUser } = useAuth();
 
   async function fetchProducts() {
-    const { data, error } = await supabase
+    const { data } = await supabase
       .from("products")
       .select("*")
       .order("created_at", { ascending: false });
 
-    if (!error) setProducts(data);
+    if (data) setProducts(data);
   }
 
   useEffect(() => {
@@ -30,9 +28,7 @@ export default function ProductsPage() {
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "products" },
-        () => {
-          void fetchProducts();
-        },
+        fetchProducts,
       )
       .subscribe();
 
@@ -41,9 +37,9 @@ export default function ProductsPage() {
     };
   }, []);
 
-  if (isEmpty(products)) {
+  if (!products.length) {
     return (
-      <Stack mt={20} alignItems="center" justifyContent="center">
+      <Stack mt={20} alignItems="center">
         <Typography color="text.secondary">
           No hay productos disponibles por el momento.
         </Typography>
@@ -52,23 +48,16 @@ export default function ProductsPage() {
   }
 
   return (
-    <Box sx={{ width: "100%" }}>
-      {!isEmpty(products) && isUnknownUser && (
-        <Typography
-          sx={{ textAlign: "center", mt: 4 }}
-          variant="h4"
-          color="text.primary"
-        >
+    <Stack spacing={2} sx={{ width: "100%" }}>
+      {isUnknownUser && (
+        <Typography sx={{ textAlign: "center", my: 4 }} variant="h4">
           Disponible para preordenar
         </Typography>
       )}
-      <Grid container spacing={2} justifyContent="flex-start">
-        {products.map((product) => (
-          <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
-            <ProductCard key={product.id} product={product} />
-          </Grid>
-        ))}
-      </Grid>
-    </Box>
+
+      {products.map((product) => (
+        <ProductCard key={product.id} product={product} />
+      ))}
+    </Stack>
   );
 }

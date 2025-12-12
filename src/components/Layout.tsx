@@ -14,10 +14,7 @@ export default function Layout({ actions, children }: LayoutProps) {
     <Stack
       sx={{
         height: "100vh",
-        overflow: "hidden",
-        p: 2,
       }}
-      spacing={2}
     >
       <Stack
         direction="row"
@@ -25,21 +22,27 @@ export default function Layout({ actions, children }: LayoutProps) {
         sx={{
           width: "100%",
           flexShrink: 0,
+          borderBottom: "1px solid",
+          borderColor: (theme) => theme.palette.secondary.main,
         }}
+        px={{ xs: 2, md: 5 }}
+        py={2}
       >
         <Logo />
 
         {actions}
       </Stack>
 
-      <Box
+      <Stack
         sx={{
           flex: 1,
-          overflowY: "auto",
         }}
+        px={{ xs: 2, md: 5 }}
+        pb={5}
+        alignItems="center"
       >
         {children}
-      </Box>
+      </Stack>
     </Stack>
   );
 }

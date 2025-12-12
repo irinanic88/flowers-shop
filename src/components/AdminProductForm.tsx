@@ -146,7 +146,7 @@ export default function AdminProductForm({
             sx: {
               width: "100%",
               maxWidth: "100%",
-              bgcolor: "#fff",
+              backgroundColor: "secondary",
             },
           },
         }}
@@ -160,7 +160,7 @@ export default function AdminProductForm({
             alignItems: "center",
             position: "sticky",
             top: 0,
-            bgcolor: "white",
+            backgroundColor: "secondary",
             zIndex: 10,
           }}
         >

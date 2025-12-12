@@ -106,9 +106,9 @@ export default function AuthPage() {
           maxWidth: 400,
           py: 3,
           px: { xs: 2, sm: 3 },
-          border: "1px solid #ccc",
           borderRadius: 2,
           mt: 8,
+          backgroundColor: (theme) => theme.palette.secondary.main,
         }}
         spacing={2}
       >

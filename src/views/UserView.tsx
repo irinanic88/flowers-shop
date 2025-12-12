@@ -4,7 +4,7 @@ import { Box, Fab } from "@mui/material";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import { useState } from "react";
 import CartPanel from "@/src/components/CartPanel";
-import UsersTabs from "@/src/views/tabs/UsersTabs";
+import UsersTabs from "@/src/views/UsersTabs";
 
 export default function UserView() {
   const [cartOpen, setCartOpen] = useState(false);
@@ -12,7 +12,7 @@ export default function UserView() {
   const handleToggleCart = () => setCartOpen((prev) => !prev);
 
   return (
-    <Box sx={{ position: "relative" }}>
+    <Box sx={{ position: "relative", width: "100%" }}>
       <UsersTabs />
 
       <Fab
