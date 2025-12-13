@@ -38,7 +38,7 @@ export interface OrderItem {
 export type OrderStatusType = "pending" | "approved" | "cancelled";
 
 export interface OrderType {
-  id: string;
+  id: number;
   user_id: string;
   items: OrderItem[];
   total: number;

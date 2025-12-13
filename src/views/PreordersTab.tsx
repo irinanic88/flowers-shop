@@ -45,7 +45,7 @@ export default function PreordersTab() {
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [expandedOrderId, setExpandedOrderId] = useState<string | null>(null);
+  const [expandedOrderId, setExpandedOrderId] = useState<number | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [adminComment, setAdminComment] = useState("");
   const [selectedOrder, setSelectedOrder] = useState<OrderType | null>(null);
@@ -54,7 +54,7 @@ export default function PreordersTab() {
   const { orders, loading, refreshOrders } = useOrders();
   const { isAdmin } = useAuth();
 
-  const toggleExpand = (orderId: string) => {
+  const toggleExpand = (orderId: number) => {
     setExpandedOrderId((prev) => (prev === orderId ? null : orderId));
   };
 
