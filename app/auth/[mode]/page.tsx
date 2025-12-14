@@ -11,6 +11,7 @@ import HomeIcon from "@mui/icons-material/Home";
 import CustomAlert from "@/src/components/CustomAlert";
 import { isEmailValid, isPasswordValid, isRequired } from "@/src/validators";
 import Layout from "@/src/components/Layout";
+import Loader from "@/src/components/Loader";
 
 export default function AuthPage() {
   const [loading, setLoading] = useState(false);
@@ -100,63 +101,67 @@ export default function AuthPage() {
           onClose={() => setAlert(null)}
         />
       )}
-      <Stack
-        sx={{
-          width: "100%",
-          maxWidth: 400,
-          py: 3,
-          px: { xs: 2, sm: 3 },
-          borderRadius: 2,
-          mt: 8,
-          backgroundColor: (theme) => theme.palette.background.paper,
-        }}
-        spacing={2}
-      >
-        <Stack spacing={2}>
-          {!isSignIn && (
+      {loading ? (
+        <Loader />
+      ) : (
+        <Stack
+          sx={{
+            width: "100%",
+            maxWidth: 400,
+            py: 3,
+            px: { xs: 2, sm: 3 },
+            borderRadius: 2,
+            mt: 8,
+            backgroundColor: (theme) => theme.palette.background.paper,
+          }}
+          spacing={2}
+        >
+          <Stack spacing={2}>
+            {!isSignIn && (
+              <TextField
+                label="Nombre de usuario"
+                value={form.name}
+                onChange={(e) => handleFieldChange("name", e.target.value)}
+                fullWidth
+              />
+            )}
             <TextField
-              label="Nombre de usuario"
-              value={form.name}
-              onChange={(e) => handleFieldChange("name", e.target.value)}
+              label="Correo electrónico"
+              value={form.email}
+              onChange={(e) => handleFieldChange("email", e.target.value)}
               fullWidth
             />
-          )}
-          <TextField
-            label="Correo electrónico"
-            value={form.email}
-            onChange={(e) => handleFieldChange("email", e.target.value)}
-            fullWidth
-          />
-          <TextField
-            label="Contraseña"
-            type="password"
-            value={form.password}
-            onChange={(e) => handleFieldChange("password", e.target.value)}
-            fullWidth
-          />
-        </Stack>
+            <TextField
+              label="Contraseña"
+              type="password"
+              value={form.password}
+              onChange={(e) => handleFieldChange("password", e.target.value)}
+              fullWidth
+            />
+          </Stack>
 
-        <PrimaryButton onClick={() => handleSubmit(form)} loading={loading}>
-          {isSignIn ? "Iniciar sesión" : "Registrarse"}
-        </PrimaryButton>
+          <PrimaryButton onClick={() => handleSubmit(form)}>
+            {isSignIn ? "Iniciar sesión" : "Registrarse"}
+          </PrimaryButton>
 
-        <Stack direction="row" spacing={0.5}>
-          <Typography variant="body2" color="text.secondary">
-            {isSignIn ? "Aún no estás registrado?" : "Ya tienes una cuenta?"}
-          </Typography>
-          <Link
-            component="button"
-            variant="body2"
-            underline="hover"
-            onClick={() =>
-              router.push(isSignIn ? "/auth/signUp" : "/auth/signIn")
-            }
-            sx={{ cursor: "pointer" }}
-          >
-            {isSignIn ? "Registrarse" : "Iniciar sesión"}
-          </Link>
+          <Stack direction="row" spacing={0.5}>
+            <Typography variant="body2" color="text.secondary">
+              {isSignIn ? "Aún no estás registrado?" : "Ya tienes una cuenta?"}
+            </Typography>
+            <Link
+              component="button"
+              variant="body2"
+              underline="hover"
+              onClick={() =>
+                router.push(isSignIn ? "/auth/signUp" : "/auth/signIn")
+              }
+              sx={{ cursor: "pointer" }}
+            >
+              {isSignIn ? "Registrarse" : "Iniciar sesión"}
+            </Link>
+          </Stack>
         </Stack>
-      </Stack>
+      )}
     </Layout>
   );
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import Loader from "@/src/components/Loader";
-
+import React from "react";
 import {
   Table,
   TableBody,
@@ -236,8 +236,8 @@ export default function PreordersTab() {
 
           <TableBody>
             {paginated.map((order) => (
-              <>
-                <TableRow key={order.id} hover>
+              <React.Fragment key={order.id}>
+                <TableRow hover>
                   <TableCell>
                     <IconButton
                       aria-label="expand row"
@@ -305,7 +305,7 @@ export default function PreordersTab() {
                 {equals(expandedOrderId, order.id) && (
                   <PreordersTableContent order={order} />
                 )}
-              </>
+              </React.Fragment>
             ))}
           </TableBody>
         </Table>
