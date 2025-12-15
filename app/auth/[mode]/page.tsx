@@ -9,7 +9,11 @@ import { equals } from "ramda";
 import { PrimaryButton, RoundIconButton } from "@/src/styledComponents";
 import HomeIcon from "@mui/icons-material/Home";
 import CustomAlert from "@/src/components/CustomAlert";
-import { isEmailValid, isPasswordValid, isRequired } from "@/src/validators";
+import {
+  isEmailValid,
+  isPasswordValid,
+  isRequired,
+} from "@/src/helpers/validators";
 import Layout from "@/src/components/Layout";
 import Loader from "@/src/components/Loader";
 

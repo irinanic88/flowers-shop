@@ -81,13 +81,11 @@ export default function CartPanel({ open, onClose }: CartPanelProps) {
       anchor="right"
       open={open}
       onClose={onClose}
-      slotProps={{
-        paper: {
-          sx: {
-            width: "100%",
-            maxWidth: "100%",
-            backgroundColor: "secondary",
-          },
+      PaperProps={{
+        sx: {
+          width: "100%",
+          maxWidth: "100%",
+          backgroundColor: "secondary",
         },
       }}
     >

@@ -54,6 +54,7 @@ export function PreordersFilters({
           <Select
             value={userFilter}
             onChange={(e) => onUserChange(e.target.value)}
+            sx={{ backgroundColor: "transparent" }}
           >
             <MenuItem value="all">Todos</MenuItem>
             {users.map((u) => (

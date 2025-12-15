@@ -26,15 +26,18 @@ import { orderStatusesDict, statusColorsDict } from "@/src/constants";
 import { supabase } from "@/lib/supabase";
 import { useOrders } from "@/src/context/OrdersContext";
 import {
+  PrimaryButton,
   RoundIconButton,
   SecondaryRoundIconButton,
 } from "@/src/styledComponents";
+import DownloadIcon from "@mui/icons-material/Download";
 import CheckIcon from "@mui/icons-material/Check";
 import ClearIcon from "@mui/icons-material/Clear";
 import { equals } from "ramda";
 import { PreordersStatusDialog } from "@/src/components/orders/PreordersStatusDialog";
 import { PreordersFilters } from "@/src/components/orders/PreordersFilters";
 import { PreordersTableContent } from "@/src/components/orders/PreordersTableContent";
+import { exportOrdersToExcel } from "@/src/helpers/exportToExcel";
 
 export default function PreordersTab() {
   const [statusFilter, setStatusFilter] = useState<OrderStatusType | "all">(
@@ -170,6 +173,18 @@ export default function PreordersTab() {
 
   return (
     <>
+      {isAdmin && (
+        <Stack alignItems="flex-end">
+          <PrimaryButton
+            endIcon={<DownloadIcon />}
+            onClick={() => exportOrdersToExcel(sortedOrders)}
+            sx={{ mb: 2 }}
+          >
+            Descargar Excel
+          </PrimaryButton>
+        </Stack>
+      )}
+
       <PreordersFilters
         statusFilter={statusFilter}
         onStatusChange={(v) => setStatusFilter(v as OrderStatusType | "all")}

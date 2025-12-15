@@ -141,13 +141,11 @@ export default function AdminProductForm({
         anchor="right"
         open={open}
         onClose={onClose}
-        slotProps={{
-          paper: {
-            sx: {
-              width: "100%",
-              maxWidth: "100%",
-              backgroundColor: "secondary",
-            },
+        PaperProps={{
+          sx: {
+            width: "100%",
+            maxWidth: "100%",
+            backgroundColor: "secondary",
           },
         }}
       >
