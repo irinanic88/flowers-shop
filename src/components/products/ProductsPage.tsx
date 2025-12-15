@@ -1,41 +1,85 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabase';
-import { Stack, Typography } from '@mui/material';
-import { ProductType } from '@/src/types';
-import ProductCard from '@/src/components/products/ProductCard';
-import { useAuth } from '@/src/context/AuthContext';
+import {
+  Stack,
+  Typography,
+  Snackbar,
+  Alert,
+  DialogContent,
+  Dialog,
+  TextField,
+} from "@mui/material";
+import ProductCard from "@/src/components/products/ProductCard";
+import { useAuth } from "@/src/context/AuthContext";
+import { useProducts } from "@/src/context/ProductsContext";
+import { useCallback, useState } from "react";
+import type { ProductType, UiAlert } from "@/src/types";
+import { supabase } from "@/lib/supabase";
+import { PrimaryButton, SecondaryButton } from "@/src/styledComponents";
 
 export default function ProductsPage() {
-  const [products, setProducts] = useState<ProductType[]>([]);
+  const { products, loading } = useProducts();
   const { isUnknownUser } = useAuth();
 
-  async function fetchProducts() {
-    const { data } = await supabase
-      .from('products')
-      .select('*')
-      .order('created_at', { ascending: false });
+  const [selectedProduct, setSelectedProduct] = useState<ProductType | null>(
+    null,
+  );
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [alert, setAlert] = useState<UiAlert>({
+    open: false,
+    message: "",
+    severity: "success",
+  });
 
-    if (data) setProducts(data);
+  const notify = useCallback(
+    (message: string, severity: UiAlert["severity"]) => {
+      setAlert({ open: true, message, severity });
+    },
+    [],
+  );
+
+  const handleDeleteProduct = async () => {
+    if (!selectedProduct) return;
+
+    try {
+      const { error } = await supabase
+        .from("products")
+        .delete()
+        .eq("id", selectedProduct.id);
+
+      if (error) {
+        notify(`No se pudo eliminar el producto: ${error.message}`, "error");
+        return;
+      }
+
+      if (selectedProduct.images?.length) {
+        const filePaths = selectedProduct.images
+          .map((url) => url.split("product-images/")[1])
+          .filter(Boolean);
+
+        if (filePaths.length) {
+          await supabase.storage.from("product-images").remove(filePaths);
+        }
+      }
+
+      setOpenDeleteDialog(false);
+
+      notify(`Producto ${selectedProduct.title} eliminado.`, "success");
+
+      setSelectedProduct(null);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Error desconocido";
+      notify(message, "error");
+    }
+  };
+
+  if (loading) {
+    return (
+      <Stack mt={20} alignItems="center">
+        <Typography color="text.secondary">Cargando productos…</Typography>
+      </Stack>
+    );
   }
-
-  useEffect(() => {
-    void fetchProducts();
-
-    const channel = supabase
-      .channel('products-realtime')
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'products' },
-        fetchProducts,
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, []);
 
   if (!products.length) {
     return (
@@ -48,16 +92,64 @@ export default function ProductsPage() {
   }
 
   return (
-    <Stack spacing={2} sx={{ width: '100%' }}>
-      {isUnknownUser && (
-        <Typography sx={{ textAlign: 'center', my: 4 }} variant="h4">
-          Disponible para preordenar
-        </Typography>
-      )}
+    <>
+      <Stack spacing={2} sx={{ width: "100%" }}>
+        {isUnknownUser && (
+          <Typography sx={{ textAlign: "center", my: 4 }} variant="h4">
+            Disponible para preordenar
+          </Typography>
+        )}
 
-      {products.map((product) => (
-        <ProductCard key={product.id} product={product} />
-      ))}
-    </Stack>
+        {products.map((product) => (
+          <ProductCard
+            key={product.id}
+            product={product}
+            onNotify={notify}
+            onDelete={(p) => {
+              setOpenDeleteDialog(true);
+              setSelectedProduct(p);
+            }}
+          />
+        ))}
+      </Stack>
+
+      <Snackbar
+        open={alert.open}
+        autoHideDuration={4000}
+        onClose={() => setAlert((p) => ({ ...p, open: false }))}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert
+          onClose={() => setAlert((p) => ({ ...p, open: false }))}
+          severity={alert.severity}
+          sx={{ width: "100%" }}
+        >
+          {alert.message}
+        </Alert>
+      </Snackbar>
+
+      {openDeleteDialog && selectedProduct && (
+        <Dialog
+          open={openDeleteDialog}
+          onClose={() => setOpenDeleteDialog(false)}
+          fullWidth
+        >
+          <DialogContent>
+            <Typography sx={{ mb: 1 }}>
+              Eliminar producto {selectedProduct.title}?
+            </Typography>
+
+            <Stack direction="row" justifyContent="center" spacing={1} mt={2}>
+              <SecondaryButton onClick={() => setOpenDeleteDialog(false)}>
+                Cancelar
+              </SecondaryButton>
+              <PrimaryButton onClick={handleDeleteProduct}>
+                Eliminar
+              </PrimaryButton>
+            </Stack>
+          </DialogContent>
+        </Dialog>
+      )}
+    </>
   );
 }

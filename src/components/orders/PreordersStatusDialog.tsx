@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import {
   Dialog,
@@ -6,8 +6,8 @@ import {
   TextField,
   Typography,
   Stack,
-} from '@mui/material';
-import { PrimaryButton, SecondaryButton } from '@/src/styledComponents';
+} from "@mui/material";
+import { PrimaryButton, SecondaryButton } from "@/src/styledComponents";
 
 interface Props {
   open: boolean;
@@ -27,7 +27,7 @@ export function PreordersStatusDialog({
   return (
     <Dialog open={open} onClose={onClose} fullWidth>
       <DialogContent>
-        <Typography sx={{ mb: 1 }}>Comentario del administrador</Typography>
+        <Typography sx={{ mb: 1 }}>Comentario del administrador:</Typography>
 
         <TextField
           fullWidth
@@ -37,7 +37,7 @@ export function PreordersStatusDialog({
           onChange={(e) => onChangeComment(e.target.value)}
         />
 
-        <Stack direction="row" justifyContent="flex-end" spacing={1} mt={2}>
+        <Stack direction="row" justifyContent="center" spacing={1} mt={2}>
           <SecondaryButton onClick={onClose}>Cancelar</SecondaryButton>
           <PrimaryButton onClick={onSave}>Guardar</PrimaryButton>
         </Stack>

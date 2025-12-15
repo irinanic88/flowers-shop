@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   Box,
   TextField,
@@ -10,18 +10,22 @@ import {
   Drawer,
   IconButton,
   Typography,
-} from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
-import { PrimaryButton, SecondaryButton } from '@/src/styledComponents';
-import { supabase } from '@/lib/supabase';
-import { ProductType } from '@/src/types';
-import ImageUploader from '@/src/components/ImageUploader';
-import { isEmpty } from 'ramda';
+} from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
+import { PrimaryButton, SecondaryButton } from "@/src/styledComponents";
+import { supabase } from "@/lib/supabase";
+import { ProductType } from "@/src/types";
+import ImageUploader from "@/src/components/ImageUploader";
+import { isEmpty } from "ramda";
 
 interface AdminProductFormProps {
   open: boolean;
   onClose: () => void;
   product?: ProductType | null;
+  onNotify?: (
+    message: string,
+    severity: "success" | "error" | "info" | "warning",
+  ) => void;
 }
 
 interface ProductForm {
@@ -34,19 +38,32 @@ interface ProductForm {
   height: string;
 }
 
+type AlertStateType = {
+  open: boolean;
+  message: string;
+  severity: "success" | "error";
+};
+
 const emptyForm: ProductForm = {
-  title: '',
-  price: '',
-  comment: '',
-  pots_count: '',
+  title: "",
+  price: "",
+  comment: "",
+  pots_count: "",
   images: [],
-  available: '',
-  height: '',
+  available: "",
+  height: "",
+};
+
+const alertInitialState = {
+  open: false,
+  message: "",
+  severity: "success" as "success" | "error",
 };
 
 export default function AdminProductForm({
   open,
   onClose,
+  onNotify,
   product = null,
 }: AdminProductFormProps) {
   const isEdit = !!product;
@@ -54,22 +71,19 @@ export default function AdminProductForm({
   const [form, setForm] = useState<ProductForm>(emptyForm);
   const [loading, setLoading] = useState(false);
 
-  const [alertOpen, setAlertOpen] = useState(false);
-  const [alertMessage, setAlertMessage] = useState('');
-  const [alertSeverity, setAlertSeverity] = useState<'success' | 'error'>(
-    'success',
-  );
+  const [alertState, setAlertState] =
+    useState<AlertStateType>(alertInitialState);
 
   useEffect(() => {
     if (product) {
       setForm({
         title: product.title,
         price: product.price,
-        comment: product.comment ?? '',
-        pots_count: product.pots_count ?? '',
+        comment: product.comment ?? "",
+        pots_count: product.pots_count ?? "",
         images: product.images ?? [],
         available: product.available,
-        height: product.height ?? '',
+        height: product.height ?? "",
       });
     } else {
       setForm(emptyForm);
@@ -80,10 +94,16 @@ export default function AdminProductForm({
     setForm((prev) => ({ ...prev, [key]: value }));
   };
 
-  const showAlert = (message: string, severity: 'success' | 'error') => {
-    setAlertMessage(message);
-    setAlertSeverity(severity);
-    setAlertOpen(true);
+  const notify = (message: string, severity: "success" | "error") => {
+    onNotify?.(message, severity);
+  };
+
+  const showAlert = (message: string, severity: "success" | "error") => {
+    setAlertState({
+      open: true,
+      message,
+      severity,
+    });
   };
 
   const handleCreate = async () => {
@@ -93,22 +113,21 @@ export default function AdminProductForm({
       isEmpty(form.pots_count) ||
       isEmpty(form.available)
     ) {
-      showAlert('Completa todos los campos correctamente.', 'error');
+      showAlert("Completa todos los campos correctamente.", "error");
       return;
     }
 
     setLoading(true);
 
     const { error } = await supabase
-      .from('products')
+      .from("products")
       .insert([form])
       .select()
       .single();
 
-    if (error) {
-      showAlert(`Error: ${error.message}`, 'error');
-    } else {
-      showAlert('Producto agregado!', 'success');
+    if (error) notify(`Error: ${error.message}`, "error");
+    else {
+      notify("Producto agregado!", "success");
       onClose();
     }
 
@@ -119,16 +138,15 @@ export default function AdminProductForm({
     setLoading(true);
 
     const { error } = await supabase
-      .from('products')
+      .from("products")
       .update(form)
-      .eq('id', product!.id)
+      .eq("id", product!.id)
       .select()
       .single();
 
-    if (error) {
-      showAlert(`Error: ${error.message}`, 'error');
-    } else {
-      showAlert('Producto actualizado!', 'success');
+    if (error) notify(`Error: ${error.message}`, "error");
+    else {
+      notify("Producto actualizado!", "success");
       onClose();
     }
 
@@ -143,26 +161,26 @@ export default function AdminProductForm({
         onClose={onClose}
         PaperProps={{
           sx: {
-            width: '100%',
-            maxWidth: '100%',
-            backgroundColor: 'secondary',
+            width: "100%",
+            maxWidth: "100%",
+            backgroundColor: "secondary",
           },
         }}
       >
         <Box
           sx={{
             p: 2,
-            borderBottom: '1px solid #eee',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            position: 'sticky',
+            borderBottom: "1px solid #eee",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            position: "sticky",
             top: 0,
             zIndex: 10,
           }}
         >
           <Typography variant="h6">
-            {isEdit ? 'Editar producto' : 'Agregar producto'}
+            {isEdit ? "Editar producto" : "Agregar producto"}
           </Typography>
 
           <IconButton onClick={onClose}>
@@ -173,16 +191,16 @@ export default function AdminProductForm({
         <Stack
           justifyContent="space-between"
           sx={{
-            height: '100%',
+            height: "100%",
             p: 2,
-            overflowY: 'auto',
+            overflowY: "auto",
           }}
         >
           <Stack spacing={2}>
             <TextField
               label="Título"
               value={form.title}
-              onChange={(e) => handleChange('title', e.target.value)}
+              onChange={(e) => handleChange("title", e.target.value)}
               fullWidth
               required
             />
@@ -191,7 +209,7 @@ export default function AdminProductForm({
               label="Precio"
               type="number"
               value={form.price}
-              onChange={(e) => handleChange('price', e.target.value)}
+              onChange={(e) => handleChange("price", e.target.value)}
               fullWidth
               required
             />
@@ -200,7 +218,7 @@ export default function AdminProductForm({
               label="Cantidad de macetas"
               type="number"
               value={form.pots_count}
-              onChange={(e) => handleChange('pots_count', e.target.value)}
+              onChange={(e) => handleChange("pots_count", e.target.value)}
               fullWidth
               required
             />
@@ -209,7 +227,7 @@ export default function AdminProductForm({
               label="Disponible"
               type="number"
               value={form.available}
-              onChange={(e) => handleChange('available', e.target.value)}
+              onChange={(e) => handleChange("available", e.target.value)}
               fullWidth
               required
             />
@@ -217,14 +235,14 @@ export default function AdminProductForm({
             <TextField
               label="Altura"
               value={form.height}
-              onChange={(e) => handleChange('height', e.target.value)}
+              onChange={(e) => handleChange("height", e.target.value)}
               fullWidth
             />
 
             <TextField
               label="Comentario"
               value={form.comment}
-              onChange={(e) => handleChange('comment', e.target.value)}
+              onChange={(e) => handleChange("comment", e.target.value)}
               fullWidth
               multiline
               rows={3}
@@ -238,17 +256,17 @@ export default function AdminProductForm({
             />
           </Stack>
 
-          <Stack direction={{ xs: 'column', md: 'row' }} spacing={1}>
+          <Stack direction={{ xs: "column", md: "row" }} spacing={1}>
             <PrimaryButton
               onClick={isEdit ? handleUpdate : handleCreate}
               disabled={loading}
-              sx={{ width: { xs: '100%', sm: 200 } }}
+              sx={{ width: { xs: "100%", sm: 200 } }}
             >
-              {isEdit ? 'Guardar cambios' : 'Agregar producto'}
+              {isEdit ? "Guardar cambios" : "Agregar producto"}
             </PrimaryButton>
 
             <SecondaryButton
-              sx={{ width: { xs: '100%', sm: 200 } }}
+              sx={{ width: { xs: "100%", sm: 200 } }}
               onClick={onClose}
               disabled={loading}
               variant="outlined"
@@ -260,17 +278,17 @@ export default function AdminProductForm({
       </Drawer>
 
       <Snackbar
-        open={alertOpen}
+        open={alertState.open}
         autoHideDuration={4000}
-        onClose={() => setAlertOpen(false)}
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        onClose={() => setAlertState(alertInitialState)}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
       >
         <Alert
-          onClose={() => setAlertOpen(false)}
-          severity={alertSeverity}
-          sx={{ width: '100%' }}
+          onClose={() => setAlertState(alertInitialState)}
+          severity={alertState.severity}
+          sx={{ width: "100%" }}
         >
-          {alertMessage}
+          {alertState.message}
         </Alert>
       </Snackbar>
     </>
