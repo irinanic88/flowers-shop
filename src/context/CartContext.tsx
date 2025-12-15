@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import { createContext, useContext, useState, ReactNode } from "react";
-import { CartItem } from "@/src/types";
+import { createContext, useContext, useState, ReactNode } from 'react';
+import { CartItem } from '@/src/types';
 
 type CartContextType = {
   items: CartItem[];
   updateItemQuantity: (
-    product: Omit<CartItem, "quantity">,
+    product: Omit<CartItem, 'quantity'>,
     quantity: number,
   ) => void;
   removeFromCart: (id: string) => void;
@@ -26,7 +26,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
 
   const updateItemQuantity = (
-    product: Omit<CartItem, "quantity">,
+    product: Omit<CartItem, 'quantity'>,
     quantity: number,
   ) => {
     setItems((prev) => {

@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { createContext, useContext, useEffect, useState } from "react";
-import { supabase } from "@/lib/supabase";
-import { UserType } from "@/src/types";
-import { equals, anyPass } from "ramda";
+import { createContext, useContext, useEffect, useState } from 'react';
+import { supabase } from '@/lib/supabase';
+import { UserType } from '@/src/types';
+import { equals, anyPass } from 'ramda';
 
 type AuthContextType = {
   userId: string | null;
@@ -36,10 +36,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   const applyRole = (role: string | null) => {
-    const safeRole = role ?? "none";
-    const isAdminRole = equals(safeRole, "admin");
-    const isUserRole = equals(safeRole, "user");
-    const isNone = !anyPass([equals("admin"), equals("user")])(safeRole);
+    const safeRole = role ?? 'none';
+    const isAdminRole = equals(safeRole, 'admin');
+    const isUserRole = equals(safeRole, 'user');
+    const isNone = !anyPass([equals('admin'), equals('user')])(safeRole);
 
     setIsAdmin(isAdminRole);
     setIsUser(isUserRole);
@@ -56,25 +56,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         id: supabaseUser.id,
         email: supabaseUser.email,
         name: supabaseUser.user_metadata?.name ?? null,
-        role: supabaseUser.user_metadata?.role ?? "none",
+        role: supabaseUser.user_metadata?.role ?? 'none',
         created_at: supabaseUser.created_at,
       };
 
       setUser(formattedUser);
 
       const { data: profile } = await supabase
-        .from("profiles")
-        .select("role, name")
-        .eq("id", supabaseUser.id)
+        .from('profiles')
+        .select('role, name')
+        .eq('id', supabaseUser.id)
         .single();
 
-      const dbRole = profile?.role ?? "none";
+      const dbRole = profile?.role ?? 'none';
 
       applyRole(dbRole);
       setName(profile?.name ?? null);
     } else {
       setUser(null);
-      applyRole("none");
+      applyRole('none');
       setName(null);
     }
 
@@ -85,9 +85,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     void loadAuth();
 
     supabase.auth.onAuthStateChange((event, session) => {
-      if (equals(event, "SIGNED_OUT") || !session) {
+      if (equals(event, 'SIGNED_OUT') || !session) {
         setUser(null);
-        applyRole("none");
+        applyRole('none');
         setName(null);
         setLoading(false);
         return;

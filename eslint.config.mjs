@@ -31,6 +31,8 @@ export default defineConfig([
       'array-bracket-spacing': ['error', 'never'],
       'block-spacing': ['error', 'always'],
       'no-multiple-empty-lines': ['error', { max: 1, maxEOF: 0 }],
+      'react-hooks/exhaustive-deps': 'off',
+      'react-hooks/set-state-in-effect': 'off',
       semi: ['error', 'always'],
       'prettier/prettier': [
         'error',

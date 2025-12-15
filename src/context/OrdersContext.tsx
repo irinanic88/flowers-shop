@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   createContext,
@@ -6,10 +6,10 @@ import {
   useState,
   useEffect,
   ReactNode,
-} from "react";
-import { supabase } from "@/lib/supabase";
-import { OrderType } from "@/src/types";
-import { useAuth } from "@/src/context/AuthContext";
+} from 'react';
+import { supabase } from '@/lib/supabase';
+import { OrderType } from '@/src/types';
+import { useAuth } from '@/src/context/AuthContext';
 
 interface OrdersContextType {
   orders: OrderType[];
@@ -40,17 +40,17 @@ export const OrdersProvider = ({ children }: { children: ReactNode }) => {
     setLoading(true);
 
     let query = supabase
-      .from("orders_with_profiles")
-      .select("*")
+      .from('orders_with_profiles')
+      .select('*')
 
-      .order("created_at", { ascending: false });
+      .order('created_at', { ascending: false });
 
-    if (!isAdmin) query = query.eq("user_id", userId);
+    if (!isAdmin) query = query.eq('user_id', userId);
 
     const { data, error } = await query;
 
     if (error) {
-      console.error("Error loading orders:", error);
+      console.error('Error loading orders:', error);
     } else if (data) {
       setOrders(data as OrderType[]);
     }
@@ -68,10 +68,10 @@ export const OrdersProvider = ({ children }: { children: ReactNode }) => {
     void loadOrders();
 
     const channel = supabase
-      .channel("orders-realtime")
+      .channel('orders-realtime')
       .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "orders" },
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'orders' },
         () => {
           void loadOrders();
         },

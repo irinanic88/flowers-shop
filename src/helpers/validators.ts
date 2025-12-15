@@ -9,5 +9,5 @@ export const isPasswordValid = (password: string) => {
 };
 
 export const isRequired = (value: string | number) => {
-  return value !== null && value !== undefined && value !== "";
+  return value !== null && value !== undefined && value !== '';
 };

@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   Stack,
@@ -6,14 +6,14 @@ import {
   MenuItem,
   InputLabel,
   FormControl,
-} from "@mui/material";
-import { OrderStatusType } from "@/src/types";
-import { orderStatusesDict } from "@/src/constants";
-import { useAuth } from "@/src/context/AuthContext";
+} from '@mui/material';
+import { OrderStatusType } from '@/src/types';
+import { orderStatusesDict } from '@/src/constants';
+import { useAuth } from '@/src/context/AuthContext';
 
 interface PreordersFiltersProps {
-  statusFilter: OrderStatusType | "all";
-  onStatusChange: (v: OrderStatusType | "all") => void;
+  statusFilter: OrderStatusType | 'all';
+  onStatusChange: (v: OrderStatusType | 'all') => void;
   userFilter: string;
   onUserChange: (v: string) => void;
   users: string[];
@@ -35,9 +35,9 @@ export function PreordersFilters({
         <Select
           value={statusFilter}
           onChange={(e) =>
-            onStatusChange(e.target.value as OrderStatusType | "all")
+            onStatusChange(e.target.value as OrderStatusType | 'all')
           }
-          sx={{ backgroundColor: "transparent" }}
+          sx={{ backgroundColor: 'transparent' }}
         >
           <MenuItem value="all">Todos</MenuItem>
           {Object.entries(orderStatusesDict).map(([key, label]) => (
@@ -54,7 +54,7 @@ export function PreordersFilters({
           <Select
             value={userFilter}
             onChange={(e) => onUserChange(e.target.value)}
-            sx={{ backgroundColor: "transparent" }}
+            sx={{ backgroundColor: 'transparent' }}
           >
             <MenuItem value="all">Todos</MenuItem>
             {users.map((u) => (

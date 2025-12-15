@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { useState, ReactNode } from "react";
-import { Snackbar, Alert, AlertColor } from "@mui/material";
+import { useState } from 'react';
+import { Snackbar, Alert, AlertColor } from '@mui/material';
 
 interface CustomAlertProps {
   message: string;
@@ -12,14 +12,14 @@ interface CustomAlertProps {
 
 export default function CustomAlert({
   message,
-  severity = "info",
+  severity = 'info',
   duration = 4000,
   onClose,
 }: CustomAlertProps) {
   const [open, setOpen] = useState(true);
 
-  const handleClose = (_?: any, reason?: string) => {
-    if (reason === "clickaway") return;
+  const handleClose = (_?: unknown, reason?: string) => {
+    if (reason === 'clickaway') return;
     setOpen(false);
     if (onClose) onClose();
   };

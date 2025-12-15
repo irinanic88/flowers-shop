@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { useEffect, useRef, useState } from "react";
-import { Stack, Typography, IconButton } from "@mui/material";
-import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import CloseIcon from "@mui/icons-material/Close";
-import { SecondaryButton, VisuallyHiddenInput } from "@/src/styledComponents";
-import { supabase } from "@/lib/supabase";
+import { useEffect, useRef, useState } from 'react';
+import { Stack, Typography, IconButton } from '@mui/material';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import CloseIcon from '@mui/icons-material/Close';
+import { SecondaryButton, VisuallyHiddenInput } from '@/src/styledComponents';
+import { supabase } from '@/lib/supabase';
 
 interface ImageUploaderProps {
   initialImages?: string[];
@@ -51,16 +51,16 @@ export default function ImageUploader({
       const filePath = `product-images/${Date.now()}_${file.name}`;
 
       const { error } = await supabase.storage
-        .from("product-images")
+        .from('product-images')
         .upload(filePath, file);
 
       if (error) {
-        console.error("Error uploading:", error.message);
+        console.error('Error uploading:', error.message);
         continue;
       }
 
       const { data } = supabase.storage
-        .from("product-images")
+        .from('product-images')
         .getPublicUrl(filePath);
 
       if (data?.publicUrl) {
@@ -89,7 +89,7 @@ export default function ImageUploader({
       <SecondaryButton
         as="label"
         variant="outlined"
-        sx={{ width: 200, justifyContent: "flex-start", padding: "8px" }}
+        sx={{ width: 200, justifyContent: 'flex-start', padding: '8px' }}
       >
         <Stack direction="row" spacing={1} alignItems="center">
           <CloudUploadIcon />
@@ -115,7 +115,7 @@ export default function ImageUploader({
             >
               <Typography
                 variant="body2"
-                sx={{ maxWidth: "80%", wordBreak: "break-all" }}
+                sx={{ maxWidth: '80%', wordBreak: 'break-all' }}
               >
                 {file.name}
               </Typography>

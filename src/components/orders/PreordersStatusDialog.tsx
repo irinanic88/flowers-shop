@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   Dialog,
@@ -6,8 +6,8 @@ import {
   TextField,
   Typography,
   Stack,
-} from "@mui/material";
-import { PrimaryButton, SecondaryButton } from "@/src/styledComponents";
+} from '@mui/material';
+import { PrimaryButton, SecondaryButton } from '@/src/styledComponents';
 
 interface Props {
   open: boolean;

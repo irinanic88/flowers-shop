@@ -1,20 +1,19 @@
-"use client";
+'use client';
 
-import React, { useState } from "react";
-import { Typography, Box, Modal, Stack, Chip } from "@mui/material";
-import Image from "next/image";
-import { ProductType } from "@/src/types";
-import ProductInfo from "@/src/components/products/ProductInfo";
-import IncrementDecrementButtons from "@/src/components/products/IncrementDecrementButtons";
-import { supabase } from "@/lib/supabase";
-import { PanelCard, RoundIconButton } from "@/src/styledComponents";
-import { useCart } from "@/src/context/CartContext";
-import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
-import { useOrders } from "@/src/context/OrdersContext";
-import { useAuth } from "@/src/context/AuthContext";
-import AdminProductForm from "@/src/components/AdminProductForm";
-import ProductImages from "@/src/components/products/ProductImages";
+import React, { useState } from 'react';
+import { Typography, Box, Stack, Chip } from '@mui/material';
+import { ProductType } from '@/src/types';
+import ProductInfo from '@/src/components/products/ProductInfo';
+import IncrementDecrementButtons from '@/src/components/products/IncrementDecrementButtons';
+import { supabase } from '@/lib/supabase';
+import { PanelCard, RoundIconButton } from '@/src/styledComponents';
+import { useCart } from '@/src/context/CartContext';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
+import { useOrders } from '@/src/context/OrdersContext';
+import { useAuth } from '@/src/context/AuthContext';
+import AdminProductForm from '@/src/components/AdminProductForm';
+import ProductImages from '@/src/components/products/ProductImages';
 
 interface ProductCardProps {
   product: ProductType;
@@ -38,30 +37,30 @@ export default function ProductCard({ product }: ProductCardProps) {
   }, 0);
 
   const handleDeleteProduct = async () => {
-    if (!confirm("Eliminar este producto?")) return;
+    if (!confirm('Eliminar este producto?')) return;
 
     try {
       const { error } = await supabase
-        .from("products")
+        .from('products')
         .delete()
-        .eq("id", product.id);
+        .eq('id', product.id);
 
       if (error) {
-        console.error("Error deleting product:", error.message);
-        alert("No se pudo eliminar el producto.");
+        console.error('Error deleting product:', error.message);
+        alert('No se pudo eliminar el producto.');
         return;
       }
 
       if (product.images && product.images.length > 0) {
         const filePaths = product.images.map((url) => {
-          const parts = url.split("product-images/");
+          const parts = url.split('product-images/');
           return parts[1];
         });
 
-        await supabase.storage.from("product-images").remove(filePaths);
+        await supabase.storage.from('product-images').remove(filePaths);
       }
 
-      alert("Producto eliminado.");
+      alert('Producto eliminado.');
     } catch (err) {
       console.error(err);
     }
@@ -88,7 +87,7 @@ export default function ProductCard({ product }: ProductCardProps) {
               size="small"
               color="primary"
               label={`Disponible: ${product.available} u.`}
-              sx={{ width: "fit-content" }}
+              sx={{ width: 'fit-content' }}
               variant="outlined"
             />
           )}

@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { ReactNode } from "react";
-import { Stack } from "@mui/material";
-import Logo from "@/src/components/Logo";
+import { ReactNode } from 'react';
+import { Stack } from '@mui/material';
+import Logo from '@/src/components/Logo';
 
 interface LayoutProps {
   actions: ReactNode;
@@ -13,7 +13,7 @@ export default function Layout({ actions, children }: LayoutProps) {
   return (
     <Stack
       sx={{
-        height: "100vh",
+        height: '100vh',
       }}
     >
       <Stack
@@ -21,7 +21,7 @@ export default function Layout({ actions, children }: LayoutProps) {
         justifyContent="space-between"
         alignItems="center"
         sx={{
-          width: "100%",
+          width: '100%',
           flexShrink: 0,
         }}
         px={{ xs: 2, md: 5 }}

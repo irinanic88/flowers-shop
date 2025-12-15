@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   Drawer,
@@ -8,13 +8,13 @@ import {
   Stack,
   Alert,
   TextField,
-} from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
-import { useCart } from "@/src/context/CartContext";
-import { PrimaryButton, Row, PanelCard } from "@/src/styledComponents";
-import IncrementDecrementButtons from "@/src/components/products/IncrementDecrementButtons";
-import { supabase } from "@/lib/supabase";
-import React, { useState } from "react";
+} from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
+import { useCart } from '@/src/context/CartContext';
+import { PrimaryButton, Row, PanelCard } from '@/src/styledComponents';
+import IncrementDecrementButtons from '@/src/components/products/IncrementDecrementButtons';
+import { supabase } from '@/lib/supabase';
+import React, { useState } from 'react';
 
 export interface CartPanelProps {
   open: boolean;
@@ -24,23 +24,23 @@ export interface CartPanelProps {
 export default function CartPanel({ open, onClose }: CartPanelProps) {
   const { items, total, updateItemQuantity, clearCart } = useCart();
 
-  const [comment, setComment] = useState("");
+  const [comment, setComment] = useState('');
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
-  const [error, setError] = useState<string>("");
+  const [error, setError] = useState<string>('');
 
   const handleSubmitPreorder = async () => {
     if (!items.length) return;
 
     setLoading(true);
     setSuccess(false);
-    setError("");
+    setError('');
 
     const { data } = await supabase.auth.getUser();
     const userId = data.user?.id;
 
     if (!userId) {
-      setError("Usuario no autenticado.");
+      setError('Usuario no autenticado.');
       setLoading(false);
       return;
     }
@@ -52,25 +52,25 @@ export default function CartPanel({ open, onClose }: CartPanelProps) {
       quantity: i.quantity,
     }));
 
-    const { error: err } = await supabase.from("orders").insert([
+    const { error: err } = await supabase.from('orders').insert([
       {
         user_id: userId,
         items: orderItems,
         total: Number(total.toFixed(2)),
         comment: comment || null,
-        status: "pending",
+        status: 'pending',
       },
     ]);
 
     if (err) {
       console.error(err);
-      setError("Error al enviar el preorden.");
+      setError('Error al enviar el preorden.');
       setLoading(false);
       return;
     }
 
     clearCart();
-    setComment("");
+    setComment('');
     setSuccess(true);
     setLoading(false);
     onClose();
@@ -83,20 +83,20 @@ export default function CartPanel({ open, onClose }: CartPanelProps) {
       onClose={onClose}
       PaperProps={{
         sx: {
-          width: "100%",
-          maxWidth: "100%",
-          backgroundColor: "secondary",
+          width: '100%',
+          maxWidth: '100%',
+          backgroundColor: 'secondary',
         },
       }}
     >
       <Box
         sx={{
           p: 2,
-          borderBottom: "1px solid #eee",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          position: "sticky",
+          borderBottom: '1px solid #eee',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          position: 'sticky',
           top: 0,
           zIndex: 10,
         }}
@@ -118,7 +118,7 @@ export default function CartPanel({ open, onClose }: CartPanelProps) {
         )}
 
         {items.length > 0 && (
-          <Box sx={{ flex: 1, overflowY: "auto", px: 2 }}>
+          <Box sx={{ flex: 1, overflowY: 'auto', px: 2 }}>
             <Stack spacing={2}>
               {items.map((item) => (
                 <PanelCard key={item.id}>
@@ -157,7 +157,7 @@ export default function CartPanel({ open, onClose }: CartPanelProps) {
         )}
 
         {items.length > 0 && (
-          <Box sx={{ p: 2, borderTop: "1px solid #eee" }}>
+          <Box sx={{ p: 2, borderTop: '1px solid #eee' }}>
             {success && (
               <Alert severity="success">Preorden enviado correctamente!</Alert>
             )}
@@ -173,7 +173,7 @@ export default function CartPanel({ open, onClose }: CartPanelProps) {
               sx={{ mb: 1 }}
               onClick={handleSubmitPreorder}
             >
-              {loading ? "Enviando..." : "Enviar preorden"}
+              {loading ? 'Enviando...' : 'Enviar preorden'}
             </PrimaryButton>
 
             <PrimaryButton variant="outlined" fullWidth onClick={clearCart}>
