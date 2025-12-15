@@ -75,6 +75,7 @@ export default function PreordersTab() {
       if (equals(nextStatus, 'approved')) {
         const { error } = await supabase.rpc('approve_order', {
           p_order_id: selectedOrder.id,
+          p_admin_comment: adminComment || null,
         });
 
         if (error) throw error;
@@ -222,7 +223,7 @@ export default function PreordersTab() {
                 </TableCell>
               )}
 
-              <TableCell align="center">
+              <TableCell align="left">
                 <TableSortLabel
                   active={equals(sortBy, 'status')}
                   direction={sortDir}
@@ -232,7 +233,7 @@ export default function PreordersTab() {
                 </TableSortLabel>
               </TableCell>
 
-              <TableCell>Total(€)</TableCell>
+              <TableCell>Total</TableCell>
 
               <TableCell>
                 <TableSortLabel
@@ -281,7 +282,9 @@ export default function PreordersTab() {
                     />
                   </TableCell>
 
-                  <TableCell>{order.total.toFixed(2)}</TableCell>
+                  <TableCell sx={{ minWidth: 100 }}>
+                    € {order.total.toFixed(2)}
+                  </TableCell>
 
                   <TableCell>
                     {new Date(order.created_at).toLocaleDateString()}
