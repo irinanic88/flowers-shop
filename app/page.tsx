@@ -58,8 +58,8 @@ export default function Page() {
       actions={
         <Stack>
           {!isUnknownUser && (
-            <Stack direction="row" spacing={2} alignItems="center">
-              <Typography variant="h5" color="primary">
+            <Stack direction="row" spacing={1} alignItems="flex-start">
+              <Typography variant="body1" color="primary">
                 Hola, {name}!
               </Typography>
               <SecondaryRoundIconButton onClick={handleSignOut}>

@@ -1,9 +1,9 @@
-'use client';
-import { CardContent, Typography, Stack } from '@mui/material';
-import GrassIcon from '@mui/icons-material/Grass';
-import { ProductType } from '@/src/types';
-import HeightIcon from '@mui/icons-material/Height';
-import CommentBox from '@/src/components/CommentBox';
+"use client";
+import { CardContent, Typography, Stack } from "@mui/material";
+import GrassIcon from "@mui/icons-material/Grass";
+import { ProductType } from "@/src/types";
+import HeightIcon from "@mui/icons-material/Height";
+import CommentBox from "@/src/components/CommentBox";
 
 interface ProductInfoProps {
   product: ProductType;
@@ -15,7 +15,7 @@ export default function ProductInfo({
   showPrice = false,
 }: ProductInfoProps) {
   return (
-    <CardContent sx={{ flexGrow: 1, px: 0, py: 1 }}>
+    <CardContent sx={{ flexGrow: 1, p: 0 }}>
       <Stack>
         <Typography variant="h6">{product.title}</Typography>
 
@@ -29,7 +29,7 @@ export default function ProductInfo({
           <Stack direction="row" spacing={0.5}>
             <HeightIcon fontSize="small" />
             <Typography variant="body2">
-              Altura: {product.height ? `${product.height} cm` : '--'}
+              Altura: {product.height ? `${product.height} cm` : "--"}
             </Typography>
           </Stack>
           <Stack direction="row" spacing={0.5}>

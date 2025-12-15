@@ -1,22 +1,22 @@
-import * as XLSX from "xlsx-js-style";
-import { OrderType } from "@/src/types";
-import { orderStatusesDict } from "@/src/constants";
+import * as XLSX from 'xlsx-js-style';
+import { OrderType } from '@/src/types';
+import { orderStatusesDict } from '@/src/constants';
 
 const headerStyle = {
   font: { bold: true },
-  alignment: { horizontal: "center" },
+  alignment: { horizontal: 'center' },
 };
 
 const totalStyle = {
   font: { bold: true },
   alignment: {
     wrapText: true,
-    vertical: "top",
+    vertical: 'top',
   },
 };
 
 const metaValueStyle = {
-  alignment: { horizontal: "left" },
+  alignment: { horizontal: 'left' },
 };
 
 export function exportOrdersToExcel(orders: OrderType[]) {
@@ -30,7 +30,7 @@ export function exportOrdersToExcel(orders: OrderType[]) {
       },
     ]);
 
-    rows.push([{ v: order.profile_name || "—", s: metaValueStyle }]);
+    rows.push([{ v: order.profile_name || '—', s: metaValueStyle }]);
 
     rows.push([
       {
@@ -67,10 +67,10 @@ export function exportOrdersToExcel(orders: OrderType[]) {
     rows.push([]);
 
     rows.push([
-      { v: "Producto", s: headerStyle },
-      { v: "Cantidad", s: headerStyle },
-      { v: "Precio", s: headerStyle },
-      { v: "Total", s: headerStyle },
+      { v: 'Producto', s: headerStyle },
+      { v: 'Cantidad', s: headerStyle },
+      { v: 'Precio', s: headerStyle },
+      { v: 'Total', s: headerStyle },
     ]);
 
     order.items.forEach((item) => {
@@ -83,9 +83,9 @@ export function exportOrdersToExcel(orders: OrderType[]) {
     });
 
     rows.push([
-      { v: "TOTAL", s: totalStyle },
-      "",
-      "",
+      { v: 'TOTAL', s: totalStyle },
+      '',
+      '',
       { v: order.total, s: totalStyle },
     ]);
 
@@ -97,10 +97,10 @@ export function exportOrdersToExcel(orders: OrderType[]) {
 
   const ws = XLSX.utils.aoa_to_sheet(rows);
 
-  ws["!cols"] = [{ wch: 40 }, { wch: 18 }, { wch: 18 }, { wch: 20 }];
+  ws['!cols'] = [{ wch: 40 }, { wch: 18 }, { wch: 18 }, { wch: 20 }];
 
   const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, "Pedidos");
+  XLSX.utils.book_append_sheet(wb, ws, 'Pedidos');
 
-  XLSX.writeFile(wb, "preorders.xlsx");
+  XLSX.writeFile(wb, 'preorders.xlsx');
 }

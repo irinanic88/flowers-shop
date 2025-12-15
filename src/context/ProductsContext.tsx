@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   createContext,
@@ -7,9 +7,9 @@ import {
   useState,
   ReactNode,
   useCallback,
-} from "react";
-import { supabase } from "@/lib/supabase";
-import { ProductType } from "@/src/types";
+} from 'react';
+import { supabase } from '@/lib/supabase';
+import { ProductType } from '@/src/types';
 
 interface ProductsContextType {
   products: ProductType[];
@@ -33,12 +33,12 @@ export function ProductsProvider({ children }: { children: ReactNode }) {
     setLoading(true);
 
     const { data, error } = await supabase
-      .from("products")
-      .select("*")
-      .order("created_at", { ascending: false });
+      .from('products')
+      .select('*')
+      .order('created_at', { ascending: false });
 
     if (error) {
-      console.error("Error loading products:", error);
+      console.error('Error loading products:', error);
       setProducts([]);
     } else {
       setProducts(data ?? []);
@@ -51,22 +51,22 @@ export function ProductsProvider({ children }: { children: ReactNode }) {
     void fetchProducts();
 
     const channel = supabase
-      .channel("products-realtime")
+      .channel('products-realtime')
       .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "products" },
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'products' },
         (payload) => {
           setProducts((prev) => {
             switch (payload.eventType) {
-              case "INSERT":
+              case 'INSERT':
                 return [payload.new as ProductType, ...prev];
 
-              case "UPDATE":
+              case 'UPDATE':
                 return prev.map((p) =>
                   p.id === payload.new.id ? (payload.new as ProductType) : p,
                 );
 
-              case "DELETE":
+              case 'DELETE':
                 return prev.filter((p) => p.id !== payload.old.id);
 
               default:

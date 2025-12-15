@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   Dialog,
@@ -6,8 +6,8 @@ import {
   TextField,
   Typography,
   Stack,
-} from "@mui/material";
-import { PrimaryButton, SecondaryButton } from "@/src/styledComponents";
+} from '@mui/material';
+import { PrimaryButton, SecondaryButton } from '@/src/styledComponents';
 
 interface Props {
   open: boolean;
@@ -15,6 +15,7 @@ interface Props {
   onChangeComment: (v: string) => void;
   onClose: () => void;
   onSave: () => void;
+  submitButton: 'Aprobar' | 'Cancelar';
 }
 
 export function PreordersStatusDialog({
@@ -23,6 +24,7 @@ export function PreordersStatusDialog({
   onChangeComment,
   onClose,
   onSave,
+  submitButton,
 }: Props) {
   return (
     <Dialog open={open} onClose={onClose} fullWidth>
@@ -38,8 +40,8 @@ export function PreordersStatusDialog({
         />
 
         <Stack direction="row" justifyContent="center" spacing={1} mt={2}>
-          <SecondaryButton onClick={onClose}>Cancelar</SecondaryButton>
-          <PrimaryButton onClick={onSave}>Guardar</PrimaryButton>
+          <SecondaryButton onClick={onClose}>Cerrar</SecondaryButton>
+          <PrimaryButton onClick={onSave}>{submitButton}</PrimaryButton>
         </Stack>
       </DialogContent>
     </Dialog>

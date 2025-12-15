@@ -5,7 +5,6 @@ import { Typography, Box, Stack, Chip } from "@mui/material";
 import { ProductType } from "@/src/types";
 import ProductInfo from "@/src/components/products/ProductInfo";
 import IncrementDecrementButtons from "@/src/components/products/IncrementDecrementButtons";
-import { supabase } from "@/lib/supabase";
 import { PanelCard, RoundIconButton } from "@/src/styledComponents";
 import { useCart } from "@/src/context/CartContext";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -45,8 +44,8 @@ export default function ProductCard({
 
   return (
     <PanelCard>
-      <Stack direction="row" spacing={2} alignItems="center">
-        <Box sx={{ width: 150, height: 150, flexShrink: 0 }}>
+      <Stack direction="row" spacing={2} alignItems="flex-start">
+        <Box sx={{ width: 100, height: 150, flexShrink: 0 }}>
           <ProductImages images={product.images ?? []} title={product.title} />
         </Box>
 

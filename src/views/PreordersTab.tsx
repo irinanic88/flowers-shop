@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import Loader from "@/src/components/Loader";
-import React from "react";
+import Loader from '@/src/components/Loader';
+import React from 'react';
 import {
   Table,
   TableBody,
@@ -16,41 +16,41 @@ import {
   TablePagination,
   IconButton,
   Typography,
-} from "@mui/material";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-import { useAuth } from "@/src/context/AuthContext";
-import { OrderType, OrderStatusType } from "@/src/types";
-import { useMemo, useState } from "react";
-import { orderStatusesDict, statusColorsDict } from "@/src/constants";
-import { supabase } from "@/lib/supabase";
-import { useOrders } from "@/src/context/OrdersContext";
+} from '@mui/material';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import { useAuth } from '@/src/context/AuthContext';
+import { OrderType, OrderStatusType } from '@/src/types';
+import { useMemo, useState } from 'react';
+import { orderStatusesDict, statusColorsDict } from '@/src/constants';
+import { supabase } from '@/lib/supabase';
+import { useOrders } from '@/src/context/OrdersContext';
 import {
   PrimaryButton,
   RoundIconButton,
   SecondaryRoundIconButton,
-} from "@/src/styledComponents";
-import DownloadIcon from "@mui/icons-material/Download";
-import CheckIcon from "@mui/icons-material/Check";
-import ClearIcon from "@mui/icons-material/Clear";
-import { equals } from "ramda";
-import { PreordersStatusDialog } from "@/src/components/orders/PreordersStatusDialog";
-import { PreordersFilters } from "@/src/components/orders/PreordersFilters";
-import { PreordersTableContent } from "@/src/components/orders/PreordersTableContent";
-import { exportOrdersToExcel } from "@/src/helpers/exportToExcel";
+} from '@/src/styledComponents';
+import DownloadIcon from '@mui/icons-material/Download';
+import CheckIcon from '@mui/icons-material/Check';
+import ClearIcon from '@mui/icons-material/Clear';
+import { equals } from 'ramda';
+import { PreordersStatusDialog } from '@/src/components/orders/PreordersStatusDialog';
+import { PreordersFilters } from '@/src/components/orders/PreordersFilters';
+import { PreordersTableContent } from '@/src/components/orders/PreordersTableContent';
+import { exportOrdersToExcel } from '@/src/helpers/exportToExcel';
 
 export default function PreordersTab() {
-  const [statusFilter, setStatusFilter] = useState<OrderStatusType | "all">(
-    "all",
+  const [statusFilter, setStatusFilter] = useState<OrderStatusType | 'all'>(
+    'all',
   );
-  const [userFilter, setUserFilter] = useState<string>("all");
-  const [sortBy, setSortBy] = useState<"date" | "status" | "user">("date");
-  const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
+  const [userFilter, setUserFilter] = useState<string>('all');
+  const [sortBy, setSortBy] = useState<'date' | 'status' | 'user'>('date');
+  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc');
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [expandedOrderId, setExpandedOrderId] = useState<number | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [adminComment, setAdminComment] = useState("");
+  const [adminComment, setAdminComment] = useState('');
   const [selectedOrder, setSelectedOrder] = useState<OrderType | null>(null);
   const [nextStatus, setNextStatus] = useState<OrderStatusType | null>(null);
 
@@ -64,7 +64,7 @@ export default function PreordersTab() {
   const openStatusDialog = (order: OrderType, status: OrderStatusType) => {
     setSelectedOrder(order);
     setNextStatus(status);
-    setAdminComment("");
+    setAdminComment('');
     setDialogOpen(true);
   };
 
@@ -72,20 +72,20 @@ export default function PreordersTab() {
     if (!selectedOrder || !nextStatus) return;
 
     try {
-      if (equals(nextStatus, "approved")) {
-        const { error } = await supabase.rpc("approve_order", {
+      if (equals(nextStatus, 'approved')) {
+        const { error } = await supabase.rpc('approve_order', {
           p_order_id: selectedOrder.id,
         });
 
         if (error) throw error;
       } else {
         await supabase
-          .from("orders")
+          .from('orders')
           .update({
-            status: "cancelled",
+            status: 'cancelled',
             admin_comment: adminComment || null,
           })
-          .eq("id", selectedOrder.id);
+          .eq('id', selectedOrder.id);
       }
 
       setDialogOpen(false);
@@ -98,11 +98,11 @@ export default function PreordersTab() {
   const filteredOrders = useMemo(() => {
     return orders.filter((order) => {
       const statusOk =
-        equals(statusFilter, "all") || equals(order.status, statusFilter);
+        equals(statusFilter, 'all') || equals(order.status, statusFilter);
 
       const userOk =
         !isAdmin ||
-        equals(userFilter, "all") ||
+        equals(userFilter, 'all') ||
         equals(order.profile_name, userFilter);
 
       return statusOk && userOk;
@@ -126,20 +126,20 @@ export default function PreordersTab() {
 
     sorted.sort((a, b) => {
       switch (sortBy) {
-        case "date":
-          return equals(sortDir, "asc")
+        case 'date':
+          return equals(sortDir, 'asc')
             ? new Date(a.created_at).getTime() -
                 new Date(b.created_at).getTime()
             : new Date(b.created_at).getTime() -
                 new Date(a.created_at).getTime();
-        case "status":
-          return equals(sortDir, "asc")
+        case 'status':
+          return equals(sortDir, 'asc')
             ? a.status.localeCompare(b.status)
             : b.status.localeCompare(a.status);
-        case "user":
-          return equals(sortDir, "asc")
-            ? (a.profile_name || "").localeCompare(b.profile_name || "")
-            : (b.profile_name || "").localeCompare(a.profile_name || "");
+        case 'user':
+          return equals(sortDir, 'asc')
+            ? (a.profile_name || '').localeCompare(b.profile_name || '')
+            : (b.profile_name || '').localeCompare(a.profile_name || '');
         default:
           return 0;
       }
@@ -155,10 +155,10 @@ export default function PreordersTab() {
 
   const toggleSort = (field: typeof sortBy) => {
     if (sortBy === field) {
-      setSortDir((prev) => (prev === "asc" ? "desc" : "asc"));
+      setSortDir((prev) => (prev === 'asc' ? 'desc' : 'asc'));
     } else {
       setSortBy(field);
-      setSortDir("asc");
+      setSortDir('asc');
     }
   };
 
@@ -187,7 +187,7 @@ export default function PreordersTab() {
 
       <PreordersFilters
         statusFilter={statusFilter}
-        onStatusChange={(v) => setStatusFilter(v as OrderStatusType | "all")}
+        onStatusChange={(v) => setStatusFilter(v as OrderStatusType | 'all')}
         userFilter={userFilter}
         onUserChange={(v) => setUserFilter(v)}
         users={users}
@@ -196,12 +196,12 @@ export default function PreordersTab() {
       <TableContainer
         component={Paper}
         sx={{
-          overflowX: "auto",
+          overflowX: 'auto',
           borderRadius: 4,
-          border: "1px solid",
+          border: '1px solid',
           borderColor: (theme) => theme.palette.grey[200],
           backgroundColor: (theme) => theme.palette.background.paper,
-          boxShadow: "none",
+          boxShadow: 'none',
         }}
       >
         <Table sx={{ minWidth: 600 }}>
@@ -213,9 +213,9 @@ export default function PreordersTab() {
               {isAdmin && (
                 <TableCell>
                   <TableSortLabel
-                    active={equals(sortBy, "user")}
+                    active={equals(sortBy, 'user')}
                     direction={sortDir}
-                    onClick={() => toggleSort("user")}
+                    onClick={() => toggleSort('user')}
                   >
                     Usuario
                   </TableSortLabel>
@@ -224,9 +224,9 @@ export default function PreordersTab() {
 
               <TableCell align="center">
                 <TableSortLabel
-                  active={equals(sortBy, "status")}
+                  active={equals(sortBy, 'status')}
                   direction={sortDir}
-                  onClick={() => toggleSort("status")}
+                  onClick={() => toggleSort('status')}
                 >
                   Estado
                 </TableSortLabel>
@@ -236,9 +236,9 @@ export default function PreordersTab() {
 
               <TableCell>
                 <TableSortLabel
-                  active={equals(sortBy, "date")}
+                  active={equals(sortBy, 'date')}
                   direction={sortDir}
-                  onClick={() => toggleSort("date")}
+                  onClick={() => toggleSort('date')}
                 >
                   Fecha
                 </TableSortLabel>
@@ -270,7 +270,7 @@ export default function PreordersTab() {
                   <TableCell>{order.id}</TableCell>
 
                   {isAdmin && (
-                    <TableCell>{order.profile_name || "—"}</TableCell>
+                    <TableCell>{order.profile_name || '—'}</TableCell>
                   )}
 
                   <TableCell>
@@ -294,7 +294,7 @@ export default function PreordersTab() {
                           <Typography
                             variant="caption"
                             color="text.primary"
-                            sx={{ whiteSpace: "pre-wrap" }}
+                            sx={{ whiteSpace: 'pre-wrap' }}
                           >
                             <strong>Cliente:</strong> {order.comment}
                           </Typography>
@@ -304,7 +304,7 @@ export default function PreordersTab() {
                           <Typography
                             variant="caption"
                             color="text.primary"
-                            sx={{ whiteSpace: "pre-wrap" }}
+                            sx={{ whiteSpace: 'pre-wrap' }}
                           >
                             <strong>Admin:</strong> {order.admin_comment}
                           </Typography>
@@ -323,10 +323,10 @@ export default function PreordersTab() {
                       align="center"
                     >
                       <RoundIconButton
-                        disabled={order.status !== "pending"}
-                        onClick={() => openStatusDialog(order, "approved")}
+                        disabled={order.status !== 'pending'}
+                        onClick={() => openStatusDialog(order, 'approved')}
                       >
-                        {" "}
+                        {' '}
                         <CheckIcon />
                       </RoundIconButton>
                     </TableCell>
@@ -338,10 +338,10 @@ export default function PreordersTab() {
                       align="center"
                     >
                       <SecondaryRoundIconButton
-                        disabled={order.status !== "pending"}
-                        onClick={() => openStatusDialog(order, "cancelled")}
+                        disabled={order.status !== 'pending'}
+                        onClick={() => openStatusDialog(order, 'cancelled')}
                       >
-                        {" "}
+                        {' '}
                         <ClearIcon />
                       </SecondaryRoundIconButton>
                     </TableCell>
@@ -376,6 +376,7 @@ export default function PreordersTab() {
         comment={adminComment}
         onSave={applyStatus}
         onChangeComment={(v) => setAdminComment(v)}
+        submitButton={equals(nextStatus, 'approved') ? 'Aprobar' : 'Cancelar'}
       />
     </>
   );

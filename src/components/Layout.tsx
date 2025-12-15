@@ -20,6 +20,7 @@ export default function Layout({ actions, children }: LayoutProps) {
         direction="row"
         justifyContent="space-between"
         alignItems="flex-start"
+        spacing={2}
         sx={{
           width: "100%",
           flexShrink: 0,

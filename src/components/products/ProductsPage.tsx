@@ -7,7 +7,6 @@ import {
   Alert,
   DialogContent,
   Dialog,
-  TextField,
 } from "@mui/material";
 import ProductCard from "@/src/components/products/ProductCard";
 import { useAuth } from "@/src/context/AuthContext";
@@ -95,7 +94,11 @@ export default function ProductsPage() {
     <>
       <Stack spacing={2} sx={{ width: "100%" }}>
         {isUnknownUser && (
-          <Typography sx={{ textAlign: "center", my: 4 }} variant="h4">
+          <Typography
+            sx={{ textAlign: "center", my: 4 }}
+            variant="h4"
+            color="text.primary"
+          >
             Disponible para preordenar
           </Typography>
         )}
