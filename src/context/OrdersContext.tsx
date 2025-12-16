@@ -6,6 +6,7 @@ import {
   useState,
   useEffect,
   ReactNode,
+  useCallback,
 } from 'react';
 import { supabase } from '@/lib/supabase';
 import { OrderType } from '@/src/types';
@@ -27,10 +28,11 @@ export const useOrders = () => useContext(OrdersContext);
 
 export const OrdersProvider = ({ children }: { children: ReactNode }) => {
   const { userId, isAdmin } = useAuth();
+
   const [orders, setOrders] = useState<OrderType[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const loadOrders = async () => {
+  const loadOrders = useCallback(async () => {
     if (!userId) {
       setOrders([]);
       setLoading(false);
@@ -42,21 +44,23 @@ export const OrdersProvider = ({ children }: { children: ReactNode }) => {
     let query = supabase
       .from('orders_with_profiles')
       .select('*')
-
       .order('created_at', { ascending: false });
 
-    if (!isAdmin) query = query.eq('user_id', userId);
+    if (!isAdmin) {
+      query = query.eq('user_id', userId);
+    }
 
     const { data, error } = await query;
 
     if (error) {
       console.error('Error loading orders:', error);
-    } else if (data) {
-      setOrders(data as OrderType[]);
+      setOrders([]);
+    } else {
+      setOrders((data ?? []) as OrderType[]);
     }
 
     setLoading(false);
-  };
+  }, [userId, isAdmin]);
 
   useEffect(() => {
     if (!userId) {
@@ -66,7 +70,9 @@ export const OrdersProvider = ({ children }: { children: ReactNode }) => {
     }
 
     void loadOrders();
+  }, [userId, isAdmin, loadOrders]);
 
+  useEffect(() => {
     const channel = supabase
       .channel('orders-realtime')
       .on(
@@ -79,13 +85,17 @@ export const OrdersProvider = ({ children }: { children: ReactNode }) => {
       .subscribe();
 
     return () => {
-      void supabase.removeChannel(channel);
+      supabase.removeChannel(channel);
     };
-  }, [userId, isAdmin]);
+  }, [loadOrders]);
 
   return (
     <OrdersContext.Provider
-      value={{ orders, loading, refreshOrders: loadOrders }}
+      value={{
+        orders,
+        loading,
+        refreshOrders: loadOrders,
+      }}
     >
       {children}
     </OrdersContext.Provider>

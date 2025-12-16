@@ -2,13 +2,17 @@
 
 import { useState } from 'react';
 import { supabase } from '@/lib/supabase';
-import { Stack, TextField, Typography, Link } from '@mui/material';
+import { Stack, TextField, Typography, Link, IconButton } from '@mui/material';
 import { useParams, useRouter } from 'next/navigation';
 import { AuthFormType } from '@/src/types';
 import { equals } from 'ramda';
 import { PrimaryButton, RoundIconButton } from '@/src/styledComponents';
 import HomeIcon from '@mui/icons-material/Home';
 import CustomAlert from '@/src/components/CustomAlert';
+import InputAdornment from '@mui/material/InputAdornment';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
+
 import {
   isEmailValid,
   isPasswordValid,
@@ -28,6 +32,7 @@ export default function AuthPage() {
     message: string;
     severity?: 'error' | 'success';
   } | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
 
   const params = useParams();
   const mode = params.mode;
@@ -110,63 +115,86 @@ export default function AuthPage() {
       {loading ? (
         <Loader />
       ) : (
-        <Stack
-          sx={{
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            void handleSubmit(form);
+          }}
+          style={{
             width: '100%',
             maxWidth: 400,
-            py: 3,
-            px: { xs: 2, sm: 3 },
-            borderRadius: 2,
-            mt: 8,
-            backgroundColor: (theme) => theme.palette.background.paper,
           }}
-          spacing={2}
         >
-          <Stack spacing={2}>
-            {!isSignIn && (
+          <Stack
+            sx={{
+              py: 3,
+              px: { xs: 2, sm: 3 },
+              borderRadius: 2,
+              mt: 8,
+              backgroundColor: (theme) => theme.palette.background.paper,
+            }}
+            spacing={2}
+          >
+            <Stack spacing={2}>
+              {!isSignIn && (
+                <TextField
+                  label="Nombre de usuario"
+                  value={form.name}
+                  onChange={(e) => handleFieldChange('name', e.target.value)}
+                  fullWidth
+                />
+              )}
               <TextField
-                label="Nombre de usuario"
-                value={form.name}
-                onChange={(e) => handleFieldChange('name', e.target.value)}
+                label="Correo electrónico"
+                value={form.email}
+                onChange={(e) => handleFieldChange('email', e.target.value)}
                 fullWidth
               />
-            )}
-            <TextField
-              label="Correo electrónico"
-              value={form.email}
-              onChange={(e) => handleFieldChange('email', e.target.value)}
-              fullWidth
-            />
-            <TextField
-              label="Contraseña"
-              type="password"
-              value={form.password}
-              onChange={(e) => handleFieldChange('password', e.target.value)}
-              fullWidth
-            />
-          </Stack>
+              <TextField
+                label="Contraseña"
+                type={showPassword ? 'text' : 'password'}
+                value={form.password}
+                onChange={(e) => handleFieldChange('password', e.target.value)}
+                fullWidth
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        onClick={() => setShowPassword((prev) => !prev)}
+                        edge="end"
+                      >
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            </Stack>
 
-          <PrimaryButton onClick={() => handleSubmit(form)}>
-            {isSignIn ? 'Iniciar sesión' : 'Registrarse'}
-          </PrimaryButton>
+            <PrimaryButton type="submit">
+              {isSignIn ? 'Iniciar sesión' : 'Registrarse'}
+            </PrimaryButton>
 
-          <Stack direction="row" spacing={0.5}>
-            <Typography variant="body2" color="text.secondary">
-              {isSignIn ? 'Aún no estás registrado?' : 'Ya tienes una cuenta?'}
-            </Typography>
-            <Link
-              component="button"
-              variant="body2"
-              underline="hover"
-              onClick={() =>
-                router.push(isSignIn ? '/auth/signUp' : '/auth/signIn')
-              }
-              sx={{ cursor: 'pointer' }}
-            >
-              {isSignIn ? 'Registrarse' : 'Iniciar sesión'}
-            </Link>
+            <Stack direction="row" spacing={0.5}>
+              <Typography variant="body2" color="text.secondary">
+                {isSignIn
+                  ? 'Aún no estás registrado?'
+                  : 'Ya tienes una cuenta?'}
+              </Typography>
+              <Link
+                component="button"
+                variant="body2"
+                underline="hover"
+                onClick={() =>
+                  router.push(isSignIn ? '/auth/signUp' : '/auth/signIn')
+                }
+                sx={{ cursor: 'pointer' }}
+              >
+                {isSignIn ? 'Registrarse' : 'Iniciar sesión'}
+              </Link>
+            </Stack>
           </Stack>
-        </Stack>
+        </form>
       )}
     </Layout>
   );
