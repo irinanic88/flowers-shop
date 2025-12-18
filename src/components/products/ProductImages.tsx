@@ -1,18 +1,12 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import {
-  Box,
-  Button,
-  Stack,
-  Modal,
-  IconButton,
-  Typography,
-} from '@mui/material';
-import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
-import Image from 'next/image';
-import CloseIcon from '@mui/icons-material/Close';
+import React, { useState } from "react";
+import { Box, Stack, Modal, IconButton, Typography } from "@mui/material";
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
+import Image from "next/image";
+import CloseIcon from "@mui/icons-material/Close";
+import SearchIcon from "@mui/icons-material/Search";
 
 interface ProductImagesProps {
   images: string[];
@@ -30,12 +24,12 @@ export default function ProductImages({ images, title }: ProductImagesProps) {
     return (
       <Stack
         sx={{
-          width: '100%',
-          height: '100%',
-          border: '1px solid',
+          width: "100%",
+          height: "100%",
+          border: "1px solid",
           borderColor: (theme) => theme.palette.grey[200],
           bgcolor: (theme) => theme.palette.grey[200],
-          color: 'text.secondary',
+          color: "text.secondary",
         }}
         alignItems="center"
         justifyContent="center"
@@ -57,12 +51,12 @@ export default function ProductImages({ images, title }: ProductImagesProps) {
     <>
       <Box
         sx={{
-          width: '100%',
-          pt: '100%',
-          position: 'relative',
-          border: '1px solid',
+          width: "100%",
+          pt: "100%",
+          position: "relative",
+          border: "1px solid",
           borderColor: (theme) => theme.palette.grey[200],
-          overflow: 'hidden',
+          overflow: "hidden",
           mb: 1,
         }}
         onClick={() => openModal(0)}
@@ -71,29 +65,25 @@ export default function ProductImages({ images, title }: ProductImagesProps) {
           src={images[0]}
           alt={title}
           fill
-          style={{ objectFit: 'cover', cursor: 'pointer' }}
+          style={{ objectFit: "cover", cursor: "pointer" }}
         />
 
         {hasMany && (
-          <Button
+          <IconButton
             size="small"
             onClick={(e) => {
               e.stopPropagation();
               openModal(0);
             }}
             sx={{
-              position: 'absolute',
-              bottom: 8,
-              right: 8,
-              bgcolor: '#fff',
-              borderRadius: 20,
-              px: 2,
-              boxShadow: 1,
-              textTransform: 'none',
+              position: "absolute",
+              bottom: 4,
+              right: 4,
+              backgroundColor: (theme) => theme.palette.background.paper,
             }}
           >
-            Ver más
-          </Button>
+            <SearchIcon fontSize="small" />
+          </IconButton>
         )}
       </Box>
 
@@ -103,15 +93,15 @@ export default function ProductImages({ images, title }: ProductImagesProps) {
             src={images[index]}
             alt={`${title}-${index}`}
             fill
-            style={{ objectFit: 'contain' }}
+            style={{ objectFit: "contain" }}
           />
           <IconButton
             onClick={() => setOpen(false)}
             sx={{
-              position: 'absolute',
+              position: "absolute",
               right: 8,
               top: 8,
-              bgcolor: 'rgba(255,255,255,0.8)',
+              bgcolor: "rgba(255,255,255,0.8)",
             }}
             size="small"
           >
@@ -122,11 +112,11 @@ export default function ProductImages({ images, title }: ProductImagesProps) {
               <IconButton
                 onClick={prev}
                 sx={{
-                  position: 'absolute',
+                  position: "absolute",
                   left: 8,
-                  top: '50%',
-                  transform: 'translateY(-50%)',
-                  bgcolor: 'rgba(255,255,255,0.8)',
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  bgcolor: "rgba(255,255,255,0.8)",
                 }}
               >
                 <ArrowBackIosNewIcon />
@@ -135,11 +125,11 @@ export default function ProductImages({ images, title }: ProductImagesProps) {
               <IconButton
                 onClick={next}
                 sx={{
-                  position: 'absolute',
+                  position: "absolute",
                   right: 8,
-                  top: '50%',
-                  transform: 'translateY(-50%)',
-                  bgcolor: 'rgba(255,255,255,0.8)',
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  bgcolor: "rgba(255,255,255,0.8)",
                 }}
               >
                 <ArrowForwardIosIcon />
