@@ -4,12 +4,31 @@ import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
 serve(async (req: Request) => {
   try {
     const { order } = await req.json();
+    const userId = order.user_id;
 
     if (!order) {
       return new Response(JSON.stringify({ error: "No order data" }), {
         status: 400,
       });
     }
+
+    // @ts-ignore
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    // @ts-ignore
+    const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+
+    const profileRes = await fetch(
+      `${supabaseUrl}/rest/v1/profiles?id=eq.${userId}&select=name`,
+      {
+        headers: {
+          apikey: serviceKey,
+          Authorization: `Bearer ${serviceKey}`,
+        },
+      },
+    );
+
+    const profiles = await profileRes.json();
+    const profileName = profiles?.[0]?.name ?? "—";
 
     const itemsHtml = order.items
       .map((i: any) => `<li>${i.title} × ${i.quantity} un.</li>`)
@@ -18,8 +37,7 @@ serve(async (req: Request) => {
     const html = `
       <h2>🛒 Nuevo preorden recibido</h2>
       <p><strong>ID:</strong> ${order.id}</p>
-      <p><strong>Name:</strong> ${order.profile_name}</p>
-      <p><strong>Name:</strong> ${order.profile_name}</p>
+      <p><strong>Name:</strong> ${profileName}</p>
       ${order.comment ? `<p><strong>Comentario:</strong> ${order.comment}</p>` : ""}
       <p><strong>Total:</strong> € ${order.total}</p>
       <h3>Productos</h3>
@@ -36,7 +54,7 @@ serve(async (req: Request) => {
       body: JSON.stringify({
         from: "Flowers Shop <onboarding@resend.dev>",
         to: ["irina.nic.yu@gmail.com"],
-        subject: `Nuevo pedido #${order.id}`,
+        subject: `#${order.id}: Nuevo pedido de ${profileName}`,
         html,
       }),
     });
