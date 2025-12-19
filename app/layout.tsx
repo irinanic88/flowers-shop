@@ -6,7 +6,6 @@ import { AuthProvider } from '@/src/context/AuthContext';
 import { CartProvider } from '@/src/context/CartContext';
 import { OrdersProvider } from '@/src/context/OrdersContext';
 import { ProductsProvider } from '@/src/context/ProductsContext';
-
 import ThemeRegistry from '@/src/components/ThemeRegistry';
 import ClientThemeProvider from '@/src/components/ClientThemeProvider';
 

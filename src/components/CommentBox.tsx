@@ -3,8 +3,8 @@ import {
   AccordionDetails,
   AccordionSummary,
   Typography,
-} from "@mui/material";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+} from '@mui/material';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 type CommentBoxProps = {
   title: string;
@@ -21,17 +21,17 @@ export default function CommentBox({ title, comment, color }: CommentBoxProps) {
         mt: 1,
         background: (theme) => color || theme.palette.secondary.main,
         borderRadius: 1.5,
-        boxShadow: "none",
-        "&:before": {
-          display: "none",
+        boxShadow: 'none',
+        '&:before': {
+          display: 'none',
         },
       }}
     >
       <AccordionSummary
-        sx={{ minHeight: 35, "& span": { m: 0 } }}
+        sx={{ minHeight: 35, '& span': { m: 0 } }}
         expandIcon={<ExpandMoreIcon />}
       >
-        <Typography variant="body2" sx={{ fontWeight: "bold" }}>
+        <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
           {title}:
         </Typography>
       </AccordionSummary>
