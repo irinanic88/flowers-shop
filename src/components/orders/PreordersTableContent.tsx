@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   Table,
@@ -7,11 +7,11 @@ import {
   TableHead,
   TableRow,
   Box,
-} from "@mui/material";
+} from '@mui/material';
 
-import { OrderType } from "@/src/types";
+import { OrderType } from '@/src/types';
 
-import { useAuth } from "@/src/context/AuthContext";
+import { useAuth } from '@/src/context/AuthContext';
 
 interface PreordersTableContentProps {
   order: OrderType;
@@ -23,12 +23,12 @@ export function PreordersTableContent({ order }: PreordersTableContentProps) {
   return (
     <TableRow>
       <TableCell colSpan={isAdmin ? 9 : 6} sx={{ p: 0 }}>
-        <Box sx={{ px: 2, py: 2, bgcolor: "grey.50" }}>
+        <Box sx={{ px: 2, py: 2, bgcolor: 'grey.50' }}>
           <Table
             size="small"
             sx={{
-              "& tbody tr:last-child td": {
-                borderBottom: "none",
+              '& tbody tr:last-child td': {
+                borderBottom: 'none',
               },
             }}
           >
@@ -51,7 +51,7 @@ export function PreordersTableContent({ order }: PreordersTableContentProps) {
 
             <TableBody>
               {order.items?.map((item, i) => (
-                <TableRow sx={{ verticalAlign: "top" }} key={i}>
+                <TableRow sx={{ verticalAlign: 'top' }} key={i}>
                   <TableCell>{item.title}</TableCell>
                   <TableCell align="left">€ {item.price.toFixed(2)}</TableCell>
                   <TableCell align="center">{item.quantity}</TableCell>
