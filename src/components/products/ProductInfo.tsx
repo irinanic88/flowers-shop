@@ -1,9 +1,9 @@
-'use client';
-import { CardContent, Typography, Stack } from '@mui/material';
-import GrassIcon from '@mui/icons-material/Grass';
-import { ProductType } from '@/src/types';
-import HeightIcon from '@mui/icons-material/Height';
-import CommentBox from '@/src/components/CommentBox';
+"use client";
+import { CardContent, Typography, Stack } from "@mui/material";
+import GrassIcon from "@mui/icons-material/Grass";
+import { ProductType } from "@/src/types";
+import HeightIcon from "@mui/icons-material/Height";
+import CommentBox from "@/src/components/CommentBox";
 
 interface ProductInfoProps {
   product: ProductType;
@@ -33,15 +33,16 @@ export default function ProductInfo({
             <Stack>
               <Typography variant="body2">Altura:</Typography>
               <Typography variant="body2">
-                {product.height ? `${product.height} cm` : '--'}
+                {product.height ? `${product.height} cm` : "--"}
               </Typography>
             </Stack>
           </Stack>
           <Stack direction="row" spacing={0.5}>
             <GrassIcon fontSize="small" />
             <Stack>
-              <Typography variant="body2">Macetas:</Typography>{' '}
-              <Typography variant="body2">{product.pots_count} m/u</Typography>
+              <Typography variant="body2">
+                Plantas por caja: {product.pots_count}
+              </Typography>{" "}
             </Stack>
           </Stack>
         </Stack>

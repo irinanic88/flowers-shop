@@ -11,11 +11,12 @@ import {
 import ProductCard from "@/src/components/products/ProductCard";
 import { useAuth } from "@/src/context/AuthContext";
 import { useProducts } from "@/src/context/ProductsContext";
-import { useCallback, useEffect, useState } from "react";
-import type { ProductType, UiAlert } from "@/src/types";
+import { useCallback, useMemo, useState } from "react";
+import type { DisponibilityType, ProductType, UiAlert } from "@/src/types";
 import { supabase } from "@/lib/supabase";
 import { PrimaryButton, SecondaryButton } from "@/src/styledComponents";
-import { isNotEmpty } from "ramda";
+import { equals, isNotEmpty } from "ramda";
+import { ProductsFilters } from "@/src/components/products/ProductsFilters";
 
 export default function ProductsPage() {
   const { products, loading } = useProducts();
@@ -24,7 +25,9 @@ export default function ProductsPage() {
   const [selectedProduct, setSelectedProduct] = useState<ProductType | null>(
     null,
   );
-  const [availableProducts, setAvailableProducts] = useState<ProductType[]>([]);
+  const [availabilityFilter, setAvailabilityFilter] = useState<
+    DisponibilityType | "all"
+  >("all");
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [alert, setAlert] = useState<UiAlert>({
     open: false,
@@ -32,11 +35,24 @@ export default function ProductsPage() {
     severity: "success",
   });
 
-  useEffect(() => {
-    if (isNotEmpty(products)) {
-      setAvailableProducts(() => products.filter((p) => p.available > 0));
-    }
-  }, [products]);
+  const filteredProducts = useMemo(() => {
+    return products.filter((product) => {
+      console.log("Product", product.title);
+      console.log("Available", product.available);
+
+      const availabilityOk =
+        equals(availabilityFilter, "all") ||
+        (equals(availabilityFilter, "available") && product.available > 0) ||
+        (equals(availabilityFilter, "outOfStock") &&
+          equals(product.available, 0));
+
+      const userAccessOk = isAdmin || product.available > 0;
+
+      console.log("Ок?", availabilityOk);
+
+      return availabilityOk && userAccessOk;
+    });
+  }, [products, availabilityFilter, isAdmin]);
 
   const notify = useCallback(
     (message: string, severity: UiAlert["severity"]) => {
@@ -88,16 +104,6 @@ export default function ProductsPage() {
     );
   }
 
-  // if (!products.length) {
-  //   return (
-  //     <Stack mt={20} alignItems="center">
-  //       <Typography color="text.secondary">
-  //         No hay productos disponibles por el momento.
-  //       </Typography>
-  //     </Stack>
-  //   );
-  // }
-
   return (
     <>
       <Stack spacing={2} sx={{ width: "100%" }}>
@@ -111,17 +117,37 @@ export default function ProductsPage() {
           </Typography>
         )}
 
-        {products.map((product) => (
-          <ProductCard
-            key={product.id}
-            product={product}
-            onNotify={notify}
-            onDelete={(p) => {
-              setOpenDeleteDialog(true);
-              setSelectedProduct(p);
-            }}
+        {isAdmin && (
+          <ProductsFilters
+            products={products}
+            availabilityFilter={availabilityFilter}
+            onAvailabilityChange={(v) => setAvailabilityFilter(v)}
           />
-        ))}
+        )}
+
+        {isNotEmpty(filteredProducts) ? (
+          filteredProducts.map((product) => (
+            <ProductCard
+              key={product.id}
+              product={product}
+              onNotify={notify}
+              onDelete={(p) => {
+                setOpenDeleteDialog(true);
+                setSelectedProduct(p);
+              }}
+            />
+          ))
+        ) : (
+          <Stack
+            alignItems="center"
+            justifyContent="center"
+            sx={{ width: "100%", height: 200 }}
+          >
+            <Typography color="text.secondary" sx={{ textAlign: "center" }}>
+              No hay productos disponibles por el momento.
+            </Typography>
+          </Stack>
+        )}
       </Stack>
 
       <Snackbar

@@ -1,10 +1,10 @@
-import { Box, Stack } from '@mui/material';
-import { PrimaryButton } from '@/src/styledComponents';
-import { useState } from 'react';
-import AdminProductForm from '@/src/components/AdminProductForm';
-import ProductsPage from '@/src/components/products/ProductsPage';
-import AddIcon from '@mui/icons-material/Add';
-import { useAuth } from '@/src/context/AuthContext';
+import { Box, Stack } from "@mui/material";
+import { PrimaryButton } from "@/src/styledComponents";
+import { useState } from "react";
+import AdminProductForm from "@/src/components/AdminProductForm";
+import ProductsPage from "@/src/components/products/ProductsPage";
+import AddIcon from "@mui/icons-material/Add";
+import { useAuth } from "@/src/context/AuthContext";
 
 export default function ProductsTab() {
   const [showForm, setShowForm] = useState(false);
@@ -17,7 +17,7 @@ export default function ProductsTab() {
         {isAdmin && (
           <PrimaryButton
             onClick={() => setShowForm(true)}
-            sx={{ width: 'fit-content', mb: 2 }}
+            sx={{ width: "fit-content", mb: 2 }}
             endIcon={<AddIcon />}
           >
             Añadir
