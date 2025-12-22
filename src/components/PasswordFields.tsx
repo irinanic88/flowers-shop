@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { Stack, TextField, IconButton, InputAdornment } from "@mui/material";
-import Visibility from "@mui/icons-material/Visibility";
-import VisibilityOff from "@mui/icons-material/VisibilityOff";
-import { useState } from "react";
+import { Stack, TextField, IconButton, InputAdornment } from '@mui/material';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import { useState } from 'react';
 
 interface PasswordFieldsProps {
   password: string;
@@ -28,11 +28,11 @@ export default function PasswordFields({
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   return (
-    <Stack spacing={2} sx={{ width: "100%" }}>
+    <Stack spacing={2} sx={{ width: '100%' }}>
       <TextField
         label="Nueva Contraseña"
-        type={showPassword ? "text" : "password"}
-        value={!password && disabled ? "00000000000000" : password}
+        type={showPassword ? 'text' : 'password'}
+        value={!password && disabled ? '00000000000000' : password}
         onChange={(e) => onChangePassword(e.target.value)}
         fullWidth
         disabled={disabled}
@@ -40,7 +40,7 @@ export default function PasswordFields({
           endAdornment: (
             <InputAdornment
               position="end"
-              sx={{ display: disabled ? "none" : "flex" }}
+              sx={{ display: disabled ? 'none' : 'flex' }}
             >
               <IconButton
                 onClick={() => setShowPassword((prev) => !prev)}
@@ -57,7 +57,7 @@ export default function PasswordFields({
       {showConfirm && onChangeConfirmPassword && (
         <TextField
           label="Confirmar Contraseña"
-          type={showConfirmPassword ? "text" : "password"}
+          type={showConfirmPassword ? 'text' : 'password'}
           value={confirmPassword}
           onChange={(e) => onChangeConfirmPassword(e.target.value)}
           fullWidth

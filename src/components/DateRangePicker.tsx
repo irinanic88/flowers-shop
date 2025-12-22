@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import * as React from "react";
+import * as React from 'react';
 import {
   TextField,
   InputAdornment,
@@ -8,12 +8,12 @@ import {
   Popover,
   Stack,
   ClickAwayListener,
-} from "@mui/material";
-import ClearIcon from "@mui/icons-material/Clear";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { PrimaryButton, SecondaryButton } from "@/src/styledComponents";
+} from '@mui/material';
+import ClearIcon from '@mui/icons-material/Clear';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { PrimaryButton, SecondaryButton } from '@/src/styledComponents';
 
 type DateRange = [Date | null, Date | null];
 
@@ -25,32 +25,32 @@ interface DateRangePickerProps {
 }
 
 const formatRange = (from: Date | null, to: Date | null) => {
-  if (!from && !to) return "";
-  const f = from ? from.toLocaleDateString() : "…";
-  const t = to ? to.toLocaleDateString() : "…";
+  if (!from && !to) return '';
+  const f = from ? from.toLocaleDateString() : '…';
+  const t = to ? to.toLocaleDateString() : '…';
   return `${f} – ${t}`;
 };
 
 const datePickerStyles = {
-  "& .MuiPickersInputBase-root": {
-    backgroundColor: "transparent",
+  '& .MuiPickersInputBase-root': {
+    backgroundColor: 'transparent',
 
-    "&:hover": {
-      backgroundColor: "transparent",
+    '&:hover': {
+      backgroundColor: 'transparent',
     },
 
-    "&.Mui-focused": {
-      backgroundColor: "transparent",
+    '&.Mui-focused': {
+      backgroundColor: 'transparent',
     },
 
-    "&.Mui-disabled": {
-      backgroundColor: "transparent",
+    '&.Mui-disabled': {
+      backgroundColor: 'transparent',
     },
   },
 };
 
 export function DateRangePicker({
-  label = "Rango de fechas",
+  label = 'Rango de fechas',
   value,
   onChange,
   disabled,
@@ -104,7 +104,7 @@ export function DateRangePicker({
     <LocalizationProvider dateAdapter={AdapterDateFns}>
       <TextField
         label={label}
-        value={display || "Todas"}
+        value={display || 'Todas'}
         onClick={handleOpen}
         size="small"
         variant="filled"
@@ -127,13 +127,13 @@ export function DateRangePicker({
         }}
         sx={{
           width: {
-            xs: "100%",
-            sm: "100%",
+            xs: '100%',
+            sm: '100%',
             md: 500,
           },
-          maxWidth: "100%",
-          "& .MuiInputBase-root": {
-            backgroundColor: "transparent",
+          maxWidth: '100%',
+          '& .MuiInputBase-root': {
+            backgroundColor: 'transparent',
           },
         }}
       />
@@ -142,7 +142,7 @@ export function DateRangePicker({
         open={open}
         anchorEl={anchorEl}
         onClose={handleClose}
-        anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
         slotProps={{
           paper: {
             sx: {
@@ -158,7 +158,7 @@ export function DateRangePicker({
               label="Desde"
               value={draftFrom}
               onChange={handleDraftFrom}
-              slotProps={{ textField: { size: "small", variant: "filled" } }}
+              slotProps={{ textField: { size: 'small', variant: 'filled' } }}
               sx={datePickerStyles}
             />
 
@@ -168,7 +168,7 @@ export function DateRangePicker({
               value={draftTo}
               onChange={handleDraftTo}
               slotProps={{
-                textField: { size: "small", variant: "filled" },
+                textField: { size: 'small', variant: 'filled' },
               }}
               sx={datePickerStyles}
             />
