@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import {
   Stack,
@@ -7,31 +7,39 @@ import {
   Alert,
   DialogContent,
   Dialog,
-} from '@mui/material';
-import ProductCard from '@/src/components/products/ProductCard';
-import { useAuth } from '@/src/context/AuthContext';
-import { useProducts } from '@/src/context/ProductsContext';
-import { useCallback, useState } from 'react';
-import type { ProductType, UiAlert } from '@/src/types';
-import { supabase } from '@/lib/supabase';
-import { PrimaryButton, SecondaryButton } from '@/src/styledComponents';
+} from "@mui/material";
+import ProductCard from "@/src/components/products/ProductCard";
+import { useAuth } from "@/src/context/AuthContext";
+import { useProducts } from "@/src/context/ProductsContext";
+import { useCallback, useEffect, useState } from "react";
+import type { ProductType, UiAlert } from "@/src/types";
+import { supabase } from "@/lib/supabase";
+import { PrimaryButton, SecondaryButton } from "@/src/styledComponents";
+import { isNotEmpty } from "ramda";
 
 export default function ProductsPage() {
   const { products, loading } = useProducts();
-  const { isUnknownUser } = useAuth();
+  const { isUnknownUser, isAdmin } = useAuth();
 
   const [selectedProduct, setSelectedProduct] = useState<ProductType | null>(
     null,
   );
+  const [availableProducts, setAvailableProducts] = useState<ProductType[]>([]);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [alert, setAlert] = useState<UiAlert>({
     open: false,
-    message: '',
-    severity: 'success',
+    message: "",
+    severity: "success",
   });
 
+  useEffect(() => {
+    if (isNotEmpty(products)) {
+      setAvailableProducts(() => products.filter((p) => p.available > 0));
+    }
+  }, [products]);
+
   const notify = useCallback(
-    (message: string, severity: UiAlert['severity']) => {
+    (message: string, severity: UiAlert["severity"]) => {
       setAlert({ open: true, message, severity });
     },
     [],
@@ -42,33 +50,33 @@ export default function ProductsPage() {
 
     try {
       const { error } = await supabase
-        .from('products')
+        .from("products")
         .delete()
-        .eq('id', selectedProduct.id);
+        .eq("id", selectedProduct.id);
 
       if (error) {
-        notify(`No se pudo eliminar el producto: ${error.message}`, 'error');
+        notify(`No se pudo eliminar el producto: ${error.message}`, "error");
         return;
       }
 
       if (selectedProduct.images?.length) {
         const filePaths = selectedProduct.images
-          .map((url) => url.split('product-images/')[1])
+          .map((url) => url.split("product-images/")[1])
           .filter(Boolean);
 
         if (filePaths.length) {
-          await supabase.storage.from('product-images').remove(filePaths);
+          await supabase.storage.from("product-images").remove(filePaths);
         }
       }
 
       setOpenDeleteDialog(false);
 
-      notify(`Producto ${selectedProduct.title} eliminado.`, 'success');
+      notify(`Producto ${selectedProduct.title} eliminado.`, "success");
 
       setSelectedProduct(null);
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Error desconocido';
-      notify(message, 'error');
+      const message = err instanceof Error ? err.message : "Error desconocido";
+      notify(message, "error");
     }
   };
 
@@ -80,22 +88,22 @@ export default function ProductsPage() {
     );
   }
 
-  if (!products.length) {
-    return (
-      <Stack mt={20} alignItems="center">
-        <Typography color="text.secondary">
-          No hay productos disponibles por el momento.
-        </Typography>
-      </Stack>
-    );
-  }
+  // if (!products.length) {
+  //   return (
+  //     <Stack mt={20} alignItems="center">
+  //       <Typography color="text.secondary">
+  //         No hay productos disponibles por el momento.
+  //       </Typography>
+  //     </Stack>
+  //   );
+  // }
 
   return (
     <>
-      <Stack spacing={2} sx={{ width: '100%' }}>
+      <Stack spacing={2} sx={{ width: "100%" }}>
         {isUnknownUser && (
           <Typography
-            sx={{ textAlign: 'center', my: 4 }}
+            sx={{ textAlign: "center", my: 4 }}
             variant="h4"
             color="text.primary"
           >
@@ -120,12 +128,12 @@ export default function ProductsPage() {
         open={alert.open}
         autoHideDuration={4000}
         onClose={() => setAlert((p) => ({ ...p, open: false }))}
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
       >
         <Alert
           onClose={() => setAlert((p) => ({ ...p, open: false }))}
           severity={alert.severity}
-          sx={{ width: '100%' }}
+          sx={{ width: "100%" }}
         >
           {alert.message}
         </Alert>

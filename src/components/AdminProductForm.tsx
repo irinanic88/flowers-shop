@@ -7,7 +7,7 @@ import { supabase } from '@/lib/supabase';
 import { ProductType, UiAlert } from '@/src/types';
 import ImageUploader from '@/src/components/ImageUploader';
 import { isEmpty } from 'ramda';
-import { AppDrawer } from '@/src/components/AppDrawer.tsx';
+import { AppDrawer } from '@/src/components/AppDrawer';
 
 interface AdminProductFormProps {
   open: boolean;

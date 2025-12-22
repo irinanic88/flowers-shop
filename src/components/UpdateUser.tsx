@@ -4,11 +4,11 @@ import React, { useState, useEffect } from 'react';
 import { TextField, Stack, Snackbar, Alert } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import CheckIcon from '@mui/icons-material/Check';
-import PasswordFields from '@/src/components/PasswordFields.tsx';
+import PasswordFields from '@/src/components/PasswordFields';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/src/context/AuthContext';
 import { UiAlert } from '@/src/types.ts';
-import { AppDrawer } from '@/src/components/AppDrawer.tsx';
+import { AppDrawer } from '@/src/components/AppDrawer';
 import {
   RoundIconButton,
   SecondaryButton,
