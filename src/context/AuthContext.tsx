@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { createContext, useContext, useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabase';
-import { UserType } from '@/src/types';
-import { equals, anyPass } from 'ramda';
+import { createContext, useContext, useEffect, useState } from "react";
+import { supabase } from "@/lib/supabase";
+import { UserType } from "@/src/types";
+import { equals, anyPass } from "ramda";
 
 type AuthContextType = {
   userId: string | null;
@@ -13,6 +13,7 @@ type AuthContextType = {
   isAdmin: boolean;
   isUser: boolean;
   isUnknownUser: boolean;
+  refreshProfile: () => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextType>({
@@ -23,6 +24,7 @@ const AuthContext = createContext<AuthContextType>({
   isAdmin: false,
   isUser: false,
   isUnknownUser: true,
+  refreshProfile: async () => {},
 });
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -35,11 +37,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const [loading, setLoading] = useState(true);
 
+  async function loadProfile(userId: string) {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("role, name")
+      .eq("id", userId)
+      .single();
+
+    const dbRole = profile?.role ?? "none";
+
+    applyRole(dbRole);
+    setName(profile?.name ?? null);
+  }
+
   const applyRole = (role: string | null) => {
-    const safeRole = role ?? 'none';
-    const isAdminRole = equals(safeRole, 'admin');
-    const isUserRole = equals(safeRole, 'user');
-    const isNone = !anyPass([equals('admin'), equals('user')])(safeRole);
+    const safeRole = role ?? "none";
+    const isAdminRole = equals(safeRole, "admin");
+    const isUserRole = equals(safeRole, "user");
+    const isNone = !anyPass([equals("admin"), equals("user")])(safeRole);
 
     setIsAdmin(isAdminRole);
     setIsUser(isUserRole);
@@ -56,38 +71,34 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         id: supabaseUser.id,
         email: supabaseUser.email,
         name: supabaseUser.user_metadata?.name ?? null,
-        role: supabaseUser.user_metadata?.role ?? 'none',
+        role: supabaseUser.user_metadata?.role ?? "none",
         created_at: supabaseUser.created_at,
       };
 
       setUser(formattedUser);
 
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('role, name')
-        .eq('id', supabaseUser.id)
-        .single();
-
-      const dbRole = profile?.role ?? 'none';
-
-      applyRole(dbRole);
-      setName(profile?.name ?? null);
+      await loadProfile(supabaseUser.id);
     } else {
       setUser(null);
-      applyRole('none');
+      applyRole("none");
       setName(null);
     }
 
     setLoading(false);
   }
 
+  const refreshProfile = async () => {
+    if (!user?.id) return;
+    await loadProfile(user.id);
+  };
+
   useEffect(() => {
     void loadAuth();
 
     supabase.auth.onAuthStateChange((event, session) => {
-      if (equals(event, 'SIGNED_OUT') || !session) {
+      if (equals(event, "SIGNED_OUT") || !session) {
         setUser(null);
-        applyRole('none');
+        applyRole("none");
         setName(null);
         setLoading(false);
         return;
@@ -107,6 +118,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         isAdmin,
         isUser,
         isUnknownUser,
+        refreshProfile,
       }}
     >
       {children}
