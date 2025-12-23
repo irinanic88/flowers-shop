@@ -19,7 +19,11 @@ export interface UserType {
   email?: string;
 }
 
-export type AuthFormType = { email: string; password: string; name: string };
+export type AuthFormType = {
+  email: string;
+  password: string;
+  name: string;
+};
 
 export interface CartItem {
   id: string;

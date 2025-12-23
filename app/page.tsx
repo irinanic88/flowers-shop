@@ -19,9 +19,11 @@ import Layout from "@/src/components/Layout";
 import UsersTabs from "@/src/views/UsersTabs";
 import EditIcon from "@mui/icons-material/Edit";
 import UpdateUser from "@/src/components/UpdateUser";
+import AuthForm from "@/src/AuthForm.tsx";
 
 export default function Page() {
   const [openUserForm, setOpenUserForm] = useState(false);
+  const [openAuthForm, setOpenAuthForm] = useState(false);
 
   const {
     loading,
@@ -33,21 +35,19 @@ export default function Page() {
 
   const router = useRouter();
 
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-
-    const hash = window.location.hash;
-
-    if (
-      hash.includes("error=access_denied") ||
-      hash.includes("error_code=otp_expired")
-    ) {
-      window.history.replaceState(null, "", window.location.pathname);
-      document.title = "APS";
-
-      router.replace("/auth/signIn");
-    }
-  }, [router]);
+  // useEffect(() => {
+  //   if (typeof window === "undefined") return;
+  //
+  //   const hash = window.location.hash;
+  //
+  //   if (
+  //     hash.includes("error=access_denied") ||
+  //     hash.includes("error_code=otp_expired")
+  //   ) {
+  //     window.history.replaceState(null, "", window.location.pathname);
+  //     document.title = "APS";
+  //   }
+  // }, [router]);
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
@@ -77,7 +77,7 @@ export default function Page() {
             </Stack>
           )}
           {isUnknownUser && (
-            <RoundIconButton onClick={() => router.push("/auth/signIn")}>
+            <RoundIconButton onClick={() => setOpenAuthForm(true)}>
               <PersonIcon />
             </RoundIconButton>
           )}
@@ -121,6 +121,10 @@ export default function Page() {
           open={openUserForm}
           onClose={() => setOpenUserForm(false)}
         />
+      )}
+
+      {openAuthForm && (
+        <AuthForm open={openAuthForm} onClose={() => setOpenAuthForm(false)} />
       )}
     </Layout>
   );

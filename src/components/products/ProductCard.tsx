@@ -1,24 +1,24 @@
-"use client";
+'use client';
 
-import React, { useState } from "react";
-import { Typography, Box, Stack, Chip } from "@mui/material";
-import { ProductType } from "@/src/types";
-import ProductInfo from "@/src/components/products/ProductInfo";
-import IncrementDecrementButtons from "@/src/components/products/IncrementDecrementButtons";
-import { PanelCard, RoundIconButton } from "@/src/styledComponents";
-import { useCart } from "@/src/context/CartContext";
-import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
-import { useOrders } from "@/src/context/OrdersContext";
-import { useAuth } from "@/src/context/AuthContext";
-import AdminProductForm from "@/src/components/AdminProductForm";
-import ProductImages from "@/src/components/products/ProductImages";
-import type { UiAlert } from "@/src/types";
-import { equals } from "ramda";
+import React, { useState } from 'react';
+import { Typography, Box, Stack, Chip } from '@mui/material';
+import { ProductType } from '@/src/types';
+import ProductInfo from '@/src/components/products/ProductInfo';
+import IncrementDecrementButtons from '@/src/components/products/IncrementDecrementButtons';
+import { PanelCard, RoundIconButton } from '@/src/styledComponents';
+import { useCart } from '@/src/context/CartContext';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
+import { useOrders } from '@/src/context/OrdersContext';
+import { useAuth } from '@/src/context/AuthContext';
+import AdminProductForm from '@/src/components/AdminProductForm';
+import ProductImages from '@/src/components/products/ProductImages';
+import type { UiAlert } from '@/src/types';
+import { equals } from 'ramda';
 
 interface ProductCardProps {
   product: ProductType;
-  onNotify: (message: string, severity: UiAlert["severity"]) => void;
+  onNotify: (message: string, severity: UiAlert['severity']) => void;
   onDelete: (p: ProductType) => void;
 }
 
@@ -37,7 +37,7 @@ export default function ProductCard({
 
   const { orders } = useOrders();
 
-  const pendingOrders = orders.filter((o) => equals(o.status, "pending"));
+  const pendingOrders = orders.filter((o) => equals(o.status, 'pending'));
   const totalOrderedPending = pendingOrders.reduce((sum, order) => {
     if (!order.items) return sum;
     const item = order.items.find((i) => i.product_id === product.id);
@@ -56,9 +56,9 @@ export default function ProductCard({
           {!isUnknownUser && (
             <Chip
               size="small"
-              color={product.available > 0 ? "primary" : "error"}
+              color={product.available > 0 ? 'primary' : 'error'}
               label={`Cajas disponibles: ${product.available}`}
-              sx={{ width: "fit-content" }}
+              sx={{ width: 'fit-content' }}
               variant="outlined"
             />
           )}

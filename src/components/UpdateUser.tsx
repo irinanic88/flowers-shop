@@ -7,7 +7,7 @@ import CheckIcon from '@mui/icons-material/Check';
 import PasswordFields from '@/src/components/PasswordFields';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/src/context/AuthContext';
-import { UiAlert } from '@/src/types.ts';
+import { UiAlert } from '@/src/types';
 import { AppDrawer } from '@/src/components/AppDrawer';
 import {
   RoundIconButton,
