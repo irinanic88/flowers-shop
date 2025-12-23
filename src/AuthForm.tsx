@@ -15,6 +15,7 @@ import {
 import Loader from "@/src/components/Loader";
 import { AppDrawer } from "@/src/components/AppDrawer";
 import PasswordFields from "@/src/components/PasswordFields";
+import { notEqual } from "assert";
 
 type AuthFormProps = {
   open: boolean;
@@ -52,6 +53,12 @@ export default function AuthForm({ open, onClose }: AuthFormProps) {
         message: "El nombre es obligatorio",
         severity: "error",
       });
+    if (!isSignIn && notEqual(password, confirmPassword)) {
+      return setAlert({
+        message: "Las contraseñas no coinciden",
+        severity: "error",
+      });
+    }
 
     setLoading(true);
     try {
@@ -78,6 +85,7 @@ export default function AuthForm({ open, onClose }: AuthFormProps) {
           severity: "success",
         });
       }
+      onClose();
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Error desconocido";
 
@@ -97,7 +105,7 @@ export default function AuthForm({ open, onClose }: AuthFormProps) {
       title={isSignIn ? "Iniciar sesión" : "Registrarse"}
       actions={
         <Stack spacing={1}>
-          <PrimaryButton type="submit">
+          <PrimaryButton type="submit" onClick={() => handleSubmit(form)}>
             {isSignIn ? "Iniciar sesión" : "Registrarse"}
           </PrimaryButton>
           <SecondaryButton onClick={onClose}>Cerrar</SecondaryButton>
@@ -150,7 +158,7 @@ export default function AuthForm({ open, onClose }: AuthFormProps) {
                 <PasswordFields
                   password={form.password}
                   onChangePassword={(v) => handleFieldChange("password", v)}
-                  showConfirm={isSignIn}
+                  showConfirm={!isSignIn}
                   confirmPassword={confirmPassword}
                   onChangeConfirmPassword={(v) => setConfirmPassword(v)}
                 />
