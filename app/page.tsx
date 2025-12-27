@@ -12,14 +12,14 @@ import {
 } from "@/src/styledComponents";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { supabase } from "@/lib/supabase";
-import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import PersonIcon from "@mui/icons-material/Person";
 import Layout from "@/src/components/Layout";
 import UsersTabs from "@/src/views/UsersTabs";
 import EditIcon from "@mui/icons-material/Edit";
 import UpdateUser from "@/src/components/UpdateUser";
 import AuthForm from "@/src/AuthForm.tsx";
+import { useEffect } from "react";
 
 export default function Page() {
   const [openUserForm, setOpenUserForm] = useState(false);
@@ -33,21 +33,19 @@ export default function Page() {
     isUnknownUser = true,
   } = useAuth();
 
-  const router = useRouter();
+  useEffect(() => {
+    if (typeof window === "undefined") return;
 
-  // useEffect(() => {
-  //   if (typeof window === "undefined") return;
-  //
-  //   const hash = window.location.hash;
-  //
-  //   if (
-  //     hash.includes("error=access_denied") ||
-  //     hash.includes("error_code=otp_expired")
-  //   ) {
-  //     window.history.replaceState(null, "", window.location.pathname);
-  //     document.title = "APS";
-  //   }
-  // }, [router]);
+    const hash = window.location.hash;
+
+    if (
+      hash.includes("error=access_denied") ||
+      hash.includes("error_code=otp_expired")
+    ) {
+      window.history.replaceState(null, "", window.location.pathname);
+      document.title = "APS";
+    }
+  }, []);
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();

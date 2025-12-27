@@ -4,7 +4,6 @@ import React, { useState, useEffect } from "react";
 import { TextField, Stack, Snackbar, Alert } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import CheckIcon from "@mui/icons-material/Check";
-import PasswordFields from "@/src/components/PasswordFields";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/src/context/AuthContext";
 import { UiAlert } from "@/src/types";
@@ -15,6 +14,10 @@ import {
   SecondaryRoundIconButton,
 } from "@/src/styledComponents";
 import CloseIcon from "@mui/icons-material/Close";
+import { useRef } from "react";
+import PasswordFields, {
+  PasswordFieldsRef,
+} from "@/src/components/PasswordFields";
 
 const alertInitialState: UiAlert = {
   open: false,
@@ -39,6 +42,8 @@ export default function UpdateUser({ open, onClose }: UpdateUserProps) {
 
   const [loading, setLoading] = useState(false);
   const [alertState, setAlertState] = useState<UiAlert>(alertInitialState);
+
+  const passwordRef = useRef<PasswordFieldsRef>(null);
 
   useEffect(() => {
     if (userName) {
@@ -115,6 +120,14 @@ export default function UpdateUser({ open, onClose }: UpdateUserProps) {
     }
   };
 
+  const handleCancelPassword = () => {
+    setEditingPassword(false);
+    setPassword("");
+    setConfirm("");
+
+    passwordRef.current?.resetVisibility();
+  };
+
   return (
     <>
       <AppDrawer
@@ -181,6 +194,7 @@ export default function UpdateUser({ open, onClose }: UpdateUserProps) {
             alignItems={editingPassword ? "flex-start" : "center"}
           >
             <PasswordFields
+              ref={passwordRef}
               password={password}
               confirmPassword={confirm}
               showConfirm={editingPassword}
@@ -192,11 +206,7 @@ export default function UpdateUser({ open, onClose }: UpdateUserProps) {
             {editingPassword ? (
               <Stack direction="row" spacing={1}>
                 <SecondaryRoundIconButton
-                  onClick={() => {
-                    setEditingPassword(false);
-                    setPassword("");
-                    setConfirm("");
-                  }}
+                  onClick={() => handleCancelPassword()}
                   disabled={loading}
                 >
                   <CloseIcon />

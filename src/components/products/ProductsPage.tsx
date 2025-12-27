@@ -37,7 +37,6 @@ export default function ProductsPage() {
 
   const filteredProducts = useMemo(() => {
     return products.filter((product) => {
-
       const availabilityOk =
         equals(availabilityFilter, 'all') ||
         (equals(availabilityFilter, 'available') && product.available > 0) ||

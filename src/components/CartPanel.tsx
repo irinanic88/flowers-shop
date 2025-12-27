@@ -1,18 +1,18 @@
-"use client";
+'use client';
 
-import { Box, Typography, Stack, Alert, TextField } from "@mui/material";
-import { useCart } from "@/src/context/CartContext";
+import { Box, Typography, Stack, TextField } from '@mui/material';
+import { useCart } from '@/src/context/CartContext';
 import {
   PrimaryButton,
   Row,
   PanelCard,
   SecondaryButton,
-} from "@/src/styledComponents";
-import IncrementDecrementButtons from "@/src/components/products/IncrementDecrementButtons";
-import { supabase } from "@/lib/supabase";
-import React, { useState } from "react";
-import { useOrders } from "@/src/context/OrdersContext";
-import { AppDrawer } from "@/src/components/AppDrawer.tsx";
+} from '@/src/styledComponents';
+import IncrementDecrementButtons from '@/src/components/products/IncrementDecrementButtons';
+import { supabase } from '@/lib/supabase';
+import React, { useState } from 'react';
+import { useOrders } from '@/src/context/OrdersContext';
+import { AppDrawer } from '@/src/components/AppDrawer.tsx';
 
 export interface CartPanelProps {
   open: boolean;
@@ -22,10 +22,10 @@ export interface CartPanelProps {
 export default function CartPanel({ open, onClose }: CartPanelProps) {
   const { items, total, updateItemQuantity, clearCart } = useCart();
 
-  const [comment, setComment] = useState("");
+  const [comment, setComment] = useState('');
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
-  const [error, setError] = useState<string>("");
+  const [error, setError] = useState<string>('');
 
   const { refreshOrders } = useOrders();
 
@@ -34,13 +34,13 @@ export default function CartPanel({ open, onClose }: CartPanelProps) {
 
     setLoading(true);
     setSuccess(false);
-    setError("");
+    setError('');
 
     const { data } = await supabase.auth.getUser();
     const userId = data.user?.id;
 
     if (!userId) {
-      setError("Usuario no autenticado.");
+      setError('Usuario no autenticado.');
       setLoading(false);
       return;
     }
@@ -52,19 +52,19 @@ export default function CartPanel({ open, onClose }: CartPanelProps) {
       quantity: i.quantity,
     }));
 
-    const { error: err } = await supabase.from("orders").insert([
+    const { error: err } = await supabase.from('orders').insert([
       {
         user_id: userId,
         items: orderItems,
         total: Number(total.toFixed(2)),
         comment: comment || null,
-        status: "pending",
+        status: 'pending',
       },
     ]);
 
     if (err) {
       console.error(err);
-      setError("Error al enviar el preorden.");
+      setError('Error al enviar el preorden.');
       setLoading(false);
       return;
     } else {
@@ -72,7 +72,7 @@ export default function CartPanel({ open, onClose }: CartPanelProps) {
     }
 
     clearCart();
-    setComment("");
+    setComment('');
     setSuccess(true);
     setLoading(false);
     onClose();
@@ -93,12 +93,12 @@ export default function CartPanel({ open, onClose }: CartPanelProps) {
         </Stack>
       }
     >
-      <Stack justifyContent="space-between" sx={{ height: "100%" }}>
+      <Stack justifyContent="space-between" sx={{ height: '100%' }}>
         {!items.length && (
           <Stack
             justifyContent="center"
             alignItems="center"
-            sx={{ height: "100%" }}
+            sx={{ height: '100%' }}
           >
             <Typography color="text.secondary">
               No hay productos en tu preorden.
@@ -107,7 +107,7 @@ export default function CartPanel({ open, onClose }: CartPanelProps) {
         )}
 
         {items.length > 0 && (
-          <Box sx={{ flex: 1, overflowY: "auto" }}>
+          <Box sx={{ flex: 1, overflowY: 'auto' }}>
             <Stack spacing={1}>
               {items.map((item) => (
                 <PanelCard key={item.id}>
@@ -150,7 +150,7 @@ export default function CartPanel({ open, onClose }: CartPanelProps) {
               rows={2}
               sx={{ mt: 2 }}
             />
-            <Box sx={{ p: 2, borderTop: "1px solid #eee" }}>
+            <Box sx={{ p: 2, borderTop: '1px solid #eee' }}>
               {/*    {success && (*/}
               {/*      <Alert severity="success">Preorden enviado correctamente!</Alert>*/}
               {/*    )}*/}
