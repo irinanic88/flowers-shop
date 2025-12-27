@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import {
   Stack,
@@ -7,16 +7,16 @@ import {
   Alert,
   DialogContent,
   Dialog,
-} from '@mui/material';
-import ProductCard from '@/src/components/products/ProductCard';
-import { useAuth } from '@/src/context/AuthContext';
-import { useProducts } from '@/src/context/ProductsContext';
-import { useCallback, useMemo, useState } from 'react';
-import type { DisponibilityType, ProductType, UiAlert } from '@/src/types';
-import { supabase } from '@/lib/supabase';
-import { PrimaryButton, SecondaryButton } from '@/src/styledComponents';
-import { equals, isNotEmpty } from 'ramda';
-import { ProductsFilters } from '@/src/components/products/ProductsFilters';
+} from "@mui/material";
+import ProductCard from "@/src/components/products/ProductCard";
+import { useAuth } from "@/src/context/AuthContext";
+import { useProducts } from "@/src/context/ProductsContext";
+import { useCallback, useMemo, useState } from "react";
+import type { DisponibilityType, ProductType, UiAlert } from "@/src/types";
+import { supabase } from "@/lib/supabase";
+import { PrimaryButton, SecondaryButton } from "@/src/styledComponents";
+import { equals, isNotEmpty } from "ramda";
+import { ProductsFilters } from "@/src/components/products/ProductsFilters";
 
 export default function ProductsPage() {
   const { products, loading } = useProducts();
@@ -26,33 +26,33 @@ export default function ProductsPage() {
     null,
   );
   const [availabilityFilter, setAvailabilityFilter] = useState<
-    DisponibilityType | 'all'
-  >('all');
+    DisponibilityType | "all"
+  >("all");
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [alert, setAlert] = useState<UiAlert>({
     open: false,
-    message: '',
-    severity: 'success',
+    message: "",
+    severity: "success",
   });
 
   const filteredProducts = useMemo(() => {
     return products.filter((product) => {
       const availabilityOk =
-        equals(availabilityFilter, 'all') ||
-        (equals(availabilityFilter, 'available') && product.available > 0) ||
-        (equals(availabilityFilter, 'outOfStock') &&
+        equals(availabilityFilter, "all") ||
+        (equals(availabilityFilter, "available") && product.available > 0) ||
+        (equals(availabilityFilter, "outOfStock") &&
           equals(product.available, 0));
 
       const userAccessOk = isAdmin || product.available > 0;
 
-      console.log('Ок?', availabilityOk);
+      console.log("Ок?", availabilityOk);
 
       return availabilityOk && userAccessOk;
     });
   }, [products, availabilityFilter, isAdmin]);
 
   const notify = useCallback(
-    (message: string, severity: UiAlert['severity']) => {
+    (message: string, severity: UiAlert["severity"]) => {
       setAlert({ open: true, message, severity });
     },
     [],
@@ -63,33 +63,33 @@ export default function ProductsPage() {
 
     try {
       const { error } = await supabase
-        .from('products')
+        .from("products")
         .delete()
-        .eq('id', selectedProduct.id);
+        .eq("id", selectedProduct.id);
 
       if (error) {
-        notify(`No se pudo eliminar el producto: ${error.message}`, 'error');
+        notify(`No se pudo eliminar el producto: ${error.message}`, "error");
         return;
       }
 
       if (selectedProduct.images?.length) {
         const filePaths = selectedProduct.images
-          .map((url) => url.split('product-images/')[1])
+          .map((url) => url.split("product-images/")[1])
           .filter(Boolean);
 
         if (filePaths.length) {
-          await supabase.storage.from('product-images').remove(filePaths);
+          await supabase.storage.from("product-images").remove(filePaths);
         }
       }
 
       setOpenDeleteDialog(false);
 
-      notify(`Producto ${selectedProduct.title} eliminado.`, 'success');
+      notify(`Producto ${selectedProduct.title} eliminado.`, "success");
 
       setSelectedProduct(null);
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Error desconocido';
-      notify(message, 'error');
+      const message = err instanceof Error ? err.message : "Error desconocido";
+      notify(message, "error");
     }
   };
 
@@ -103,10 +103,10 @@ export default function ProductsPage() {
 
   return (
     <>
-      <Stack spacing={2} sx={{ width: '100%' }}>
+      <Stack spacing={2} sx={{ width: "100%" }}>
         {isUnknownUser && (
           <Typography
-            sx={{ textAlign: 'center', my: 4 }}
+            sx={{ textAlign: "center", my: 4 }}
             variant="h4"
             color="text.primary"
           >
@@ -118,7 +118,9 @@ export default function ProductsPage() {
           <ProductsFilters
             products={products}
             availabilityFilter={availabilityFilter}
-            onAvailabilityChange={(v) => setAvailabilityFilter(v)}
+            onAvailabilityChange={(v: DisponibilityType | "all") =>
+              setAvailabilityFilter(v)
+            }
           />
         )}
 
@@ -138,9 +140,9 @@ export default function ProductsPage() {
           <Stack
             alignItems="center"
             justifyContent="center"
-            sx={{ width: '100%', height: 200 }}
+            sx={{ width: "100%", height: 200 }}
           >
-            <Typography color="text.secondary" sx={{ textAlign: 'center' }}>
+            <Typography color="text.secondary" sx={{ textAlign: "center" }}>
               No hay productos disponibles por el momento.
             </Typography>
           </Stack>
@@ -151,12 +153,12 @@ export default function ProductsPage() {
         open={alert.open}
         autoHideDuration={4000}
         onClose={() => setAlert((p) => ({ ...p, open: false }))}
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
       >
         <Alert
           onClose={() => setAlert((p) => ({ ...p, open: false }))}
           severity={alert.severity}
-          sx={{ width: '100%' }}
+          sx={{ width: "100%" }}
         >
           {alert.message}
         </Alert>
