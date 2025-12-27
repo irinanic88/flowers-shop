@@ -56,8 +56,8 @@ export default function ProductCard({
           {!isUnknownUser && (
             <Chip
               size="small"
-              color="primary"
-              label={`Disponible: ${product.available} u.`}
+              color={product.available > 0 ? 'primary' : 'error'}
+              label={`Cajas disponibles: ${product.available}`}
               sx={{ width: 'fit-content' }}
               variant="outlined"
             />
@@ -83,7 +83,7 @@ export default function ProductCard({
           {isAdmin && (
             <Stack spacing={1}>
               <Typography variant="body2" color="text.secondary">
-                Total preordenado: {totalOrderedPending ?? 0}
+                Preordenes pendientes: {totalOrderedPending ?? 0}
               </Typography>
 
               <Stack direction="row" spacing={1}>

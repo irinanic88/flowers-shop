@@ -19,7 +19,11 @@ export interface UserType {
   email?: string;
 }
 
-export type AuthFormType = { email: string; password: string; name: string };
+export type AuthFormType = {
+  email: string;
+  password: string;
+  name: string;
+};
 
 export interface CartItem {
   id: string;
@@ -36,6 +40,7 @@ export interface OrderItem {
 }
 
 export type OrderStatusType = 'pending' | 'approved' | 'cancelled';
+export type DisponibilityType = 'available' | 'outOfStock';
 
 export interface OrderType {
   id: number;
