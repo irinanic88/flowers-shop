@@ -18,7 +18,7 @@ import Layout from "@/src/components/Layout";
 import UsersTabs from "@/src/views/UsersTabs";
 import EditIcon from "@mui/icons-material/Edit";
 import UpdateUser from "@/src/components/UpdateUser";
-import AuthForm from "@/src/AuthForm.tsx";
+import AuthForm from "@/src/AuthForm";
 import { useEffect } from "react";
 
 export default function Page() {

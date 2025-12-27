@@ -12,7 +12,7 @@ import IncrementDecrementButtons from '@/src/components/products/IncrementDecrem
 import { supabase } from '@/lib/supabase';
 import React, { useState } from 'react';
 import { useOrders } from '@/src/context/OrdersContext';
-import { AppDrawer } from '@/src/components/AppDrawer.tsx';
+import { AppDrawer } from '@/src/components/AppDrawer';
 
 export interface CartPanelProps {
   open: boolean;
