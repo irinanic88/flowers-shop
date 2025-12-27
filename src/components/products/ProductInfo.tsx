@@ -40,8 +40,9 @@ export default function ProductInfo({
           <Stack direction="row" spacing={0.5}>
             <GrassIcon fontSize="small" />
             <Stack>
-              <Typography variant="body2">Macetas:</Typography>{' '}
-              <Typography variant="body2">{product.pots_count} m/u</Typography>
+              <Typography variant="body2">
+                Plantas por caja: {product.pots_count}
+              </Typography>{' '}
             </Stack>
           </Stack>
         </Stack>

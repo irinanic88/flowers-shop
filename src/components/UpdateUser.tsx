@@ -1,25 +1,28 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { TextField, Stack, Snackbar, Alert } from '@mui/material';
-import EditIcon from '@mui/icons-material/Edit';
-import CheckIcon from '@mui/icons-material/Check';
-import PasswordFields from '@/src/components/PasswordFields';
-import { supabase } from '@/lib/supabase';
-import { useAuth } from '@/src/context/AuthContext';
-import { UiAlert } from '@/src/types.ts';
-import { AppDrawer } from '@/src/components/AppDrawer';
+import React, { useState, useEffect } from "react";
+import { TextField, Stack, Snackbar, Alert } from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
+import CheckIcon from "@mui/icons-material/Check";
+import { supabase } from "@/lib/supabase";
+import { useAuth } from "@/src/context/AuthContext";
+import { UiAlert } from "@/src/types";
+import { AppDrawer } from "@/src/components/AppDrawer";
 import {
   RoundIconButton,
   SecondaryButton,
   SecondaryRoundIconButton,
-} from '@/src/styledComponents';
-import CloseIcon from '@mui/icons-material/Close';
+} from "@/src/styledComponents";
+import CloseIcon from "@mui/icons-material/Close";
+import { useRef } from "react";
+import PasswordFields, {
+  PasswordFieldsRef,
+} from "@/src/components/PasswordFields";
 
 const alertInitialState: UiAlert = {
   open: false,
-  message: '',
-  severity: 'success',
+  message: "",
+  severity: "success",
 };
 
 interface UpdateUserProps {
@@ -33,12 +36,14 @@ export default function UpdateUser({ open, onClose }: UpdateUserProps) {
   const [editingName, setEditingName] = useState(false);
   const [editingPassword, setEditingPassword] = useState(false);
 
-  const [name, setName] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirm, setConfirm] = useState('');
+  const [name, setName] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirm, setConfirm] = useState("");
 
   const [loading, setLoading] = useState(false);
   const [alertState, setAlertState] = useState<UiAlert>(alertInitialState);
+
+  const passwordRef = useRef<PasswordFieldsRef>(null);
 
   useEffect(() => {
     if (userName) {
@@ -46,7 +51,7 @@ export default function UpdateUser({ open, onClose }: UpdateUserProps) {
     }
   }, [userName]);
 
-  const showAlert = (message: string, severity: 'success' | 'error') => {
+  const showAlert = (message: string, severity: "success" | "error") => {
     setAlertState({
       open: true,
       message,
@@ -58,42 +63,42 @@ export default function UpdateUser({ open, onClose }: UpdateUserProps) {
     if (!user) return;
 
     if (!name.trim()) {
-      showAlert('El nombre no puede estar vacío.', 'error');
+      showAlert("El nombre no puede estar vacío.", "error");
       return;
     }
 
     setLoading(true);
 
     const { error } = await supabase
-      .from('profiles')
+      .from("profiles")
       .update({ name })
-      .eq('id', user.id);
+      .eq("id", user.id);
 
     setLoading(false);
 
     if (error) {
-      showAlert(`Error: ${error.message}`, 'error');
+      showAlert(`Error: ${error.message}`, "error");
     } else {
       await refreshProfile();
 
       setEditingName(false);
-      showAlert('Nombre actualizado correctamente.', 'success');
+      showAlert("Nombre actualizado correctamente.", "success");
     }
   };
 
   const handleSavePassword = async () => {
     if (!password || !confirm) {
-      showAlert('Completa todos los campos.', 'error');
+      showAlert("Completa todos los campos.", "error");
       return;
     }
 
     if (password !== confirm) {
-      showAlert('Las contraseñas no coinciden.', 'error');
+      showAlert("Las contraseñas no coinciden.", "error");
       return;
     }
 
     if (password.length < 6) {
-      showAlert('La contraseña debe tener al menos 6 caracteres.', 'error');
+      showAlert("La contraseña debe tener al menos 6 caracteres.", "error");
       return;
     }
 
@@ -106,13 +111,21 @@ export default function UpdateUser({ open, onClose }: UpdateUserProps) {
     setLoading(false);
 
     if (error) {
-      showAlert(`Error: ${error.message}`, 'error');
+      showAlert(`Error: ${error.message}`, "error");
     } else {
       setEditingPassword(false);
-      setPassword('');
-      setConfirm('');
-      showAlert('Contraseña actualizada correctamente.', 'success');
+      setPassword("");
+      setConfirm("");
+      showAlert("Contraseña actualizada correctamente.", "success");
     }
+  };
+
+  const handleCancelPassword = () => {
+    setEditingPassword(false);
+    setPassword("");
+    setConfirm("");
+
+    passwordRef.current?.resetVisibility();
   };
 
   return (
@@ -126,16 +139,17 @@ export default function UpdateUser({ open, onClose }: UpdateUserProps) {
         <Stack
           spacing={4}
           sx={{
-            height: '100%',
-            overflowY: 'auto',
+            height: "100%",
+            overflowY: "auto",
           }}
+          justifyContent="center"
         >
           <Stack spacing={1} pt={1}>
             <Stack
-              direction={editingName ? 'column' : 'row'}
+              direction={editingName ? "column" : "row"}
               spacing={1}
-              alignItems={editingName ? 'flex-start' : 'center'}
-              sx={{ width: '100%' }}
+              alignItems={editingName ? "flex-start" : "center"}
+              sx={{ width: "100%" }}
             >
               <TextField
                 label="Nombre"
@@ -150,7 +164,7 @@ export default function UpdateUser({ open, onClose }: UpdateUserProps) {
                   <SecondaryRoundIconButton
                     onClick={() => {
                       setEditingName(false);
-                      setName('');
+                      setName("");
                     }}
                     disabled={loading}
                   >
@@ -175,11 +189,12 @@ export default function UpdateUser({ open, onClose }: UpdateUserProps) {
           </Stack>
 
           <Stack
-            direction={editingPassword ? 'column' : 'row'}
+            direction={editingPassword ? "column" : "row"}
             spacing={1}
-            alignItems={editingPassword ? 'flex-start' : 'center'}
+            alignItems={editingPassword ? "flex-start" : "center"}
           >
             <PasswordFields
+              ref={passwordRef}
               password={password}
               confirmPassword={confirm}
               showConfirm={editingPassword}
@@ -191,11 +206,7 @@ export default function UpdateUser({ open, onClose }: UpdateUserProps) {
             {editingPassword ? (
               <Stack direction="row" spacing={1}>
                 <SecondaryRoundIconButton
-                  onClick={() => {
-                    setEditingPassword(false);
-                    setPassword('');
-                    setConfirm('');
-                  }}
+                  onClick={() => handleCancelPassword()}
                   disabled={loading}
                 >
                   <CloseIcon />
@@ -223,12 +234,12 @@ export default function UpdateUser({ open, onClose }: UpdateUserProps) {
         open={alertState.open}
         autoHideDuration={4000}
         onClose={() => setAlertState(alertInitialState)}
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
       >
         <Alert
           onClose={() => setAlertState(alertInitialState)}
           severity={alertState.severity}
-          sx={{ width: '100%' }}
+          sx={{ width: "100%" }}
         >
           {alertState.message}
         </Alert>
