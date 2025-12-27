@@ -1,15 +1,15 @@
-"use client";
+'use client';
 
-import React from "react";
+import React from 'react';
 import {
   Stack,
   Select,
   MenuItem,
   InputLabel,
   FormControl,
-} from "@mui/material";
-import { DisponibilityType, ProductType } from "@/src/types";
-import { availabilityStatusesDict } from "@/src/constants";
+} from '@mui/material';
+import { ProductType } from '@/src/types';
+import { availabilityStatusesDict } from '@/src/constants';
 
 interface ProductsFiltersProps {
   availabilityFilter: DisponibilityType | "all";
@@ -32,7 +32,7 @@ export function ProductsFilters({
         maxWidth: "100%",
       }}
     >
-      <FormControl size="small" variant="filled" sx={{ width: "100%" }}>
+      <FormControl size="small" variant="filled" sx={{ width: '100%' }}>
         <InputLabel>Disponibilidad</InputLabel>
         <Select
           value={availabilityFilter}
