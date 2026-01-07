@@ -1,15 +1,8 @@
 'use client';
 
 import * as React from 'react';
-import {
-  TextField,
-  InputAdornment,
-  IconButton,
-  Popover,
-  Stack,
-  ClickAwayListener,
-} from '@mui/material';
-import ClearIcon from '@mui/icons-material/Clear';
+import { Popover, Stack, Box, ClickAwayListener } from '@mui/material';
+import { FilterPillValue } from '@/src/components/FilterPillValue';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -67,18 +60,7 @@ export function DateRangePicker({
     setDraftFrom(from);
     setDraftTo(to);
   }, [from, to]);
-
-  const handleOpen = (e: React.MouseEvent<HTMLElement>) => {
-    if (disabled) return;
-    setAnchorEl(e.currentTarget);
-  };
-
   const handleClose = () => setAnchorEl(null);
-
-  const handleClear = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    onChange([null, null]);
-  };
 
   const handleApply = () => {
     if (draftFrom && draftTo && draftTo < draftFrom) {
@@ -102,54 +84,23 @@ export function DateRangePicker({
 
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
-      <TextField
-        label={label}
-        value={display || 'Todas'}
-        onClick={handleOpen}
-        size="small"
-        variant="filled"
-        placeholder="Seleccionar rango"
-        disabled={disabled}
-        InputProps={{
-          readOnly: true,
-          endAdornment:
-            from || to ? (
-              <InputAdornment position="end">
-                <IconButton
-                  size="small"
-                  onClick={handleClear}
-                  aria-label="Limpiar rango"
-                >
-                  <ClearIcon fontSize="small" />
-                </IconButton>
-              </InputAdornment>
-            ) : undefined,
-        }}
-        sx={{
-          width: {
-            xs: '100%',
-            sm: '100%',
-            md: 500,
-          },
-          maxWidth: '100%',
-          '& .MuiInputBase-root': {
-            backgroundColor: 'transparent',
-          },
-        }}
-      />
+      <Box
+        onClick={(e) => !disabled && setAnchorEl(e.currentTarget)}
+        sx={{ display: 'inline-block', width: 'fit-content' }}
+      >
+        <FilterPillValue
+          label={label}
+          value={display || 'Todas'}
+          active={Boolean(from || to)}
+          maxValueWidth="none"
+        />
+      </Box>
 
       <Popover
         open={open}
         anchorEl={anchorEl}
         onClose={handleClose}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-        slotProps={{
-          paper: {
-            sx: {
-              width: 250,
-            },
-          },
-        }}
       >
         <ClickAwayListener onClickAway={handleClose}>
           <Stack spacing={2} sx={{ p: 2, width: 250 }}>

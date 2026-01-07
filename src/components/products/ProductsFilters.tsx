@@ -1,52 +1,22 @@
-"use client";
+'use client';
 
-import React from "react";
-import {
-  Stack,
-  Select,
-  MenuItem,
-  InputLabel,
-  FormControl,
-} from "@mui/material";
-import { DisponibilityType, ProductType } from "@/src/types";
-import { availabilityStatusesDict } from "@/src/constants";
-
-interface ProductsFiltersProps {
-  availabilityFilter: DisponibilityType | "all";
-  onAvailabilityChange: (v: DisponibilityType | "all") => void;
-  products: ProductType[];
-}
+import React from 'react';
+import { FilterSelect } from '@/src/components/FilterSelect';
+import { Stack } from '@mui/material';
+import { availabilityStatusesDict } from '@/src/constants';
 
 export function ProductsFilters({
   availabilityFilter,
   onAvailabilityChange,
 }: ProductsFiltersProps) {
   return (
-    <Stack
-      sx={{
-        width: {
-          xs: "100%",
-          sm: "100%",
-          md: 300,
-        },
-        maxWidth: "100%",
-      }}
-    >
-      <FormControl size="small" variant="filled" sx={{ width: "100%" }}>
-        <InputLabel>Disponibilidad</InputLabel>
-        <Select
-          value={availabilityFilter}
-          onChange={(e) => onAvailabilityChange(e.target.value)}
-          sx={{ backgroundColor: "transparent" }}
-        >
-          <MenuItem value="all">Todos</MenuItem>
-          {Object.entries(availabilityStatusesDict).map(([key, label]) => (
-            <MenuItem key={key} value={key}>
-              {label}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
+    <Stack>
+      <FilterSelect
+        label="Disponibilidad"
+        value={availabilityFilter}
+        options={availabilityStatusesDict}
+        onChange={onAvailabilityChange}
+      />
     </Stack>
   );
 }

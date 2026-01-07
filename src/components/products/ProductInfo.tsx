@@ -1,9 +1,9 @@
 'use client';
-import { CardContent, Typography, Stack } from '@mui/material';
+import { Typography, Stack, Box } from '@mui/material';
 import GrassIcon from '@mui/icons-material/Grass';
 import { ProductType } from '@/src/types';
 import HeightIcon from '@mui/icons-material/Height';
-import CommentBox from '@/src/components/CommentBox';
+import React from 'react';
 
 interface ProductInfoProps {
   product: ProductType;
@@ -15,27 +15,23 @@ export default function ProductInfo({
   showPrice = false,
 }: ProductInfoProps) {
   return (
-    <CardContent sx={{ flexGrow: 1, p: 0 }}>
+    <Box>
       <Stack>
-        <Typography variant="h6" sx={{ lineHeight: 1.3, pb: 0.5 }}>
-          {product.title}
-        </Typography>
-
         {showPrice && (
-          <Typography sx={{ pl: 0.5 }} color="primary" variant="h6">
+          <Typography
+            sx={{ pl: 0.5, fontWeight: 600, fontSize: 20 }}
+            color="primary"
+          >
             {product.price} €
           </Typography>
         )}
 
-        <Stack direction="row" spacing={2} alignItems="center" sx={{ mt: 0.5 }}>
+        <Stack spacing={1} alignItems="flex-start" sx={{ mt: 0.5 }}>
           <Stack direction="row" spacing={0.5}>
             <HeightIcon fontSize="small" />
-            <Stack>
-              <Typography variant="body2">Altura:</Typography>
-              <Typography variant="body2">
-                {product.height ? `${product.height} cm` : '--'}
-              </Typography>
-            </Stack>
+            <Typography variant="body2">
+              Altura: {product.height ? `${product.height} cm` : '--'}
+            </Typography>
           </Stack>
           <Stack direction="row" spacing={0.5}>
             <GrassIcon fontSize="small" />
@@ -46,11 +42,7 @@ export default function ProductInfo({
             </Stack>
           </Stack>
         </Stack>
-
-        {product.comment && (
-          <CommentBox title="Detalles" comment={product.comment} />
-        )}
       </Stack>
-    </CardContent>
+    </Box>
   );
 }

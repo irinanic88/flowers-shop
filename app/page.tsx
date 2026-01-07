@@ -1,29 +1,40 @@
-"use client";
+'use client';
 
-import { Box, Stack, Typography } from "@mui/material";
-import { useAuth } from "@/src/context/AuthContext";
-import ProductsPage from "@/src/components/products/ProductsPage";
-import Loader from "@/src/components/Loader";
-import UserView from "@/src/views/UserView";
+import {
+  Box,
+  ListItemIcon,
+  ListItemText,
+  Menu,
+  MenuItem,
+  Stack,
+  Typography,
+} from '@mui/material';
+import { useAuth } from '@/src/context/AuthContext';
+import ProductsPage from '@/src/components/products/ProductsPage';
+import Loader from '@/src/components/Loader';
+import UserView from '@/src/views/UserView';
 import {
   RoundIconButton,
   SecondaryRoundIconButton,
   WelcomeBox,
-} from "@/src/styledComponents";
-import LogoutIcon from "@mui/icons-material/Logout";
-import { supabase } from "@/lib/supabase";
-import React, { useState } from "react";
-import PersonIcon from "@mui/icons-material/Person";
-import Layout from "@/src/components/Layout";
-import UsersTabs from "@/src/views/UsersTabs";
-import EditIcon from "@mui/icons-material/Edit";
-import UpdateUser from "@/src/components/UpdateUser";
-import AuthForm from "@/src/AuthForm";
-import { useEffect } from "react";
+} from '@/src/styledComponents';
+import { supabase } from '@/lib/supabase';
+import React, { useState } from 'react';
+import PersonIcon from '@mui/icons-material/Person';
+import Layout from '@/src/components/Layout';
+import UsersTabs from '@/src/views/UsersTabs';
+import UpdateUser from '@/src/components/UpdateUser';
+import AuthForm from '@/src/AuthForm';
+import { useEffect } from 'react';
+import MenuIcon from '@mui/icons-material/Menu';
+import LogoutIcon from '@mui/icons-material/Logout';
+import EditIcon from '@mui/icons-material/Edit';
 
 export default function Page() {
   const [openUserForm, setOpenUserForm] = useState(false);
   const [openAuthForm, setOpenAuthForm] = useState(false);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const openSelect = Boolean(anchorEl);
 
   const {
     loading,
@@ -34,44 +45,76 @@ export default function Page() {
   } = useAuth();
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
+    if (typeof window === 'undefined') return;
 
     const hash = window.location.hash;
 
     if (
-      hash.includes("error=access_denied") ||
-      hash.includes("error_code=otp_expired")
+      hash.includes('error=access_denied') ||
+      hash.includes('error_code=otp_expired')
     ) {
-      window.history.replaceState(null, "", window.location.pathname);
-      document.title = "APS";
+      window.history.replaceState(null, '', window.location.pathname);
+      document.title = 'APS';
     }
   }, []);
-
-  const handleSignOut = async () => {
-    await supabase.auth.signOut();
-  };
 
   if (loading) {
     return <Loader />;
   }
+
+  const actions = [
+    {
+      value: 'edit',
+      label: 'Editar perfil',
+      icon: <EditIcon fontSize="small" />,
+      onClick: () => setOpenUserForm(true),
+    },
+    {
+      value: 'logout',
+      label: 'Salir',
+      icon: <LogoutIcon fontSize="small" />,
+      onClick: async () => {
+        await supabase.auth.signOut();
+      },
+    },
+  ];
 
   return (
     <Layout
       actions={
         <Stack>
           {!isUnknownUser && (
-            <Stack spacing={1} alignItems="flex-end">
+            <Stack direction="row" spacing={1} alignItems="center">
               <Typography variant="body1" color="primary">
                 Hola, {name}!
               </Typography>
-              <Stack direction="row" spacing={1}>
-                <SecondaryRoundIconButton onClick={() => setOpenUserForm(true)}>
-                  <EditIcon fontSize="small" />
+              <>
+                <SecondaryRoundIconButton
+                  onClick={(event) => setAnchorEl(event.currentTarget)}
+                >
+                  <MenuIcon fontSize="small" />
                 </SecondaryRoundIconButton>
-                <SecondaryRoundIconButton onClick={handleSignOut}>
-                  <LogoutIcon fontSize="small" />
-                </SecondaryRoundIconButton>
-              </Stack>
+                <Menu
+                  anchorEl={anchorEl}
+                  open={openSelect}
+                  onClose={() => setAnchorEl(null)}
+                  anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                  transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+                >
+                  {actions.map(({ value, label, icon, onClick }) => (
+                    <MenuItem
+                      key={value}
+                      onClick={() => {
+                        onClick();
+                        setAnchorEl(null);
+                      }}
+                    >
+                      <ListItemIcon>{icon}</ListItemIcon>
+                      <ListItemText>{label}</ListItemText>
+                    </MenuItem>
+                  ))}
+                </Menu>
+              </>
             </Stack>
           )}
           {isUnknownUser && (
@@ -97,15 +140,15 @@ export default function Page() {
             </Typography>
 
             <Typography variant="body1" color="text.secondary">
-              Ahora puedes{" "}
+              Ahora puedes{' '}
               <strong>explorar la lista de productos disponibles</strong>, que
               se actualiza con cada nueva llegada.
             </Typography>
 
             <Typography variant="body1" color="text.secondary">
-              Si quieres{" "}
+              Si quieres{' '}
               <strong>ver los precios y realizar un pedido anticipado</strong>,
-              por favor <strong>regístrate</strong> o{" "}
+              por favor <strong>regístrate</strong> o{' '}
               <strong>inicia sesión</strong>.
             </Typography>
           </WelcomeBox>
