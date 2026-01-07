@@ -40,7 +40,6 @@ export function FilterSelect<T extends string>({
           <FilterPillValue
             label={label}
             value={value === 'all' ? allLabel : options[value]}
-            active={value !== 'all'}
           />
         )}
         sx={{
