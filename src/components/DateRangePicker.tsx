@@ -88,11 +88,7 @@ export function DateRangePicker({
         onClick={(e) => !disabled && setAnchorEl(e.currentTarget)}
         sx={{ display: "inline-block", width: "fit-content" }}
       >
-        <FilterPillValue
-          label={label}
-          value={display || "Todas"}
-          active={Boolean(from || to)}
-        />
+        <FilterPillValue label={label} value={display || "Todas"} />
       </Box>
 
       <Popover
