@@ -40,6 +40,7 @@ import { PreordersTableContent } from '@/src/components/orders/PreordersTableCon
 import { exportOrdersToExcel } from '@/src/helpers/exportToExcel';
 import { DateRangePicker } from '@/src/components/DateRangePicker';
 import { endOfDay, startOfDay } from 'date-fns';
+import TuneIcon from '@mui/icons-material/Tune';
 
 export default function PreordersTab() {
   const [statusFilter, setStatusFilter] = useState<OrderStatusType | 'all'>(
@@ -59,6 +60,7 @@ export default function PreordersTab() {
     null,
     null,
   ]);
+  const [showFilters, setShowFilters] = useState(false);
   const [dateFrom, dateTo] = dateRange;
 
   const { orders, loading, refreshOrders } = useOrders();
@@ -191,8 +193,11 @@ export default function PreordersTab() {
 
   return (
     <>
-      {isAdmin && (
-        <Stack alignItems="flex-start">
+      <Stack direction="row" justifyContent="space-between">
+        <SecondaryRoundIconButton onClick={() => setShowFilters(!showFilters)}>
+          <TuneIcon fontSize="small" />
+        </SecondaryRoundIconButton>
+        {isAdmin && (
           <PrimaryButton
             endIcon={<DownloadIcon />}
             onClick={() => exportOrdersToExcel(sortedOrders)}
@@ -200,26 +205,30 @@ export default function PreordersTab() {
           >
             Descargar Excel
           </PrimaryButton>
+        )}
+      </Stack>
+
+      {showFilters && (
+        <Stack spacing={1} mb={2}>
+          <PreordersFilters
+            statusFilter={statusFilter}
+            onStatusChange={(v) =>
+              setStatusFilter(v as OrderStatusType | 'all')
+            }
+            userFilter={userFilter}
+            onUserChange={(v) => setUserFilter(v)}
+            users={users}
+          />
+
+          <DateRangePicker value={dateRange} onChange={setDateRange} />
         </Stack>
       )}
-
-      <Stack spacing={2} mb={2}>
-        <PreordersFilters
-          statusFilter={statusFilter}
-          onStatusChange={(v) => setStatusFilter(v as OrderStatusType | 'all')}
-          userFilter={userFilter}
-          onUserChange={(v) => setUserFilter(v)}
-          users={users}
-        />
-
-        <DateRangePicker value={dateRange} onChange={setDateRange} />
-      </Stack>
 
       <TableContainer
         component={Paper}
         sx={{
           overflowX: 'auto',
-          borderRadius: 4,
+          borderRadius: '16px',
           border: '1px solid',
           borderColor: (theme) => theme.palette.grey[200],
           backgroundColor: (theme) => theme.palette.background.paper,
@@ -361,13 +370,13 @@ export default function PreordersTab() {
                       onClick={(e) => e.stopPropagation()}
                       align="center"
                     >
-                      <SecondaryRoundIconButton
+                      <RoundIconButton
                         disabled={order.status !== 'pending'}
                         onClick={() => openStatusDialog(order, 'cancelled')}
                       >
                         {' '}
                         <ClearIcon />
-                      </SecondaryRoundIconButton>
+                      </RoundIconButton>
                     </TableCell>
                   )}
                 </TableRow>

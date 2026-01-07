@@ -21,27 +21,17 @@ export interface CartPanelProps {
 
 export default function CartPanel({ open, onClose }: CartPanelProps) {
   const { items, total, updateItemQuantity, clearCart } = useCart();
-
   const [comment, setComment] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
-  const [error, setError] = useState<string>('');
 
   const { refreshOrders } = useOrders();
 
   const handleSubmitPreorder = async () => {
     if (!items.length) return;
 
-    setLoading(true);
-    setSuccess(false);
-    setError('');
-
     const { data } = await supabase.auth.getUser();
     const userId = data.user?.id;
 
     if (!userId) {
-      setError('Usuario no autenticado.');
-      setLoading(false);
       return;
     }
 
@@ -64,8 +54,6 @@ export default function CartPanel({ open, onClose }: CartPanelProps) {
 
     if (err) {
       console.error(err);
-      setError('Error al enviar el preorden.');
-      setLoading(false);
       return;
     } else {
       void refreshOrders();
@@ -73,8 +61,6 @@ export default function CartPanel({ open, onClose }: CartPanelProps) {
 
     clearCart();
     setComment('');
-    setSuccess(true);
-    setLoading(false);
     onClose();
   };
 
@@ -151,10 +137,6 @@ export default function CartPanel({ open, onClose }: CartPanelProps) {
               sx={{ mt: 2 }}
             />
             <Box sx={{ p: 2, borderTop: '1px solid #eee' }}>
-              {/*    {success && (*/}
-              {/*      <Alert severity="success">Preorden enviado correctamente!</Alert>*/}
-              {/*    )}*/}
-              {/*    {error && <Alert severity="error">{error}</Alert>}*/}
               <Row sx={{ mb: 1 }}>
                 <Typography variant="subtitle1">Total:</Typography>
                 <Typography variant="subtitle1">
