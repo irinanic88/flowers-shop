@@ -4,6 +4,12 @@ import React from 'react';
 import { FilterSelect } from '@/src/components/FilterSelect';
 import { Stack } from '@mui/material';
 import { availabilityStatusesDict } from '@/src/constants';
+import { DisponibilityType } from '@/src/types.ts';
+
+type ProductsFiltersProps = {
+  availabilityFilter: DisponibilityType | 'all';
+  onAvailabilityChange: (v: DisponibilityType | 'all') => void;
+};
 
 export function ProductsFilters({
   availabilityFilter,

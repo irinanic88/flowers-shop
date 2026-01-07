@@ -1,7 +1,6 @@
 'use client';
 
 import {
-  Box,
   ListItemIcon,
   ListItemText,
   Menu,
@@ -128,8 +127,8 @@ export default function Page() {
       {isAdmin && <UsersTabs />}
       {isUser && <UserView />}
       {isUnknownUser && (
-        <Box>
-          <WelcomeBox spacing={2}>
+        <Stack sx={{ width: '100%' }} alignItems="center">
+          <WelcomeBox spacing={2} sx={{ mt: 2 }}>
             <Typography variant="h5" color="text.primary">
               ¡Bienvenido a Andrés Plant Select! 🌿
             </Typography>
@@ -154,7 +153,7 @@ export default function Page() {
           </WelcomeBox>
 
           <ProductsPage />
-        </Box>
+        </Stack>
       )}
 
       {openUserForm && (

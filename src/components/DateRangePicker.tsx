@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import * as React from "react";
-import { Popover, Stack, Box, ClickAwayListener } from "@mui/material";
-import { FilterPillValue } from "@/src/components/FilterPillValue";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { PrimaryButton, SecondaryButton } from "@/src/styledComponents";
+import * as React from 'react';
+import { Popover, Stack, Box, ClickAwayListener } from '@mui/material';
+import { FilterPillValue } from '@/src/components/FilterPillValue';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { PrimaryButton, SecondaryButton } from '@/src/styledComponents';
 
 type DateRange = [Date | null, Date | null];
 
@@ -18,32 +18,32 @@ interface DateRangePickerProps {
 }
 
 const formatRange = (from: Date | null, to: Date | null) => {
-  if (!from && !to) return "";
-  const f = from ? from.toLocaleDateString() : "…";
-  const t = to ? to.toLocaleDateString() : "…";
+  if (!from && !to) return '';
+  const f = from ? from.toLocaleDateString() : '…';
+  const t = to ? to.toLocaleDateString() : '…';
   return `${f} – ${t}`;
 };
 
 const datePickerStyles = {
-  "& .MuiPickersInputBase-root": {
-    backgroundColor: "transparent",
+  '& .MuiPickersInputBase-root': {
+    backgroundColor: 'transparent',
 
-    "&:hover": {
-      backgroundColor: "transparent",
+    '&:hover': {
+      backgroundColor: 'transparent',
     },
 
-    "&.Mui-focused": {
-      backgroundColor: "transparent",
+    '&.Mui-focused': {
+      backgroundColor: 'transparent',
     },
 
-    "&.Mui-disabled": {
-      backgroundColor: "transparent",
+    '&.Mui-disabled': {
+      backgroundColor: 'transparent',
     },
   },
 };
 
 export function DateRangePicker({
-  label = "Rango de fechas",
+  label = 'Rango de fechas',
   value,
   onChange,
   disabled,
@@ -86,16 +86,16 @@ export function DateRangePicker({
     <LocalizationProvider dateAdapter={AdapterDateFns}>
       <Box
         onClick={(e) => !disabled && setAnchorEl(e.currentTarget)}
-        sx={{ display: "inline-block", width: "fit-content" }}
+        sx={{ display: 'inline-block', width: 'fit-content' }}
       >
-        <FilterPillValue label={label} value={display || "Todas"} />
+        <FilterPillValue label={label} value={display || 'Todas'} />
       </Box>
 
       <Popover
         open={open}
         anchorEl={anchorEl}
         onClose={handleClose}
-        anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
       >
         <ClickAwayListener onClickAway={handleClose}>
           <Stack spacing={2} sx={{ p: 2, width: 250 }}>
@@ -104,7 +104,7 @@ export function DateRangePicker({
               label="Desde"
               value={draftFrom}
               onChange={handleDraftFrom}
-              slotProps={{ textField: { size: "small", variant: "filled" } }}
+              slotProps={{ textField: { size: 'small', variant: 'filled' } }}
               sx={datePickerStyles}
             />
 
@@ -114,7 +114,7 @@ export function DateRangePicker({
               value={draftTo}
               onChange={handleDraftTo}
               slotProps={{
-                textField: { size: "small", variant: "filled" },
+                textField: { size: 'small', variant: 'filled' },
               }}
               sx={datePickerStyles}
             />

@@ -2,6 +2,15 @@ import { FilterSelect } from '@/src/components/FilterSelect';
 import { useAuth } from '@/src/context/AuthContext';
 import { Stack } from '@mui/material';
 import { orderStatusesDict } from '@/src/constants';
+import { OrderStatusType } from '@/src/types.ts';
+
+type PreordersFiltersProps = {
+  statusFilter: OrderStatusType | 'all';
+  onStatusChange: (v: string) => void;
+  userFilter: string | 'all';
+  onUserChange: (v: string) => void;
+  users: string[];
+};
 
 export function PreordersFilters({
   statusFilter,
