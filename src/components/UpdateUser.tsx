@@ -8,11 +8,7 @@ import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/src/context/AuthContext';
 import { UiAlert } from '@/src/types';
 import { AppDrawer } from '@/src/components/AppDrawer';
-import {
-  RoundIconButton,
-  SecondaryButton,
-  SecondaryRoundIconButton,
-} from '@/src/styledComponents';
+import { RoundIconButton, SecondaryButton } from '@/src/styledComponents';
 import CloseIcon from '@mui/icons-material/Close';
 import { useRef } from 'react';
 import PasswordFields, {
@@ -161,7 +157,7 @@ export default function UpdateUser({ open, onClose }: UpdateUserProps) {
 
               {editingName ? (
                 <Stack direction="row" spacing={1}>
-                  <SecondaryRoundIconButton
+                  <RoundIconButton
                     onClick={() => {
                       setEditingName(false);
                       setName('');
@@ -169,7 +165,7 @@ export default function UpdateUser({ open, onClose }: UpdateUserProps) {
                     disabled={loading}
                   >
                     <CloseIcon />
-                  </SecondaryRoundIconButton>
+                  </RoundIconButton>
                   <RoundIconButton
                     onClick={() => handleSaveName()}
                     disabled={loading}
@@ -205,12 +201,12 @@ export default function UpdateUser({ open, onClose }: UpdateUserProps) {
 
             {editingPassword ? (
               <Stack direction="row" spacing={1}>
-                <SecondaryRoundIconButton
+                <RoundIconButton
                   onClick={() => handleCancelPassword()}
                   disabled={loading}
                 >
                   <CloseIcon />
-                </SecondaryRoundIconButton>
+                </RoundIconButton>
                 <RoundIconButton
                   onClick={() => handleSavePassword()}
                   disabled={loading}

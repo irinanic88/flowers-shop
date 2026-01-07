@@ -1,20 +1,19 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Typography, Box, Stack, Chip } from '@mui/material';
+import { Typography, Box, Stack, Divider } from '@mui/material';
 import { ProductType } from '@/src/types';
 import ProductInfo from '@/src/components/products/ProductInfo';
 import IncrementDecrementButtons from '@/src/components/products/IncrementDecrementButtons';
-import { PanelCard, RoundIconButton } from '@/src/styledComponents';
+import { PanelCard } from '@/src/styledComponents';
 import { useCart } from '@/src/context/CartContext';
-import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
-import { useOrders } from '@/src/context/OrdersContext';
+import { CardEditButton, CardDeleteButton } from '@/src/styledComponents';
 import { useAuth } from '@/src/context/AuthContext';
 import AdminProductForm from '@/src/components/AdminProductForm';
 import ProductImages from '@/src/components/products/ProductImages';
 import type { UiAlert } from '@/src/types';
-import { equals } from 'ramda';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 interface ProductCardProps {
   product: ProductType;
@@ -35,32 +34,103 @@ export default function ProductCard({
   const itemInCart = items.find((i) => i.id === product.id);
   const quantity = itemInCart?.quantity ?? 0;
 
-  const { orders } = useOrders();
-
-  const pendingOrders = orders.filter((o) => equals(o.status, 'pending'));
-  const totalOrderedPending = pendingOrders.reduce((sum, order) => {
-    if (!order.items) return sum;
-    const item = order.items.find((i) => i.product_id === product.id);
-    return sum + (item?.quantity ?? 0);
-  }, 0);
-
   return (
-    <PanelCard>
-      <Stack direction="row" spacing={2} alignItems="flex-start">
-        <Box sx={{ width: 100, height: 150, flexShrink: 0 }}>
-          <ProductImages images={product.images ?? []} title={product.title} />
-        </Box>
+    <PanelCard
+      sx={{
+        minWidth: 300,
+        maxWidth: 350,
+      }}
+    >
+      <Stack sx={{ height: '100%', p: 0.5 }} justifyContent="space-between">
+        <Stack spacing={2.5}>
+          <Stack spacing={1}>
+            <Typography
+              variant="h6"
+              sx={{
+                lineHeight: 1.35,
+                fontWeight: 600,
+                display: '-webkit-box',
+                WebkitLineClamp: 2,
+                WebkitBoxOrient: 'vertical',
+                overflow: 'hidden',
+              }}
+            >
+              {product.title}
+            </Typography>
+            {!isUnknownUser && (
+              <Typography
+                variant="body2"
+                color={product.available > 0 ? 'primary' : 'error'}
+              >
+                En Stock: {product.available}
+              </Typography>
+            )}
+          </Stack>
 
-        <Stack spacing={1} flex={1}>
-          <ProductInfo product={product} showPrice={!isUnknownUser} />
-          {!isUnknownUser && (
-            <Chip
-              size="small"
-              color={product.available > 0 ? 'primary' : 'error'}
-              label={`Cajas disponibles: ${product.available}`}
-              sx={{ width: 'fit-content' }}
-              variant="outlined"
-            />
+          <Stack direction="row" spacing={2} alignItems="flex-start">
+            <Box
+              sx={{
+                width: 96,
+                height: 96,
+                border: '1px solid',
+                borderRadius: 1,
+                borderColor: (theme) => theme.palette.grey[200],
+                bgcolor: (theme) => theme.palette.grey[200],
+                overflow: 'hidden',
+              }}
+            >
+              <ProductImages
+                images={product.images ?? []}
+                title={product.title}
+              />
+            </Box>
+
+            <ProductInfo product={product} showPrice={!isUnknownUser} />
+          </Stack>
+
+          <Stack spacing={1}>
+            {product.comment && (
+              <Stack spacing={1}>
+                <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
+                  Detalles:
+                </Typography>
+                <Typography variant="body2">{product.comment}</Typography>
+              </Stack>
+            )}
+          </Stack>
+        </Stack>
+
+        <Stack>
+          {isAdmin && (
+            <Stack
+              direction="row"
+              alignItems="center"
+              justifyContent="center"
+              spacing={1}
+              sx={{ mt: 2 }}
+            >
+              <CardEditButton
+                onClick={() => setOpenUpdate(true)}
+                startIcon={<EditIcon fontSize="small" />}
+              >
+                Editar
+              </CardEditButton>
+
+              <Divider
+                sx={(theme) => ({
+                  borderColor: theme.palette.divider,
+                })}
+                orientation="vertical"
+                flexItem
+              />
+
+              <CardDeleteButton
+                onClick={onDelete}
+                startIcon={<DeleteIcon fontSize="small" />}
+              >
+                Eliminar
+              </CardDeleteButton>
+            </Stack>
           )}
           {isUser && (
             <Stack direction="row" spacing={1} alignItems="center">
@@ -80,39 +150,17 @@ export default function ProductCard({
               />
             </Stack>
           )}
-          {isAdmin && (
-            <Stack spacing={1}>
-              <Typography variant="body2" color="text.secondary">
-                Preordenes pendientes: {totalOrderedPending ?? 0}
-              </Typography>
-
-              <Stack direction="row" spacing={1}>
-                <RoundIconButton
-                  onClick={() => setOpenUpdate(true)}
-                  color="error"
-                >
-                  <EditIcon fontSize="small" />
-                </RoundIconButton>
-                <RoundIconButton
-                  onClick={() => onDelete(product)}
-                  color="error"
-                >
-                  <DeleteIcon fontSize="small" />
-                </RoundIconButton>
-              </Stack>
-            </Stack>
-          )}
         </Stack>
-
-        {openUpdate && (
-          <AdminProductForm
-            open={openUpdate}
-            onClose={() => setOpenUpdate(false)}
-            onNotify={onNotify}
-            product={product}
-          />
-        )}
       </Stack>
+
+      {openUpdate && (
+        <AdminProductForm
+          open={openUpdate}
+          onClose={() => setOpenUpdate(false)}
+          onNotify={onNotify}
+          product={product}
+        />
+      )}
     </PanelCard>
   );
 }
