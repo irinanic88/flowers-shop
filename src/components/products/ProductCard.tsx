@@ -125,7 +125,7 @@ export default function ProductCard({
               />
 
               <CardDeleteButton
-                onClick={() => onDelete()}
+                onClick={() => onDelete(product)}
                 startIcon={<DeleteIcon fontSize="small" />}
               >
                 Eliminar
