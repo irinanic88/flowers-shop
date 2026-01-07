@@ -1,7 +1,7 @@
 'use client';
 
-import { ReactNode } from 'react';
-import { Stack } from '@mui/material';
+import React, { ReactNode } from 'react';
+import { Divider, Stack } from '@mui/material';
 import Logo from '@/src/components/Logo';
 
 interface LayoutProps {
@@ -19,7 +19,7 @@ export default function Layout({ actions, children }: LayoutProps) {
       <Stack
         direction="row"
         justifyContent="space-between"
-        alignItems="flex-start"
+        alignItems="center"
         spacing={2}
         sx={{
           width: '100%',
@@ -33,11 +33,18 @@ export default function Layout({ actions, children }: LayoutProps) {
         {actions}
       </Stack>
 
+      <Divider
+        sx={(theme) => ({
+          borderColor: theme.palette.divider,
+        })}
+        flexItem
+      />
+
       <Stack
         sx={{
           flex: 1,
         }}
-        px={{ xs: 2, md: 5 }}
+        px={{ xs: 3, md: 5 }}
         pb={10}
         alignItems="center"
       >

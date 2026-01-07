@@ -21,11 +21,7 @@ export interface CartPanelProps {
 
 export default function CartPanel({ open, onClose }: CartPanelProps) {
   const { items, total, updateItemQuantity, clearCart } = useCart();
-
   const [comment, setComment] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
-  const [error, setError] = useState<string>('');
 
   const { refreshOrders } = useOrders();
 
@@ -151,10 +147,6 @@ export default function CartPanel({ open, onClose }: CartPanelProps) {
               sx={{ mt: 2 }}
             />
             <Box sx={{ p: 2, borderTop: '1px solid #eee' }}>
-              {/*    {success && (*/}
-              {/*      <Alert severity="success">Preorden enviado correctamente!</Alert>*/}
-              {/*    )}*/}
-              {/*    {error && <Alert severity="error">{error}</Alert>}*/}
               <Row sx={{ mb: 1 }}>
                 <Typography variant="subtitle1">Total:</Typography>
                 <Typography variant="subtitle1">

@@ -26,9 +26,6 @@ export default function ProductImages({ images, title }: ProductImagesProps) {
         sx={{
           width: '100%',
           height: '100%',
-          border: '1px solid',
-          borderColor: (theme) => theme.palette.grey[200],
-          bgcolor: (theme) => theme.palette.grey[200],
           color: 'text.secondary',
         }}
         alignItems="center"
@@ -54,8 +51,6 @@ export default function ProductImages({ images, title }: ProductImagesProps) {
           width: '100%',
           pt: '100%',
           position: 'relative',
-          border: '1px solid',
-          borderColor: (theme) => theme.palette.grey[200],
           overflow: 'hidden',
           mb: 1,
         }}
