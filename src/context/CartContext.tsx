@@ -30,19 +30,21 @@ export function CartProvider({ children }: { children: ReactNode }) {
     quantity: number,
   ) => {
     setItems((prev) => {
-      if (quantity === 0) {
+      if (quantity <= 0) {
         return prev.filter((item) => item.id !== product.id);
       }
+
+      const safeQuantity = Math.min(quantity, product.available);
 
       const existing = prev.find((item) => item.id === product.id);
 
       if (existing) {
         return prev.map((item) =>
-          item.id === product.id ? { ...item, quantity } : item,
+          item.id === product.id ? { ...item, quantity: safeQuantity } : item,
         );
       }
 
-      return [...prev, { ...product, quantity }];
+      return [...prev, { ...product, quantity: safeQuantity }];
     });
   };
 
@@ -59,7 +61,13 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   return (
     <CartContext.Provider
-      value={{ items, updateItemQuantity, removeFromCart, clearCart, total }}
+      value={{
+        items,
+        updateItemQuantity,
+        removeFromCart,
+        clearCart,
+        total,
+      }}
     >
       {children}
     </CartContext.Provider>

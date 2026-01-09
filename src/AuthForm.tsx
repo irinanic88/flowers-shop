@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Stack, TextField, Typography, Link } from '@mui/material';
 import { AuthFormType } from '@/src/types';
-import { PrimaryButton, SecondaryButton } from '@/src/styledComponents';
+import { PrimaryButton } from '@/src/styledComponents';
 import CustomAlert from '@/src/components/CustomAlert';
 
 import {
@@ -108,7 +108,6 @@ export default function AuthForm({ open, onClose }: AuthFormProps) {
           <PrimaryButton type="submit" onClick={() => handleSubmit(form)}>
             {isSignIn ? 'Iniciar sesión' : 'Registrarse'}
           </PrimaryButton>
-          <SecondaryButton onClick={onClose}>Cerrar</SecondaryButton>
         </Stack>
       }
     >

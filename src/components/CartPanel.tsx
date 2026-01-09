@@ -10,7 +10,7 @@ import {
 } from '@/src/styledComponents';
 import IncrementDecrementButtons from '@/src/components/products/IncrementDecrementButtons';
 import { supabase } from '@/lib/supabase';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useOrders } from '@/src/context/OrdersContext';
 import { AppDrawer } from '@/src/components/AppDrawer';
 
@@ -20,10 +20,20 @@ export interface CartPanelProps {
 }
 
 export default function CartPanel({ open, onClose }: CartPanelProps) {
+  const [isCartEmpty, setIsCartEmpty] = useState(true);
+
   const { items, total, updateItemQuantity, clearCart } = useCart();
   const [comment, setComment] = useState('');
 
   const { refreshOrders } = useOrders();
+
+  useEffect(() => {
+    if (items.length) {
+      setIsCartEmpty(false);
+    } else {
+      setIsCartEmpty(true);
+    }
+  }, [items]);
 
   const handleSubmitPreorder = async () => {
     if (!items.length) return;
@@ -71,11 +81,13 @@ export default function CartPanel({ open, onClose }: CartPanelProps) {
       title="Preorden"
       actions={
         <Stack spacing={1}>
-          <PrimaryButton onClick={handleSubmitPreorder}>
+          <PrimaryButton disabled={isCartEmpty} onClick={handleSubmitPreorder}>
             Enviar Preorden
           </PrimaryButton>
 
-          <SecondaryButton onClick={clearCart}>Vaciar</SecondaryButton>
+          <SecondaryButton disabled={isCartEmpty} onClick={clearCart}>
+            Vaciar
+          </SecondaryButton>
         </Stack>
       }
     >
@@ -106,6 +118,7 @@ export default function CartPanel({ open, onClose }: CartPanelProps) {
 
                   <Box mt={1}>
                     <IncrementDecrementButtons
+                      inStock={Number(0)}
                       quantity={item.quantity}
                       onChange={(q) =>
                         updateItemQuantity(
@@ -113,6 +126,7 @@ export default function CartPanel({ open, onClose }: CartPanelProps) {
                             id: item.id,
                             title: item.title,
                             price: item.price,
+                            available: item.available,
                           },
                           q,
                         )

@@ -45,14 +45,14 @@ export default function ProductCard({
         <Stack spacing={2.5}>
           <Stack spacing={1}>
             <Typography
-              variant="h6"
               sx={{
                 lineHeight: 1.35,
-                fontWeight: 600,
                 display: '-webkit-box',
                 WebkitLineClamp: 2,
                 WebkitBoxOrient: 'vertical',
                 overflow: 'hidden',
+                fontWeight: 600,
+                fontSize: 20,
               }}
             >
               {product.title}
@@ -90,7 +90,7 @@ export default function ProductCard({
 
           <Stack spacing={1}>
             {product.comment && (
-              <Stack spacing={1}>
+              <Stack spacing={0.5}>
                 <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
                   Detalles:
                 </Typography>
@@ -133,9 +133,15 @@ export default function ProductCard({
             </Stack>
           )}
           {isUser && (
-            <Stack direction="row" spacing={1} alignItems="center">
+            <Stack
+              direction="row"
+              spacing={1}
+              alignItems="center"
+              sx={{ mt: 2 }}
+            >
               <Typography variant="body2">Preordenar:</Typography>
               <IncrementDecrementButtons
+                inStock={product.available}
                 quantity={quantity}
                 onChange={(q) =>
                   updateItemQuantity(
@@ -143,6 +149,7 @@ export default function ProductCard({
                       id: product.id,
                       title: product.title,
                       price: product.price,
+                      available: product.available,
                     },
                     q,
                   )

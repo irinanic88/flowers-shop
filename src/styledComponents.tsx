@@ -10,16 +10,18 @@ export const PrimaryButton = styled(Button)(({ theme }) => ({
   fontSize: 14,
   padding: theme.spacing(0.7, 2.5),
   borderRadius: 999,
-  border: 'none',
+  border: `1px solid ${theme.palette.primary.main}`,
 
   transition: 'background-color 0.2s ease',
 
   '&:hover': {
     backgroundColor: theme.palette.primary.dark,
+    border: `1px solid ${theme.palette.primary.dark}`,
   },
 
   '&.Mui-disabled': {
     backgroundColor: theme.palette.grey[200],
+    border: `1px solid ${theme.palette.grey[200]}`,
     color: theme.palette.grey[400],
   },
 }));
@@ -27,15 +29,12 @@ export const PrimaryButton = styled(Button)(({ theme }) => ({
 export const SecondaryButton = styled(Button)(({ theme }) => ({
   backgroundColor: 'transparent',
   color: theme.palette.text.primary,
-
   textTransform: 'none',
   fontWeight: 600,
   fontSize: 14,
-
   padding: theme.spacing(0.7, 2.5),
   borderRadius: 999,
   border: `1px solid ${theme.palette.divider}`,
-
   transition: 'background-color 0.2s ease, border-color 0.2s ease',
 
   '&:hover': {

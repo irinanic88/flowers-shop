@@ -193,7 +193,7 @@ export default function PreordersTab() {
 
   return (
     <>
-      <Stack direction="row" justifyContent="space-between">
+      <Stack direction="row" justifyContent="space-between" mb={1}>
         <SecondaryRoundIconButton onClick={() => setShowFilters(!showFilters)}>
           <TuneIcon fontSize="small" />
         </SecondaryRoundIconButton>
@@ -239,7 +239,7 @@ export default function PreordersTab() {
           <TableHead>
             <TableRow>
               <TableCell />
-              <TableCell>ID</TableCell>
+              <TableCell sx={{ fontWeight: 600 }}>ID</TableCell>
 
               {isAdmin && (
                 <TableCell>
@@ -247,6 +247,7 @@ export default function PreordersTab() {
                     active={equals(sortBy, 'user')}
                     direction={sortDir}
                     onClick={() => toggleSort('user')}
+                    sx={{ fontWeight: 600 }}
                   >
                     Usuario
                   </TableSortLabel>
@@ -258,26 +259,36 @@ export default function PreordersTab() {
                   active={equals(sortBy, 'status')}
                   direction={sortDir}
                   onClick={() => toggleSort('status')}
+                  sx={{ fontWeight: 600 }}
                 >
                   Estado
                 </TableSortLabel>
               </TableCell>
 
-              <TableCell>Total</TableCell>
+              <TableCell sx={{ fontWeight: 600 }}>Total</TableCell>
 
               <TableCell>
                 <TableSortLabel
                   active={equals(sortBy, 'date')}
                   direction={sortDir}
                   onClick={() => toggleSort('date')}
+                  sx={{ fontWeight: 600 }}
                 >
                   Fecha
                 </TableSortLabel>
               </TableCell>
-              <TableCell>Comentarios</TableCell>
+              <TableCell sx={{ fontWeight: 600 }}>Comentarios</TableCell>
 
-              {isAdmin && <TableCell align="center">Aprobar</TableCell>}
-              {isAdmin && <TableCell align="center">Cancelar</TableCell>}
+              {isAdmin && (
+                <TableCell align="center" sx={{ fontWeight: 600 }}>
+                  Aprobar
+                </TableCell>
+              )}
+              {isAdmin && (
+                <TableCell align="center" sx={{ fontWeight: 600 }}>
+                  Cancelar
+                </TableCell>
+              )}
             </TableRow>
           </TableHead>
 
