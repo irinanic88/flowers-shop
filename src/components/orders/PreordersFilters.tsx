@@ -1,13 +1,13 @@
-import { FilterSelect } from "@/src/components/FilterSelect";
-import { useAuth } from "@/src/context/AuthContext";
-import { Stack } from "@mui/material";
-import { orderStatusesDict } from "@/src/constants";
-import { OrderStatusType } from "@/src/types";
+import { FilterSelect } from '@/src/components/FilterSelect';
+import { useAuth } from '@/src/context/AuthContext';
+import { Stack } from '@mui/material';
+import { orderStatusesDict } from '@/src/constants';
+import { OrderStatusType } from '@/src/types';
 
 type PreordersFiltersProps = {
-  statusFilter: OrderStatusType | "all";
+  statusFilter: OrderStatusType | 'all';
   onStatusChange: (v: string) => void;
-  userFilter: string | "all";
+  userFilter: string | 'all';
   onUserChange: (v: string) => void;
   users: string[];
 };

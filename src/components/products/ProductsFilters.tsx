@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
-import React from "react";
-import { FilterSelect } from "@/src/components/FilterSelect";
-import { Stack } from "@mui/material";
-import { availabilityStatusesDict } from "@/src/constants";
-import { DisponibilityType } from "@/src/types";
+import React from 'react';
+import { FilterSelect } from '@/src/components/FilterSelect';
+import { Stack } from '@mui/material';
+import { availabilityStatusesDict } from '@/src/constants';
+import { DisponibilityType } from '@/src/types';
 
 type ProductsFiltersProps = {
-  availabilityFilter: DisponibilityType | "all";
-  onAvailabilityChange: (v: DisponibilityType | "all") => void;
+  availabilityFilter: DisponibilityType | 'all';
+  onAvailabilityChange: (v: DisponibilityType | 'all') => void;
 };
 
 export function ProductsFilters({
