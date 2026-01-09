@@ -141,6 +141,7 @@ export default function ProductCard({
             >
               <Typography variant="body2">Preordenar:</Typography>
               <IncrementDecrementButtons
+                inStock={product.available}
                 quantity={quantity}
                 onChange={(q) =>
                   updateItemQuantity(
