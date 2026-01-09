@@ -1,7 +1,7 @@
-import React, { useEffect } from "react";
-import { Box, IconButton, Typography } from "@mui/material";
-import { Add, Remove } from "@mui/icons-material";
-import { equals } from "ramda";
+import React from 'react';
+import { Box, IconButton, Typography } from '@mui/material';
+import { Add, Remove } from '@mui/icons-material';
+import { equals } from 'ramda';
 
 interface PreorderButtonProps {
   inStock: number;
@@ -33,8 +33,8 @@ export default function IncrementDecrementButtons({
         sx={{
           width: 20,
           height: 20,
-          borderRadius: "50%",
-          border: "1px solid #ccc",
+          borderRadius: '50%',
+          border: '1px solid #ccc',
         }}
       >
         <Remove sx={{ width: 15, height: 15 }} />
@@ -49,8 +49,8 @@ export default function IncrementDecrementButtons({
         sx={{
           width: 20,
           height: 20,
-          borderRadius: "50%",
-          border: "1px solid #ccc",
+          borderRadius: '50%',
+          border: '1px solid #ccc',
         }}
       >
         <Add sx={{ width: 15, height: 15 }} />
