@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Typography, Box, Stack, Divider } from "@mui/material";
 import { ProductType } from "@/src/types";
 import ProductInfo from "@/src/components/products/ProductInfo";
@@ -149,6 +149,7 @@ export default function ProductCard({
                       id: product.id,
                       title: product.title,
                       price: product.price,
+                      available: product.available,
                     },
                     q,
                   )

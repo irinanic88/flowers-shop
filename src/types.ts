@@ -14,7 +14,7 @@ export interface ProductType {
 export interface UserType {
   id: string;
   name?: string;
-  role?: 'user' | 'admin';
+  role?: "user" | "admin";
   created_at?: string;
   email?: string;
 }
@@ -30,6 +30,7 @@ export interface CartItem {
   title: string;
   price: number;
   quantity: number;
+  available: number;
 }
 
 export interface OrderItem {
@@ -39,8 +40,8 @@ export interface OrderItem {
   quantity: number;
 }
 
-export type OrderStatusType = 'pending' | 'approved' | 'cancelled';
-export type DisponibilityType = 'available' | 'outOfStock';
+export type OrderStatusType = "pending" | "approved" | "cancelled";
+export type DisponibilityType = "available" | "outOfStock";
 
 export interface OrderType {
   id: number;
@@ -57,5 +58,5 @@ export interface OrderType {
 export type UiAlert = {
   open: boolean;
   message: string;
-  severity: 'success' | 'error' | 'info' | 'warning';
+  severity: "success" | "error" | "info" | "warning";
 };

@@ -1,18 +1,18 @@
-'use client';
+"use client";
 
-import { Box, Typography, Stack, TextField } from '@mui/material';
-import { useCart } from '@/src/context/CartContext';
+import { Box, Typography, Stack, TextField } from "@mui/material";
+import { useCart } from "@/src/context/CartContext";
 import {
   PrimaryButton,
   Row,
   PanelCard,
   SecondaryButton,
-} from '@/src/styledComponents';
-import IncrementDecrementButtons from '@/src/components/products/IncrementDecrementButtons';
-import { supabase } from '@/lib/supabase';
-import React, { useState } from 'react';
-import { useOrders } from '@/src/context/OrdersContext';
-import { AppDrawer } from '@/src/components/AppDrawer';
+} from "@/src/styledComponents";
+import IncrementDecrementButtons from "@/src/components/products/IncrementDecrementButtons";
+import { supabase } from "@/lib/supabase";
+import React, { useEffect, useState } from "react";
+import { useOrders } from "@/src/context/OrdersContext";
+import { AppDrawer } from "@/src/components/AppDrawer";
 
 export interface CartPanelProps {
   open: boolean;
@@ -20,10 +20,20 @@ export interface CartPanelProps {
 }
 
 export default function CartPanel({ open, onClose }: CartPanelProps) {
+  const [isCartEmpty, setIsCartEmpty] = useState(true);
+
   const { items, total, updateItemQuantity, clearCart } = useCart();
-  const [comment, setComment] = useState('');
+  const [comment, setComment] = useState("");
 
   const { refreshOrders } = useOrders();
+
+  useEffect(() => {
+    if (items.length) {
+      setIsCartEmpty(false);
+    } else {
+      setIsCartEmpty(true);
+    }
+  }, [items]);
 
   const handleSubmitPreorder = async () => {
     if (!items.length) return;
@@ -42,13 +52,13 @@ export default function CartPanel({ open, onClose }: CartPanelProps) {
       quantity: i.quantity,
     }));
 
-    const { error: err } = await supabase.from('orders').insert([
+    const { error: err } = await supabase.from("orders").insert([
       {
         user_id: userId,
         items: orderItems,
         total: Number(total.toFixed(2)),
         comment: comment || null,
-        status: 'pending',
+        status: "pending",
       },
     ]);
 
@@ -60,7 +70,7 @@ export default function CartPanel({ open, onClose }: CartPanelProps) {
     }
 
     clearCart();
-    setComment('');
+    setComment("");
     onClose();
   };
 
@@ -71,20 +81,22 @@ export default function CartPanel({ open, onClose }: CartPanelProps) {
       title="Preorden"
       actions={
         <Stack spacing={1}>
-          <PrimaryButton onClick={handleSubmitPreorder}>
+          <PrimaryButton disabled={isCartEmpty} onClick={handleSubmitPreorder}>
             Enviar Preorden
           </PrimaryButton>
 
-          <SecondaryButton onClick={clearCart}>Vaciar</SecondaryButton>
+          <SecondaryButton disabled={isCartEmpty} onClick={clearCart}>
+            Vaciar
+          </SecondaryButton>
         </Stack>
       }
     >
-      <Stack justifyContent="space-between" sx={{ height: '100%' }}>
+      <Stack justifyContent="space-between" sx={{ height: "100%" }}>
         {!items.length && (
           <Stack
             justifyContent="center"
             alignItems="center"
-            sx={{ height: '100%' }}
+            sx={{ height: "100%" }}
           >
             <Typography color="text.secondary">
               No hay productos en tu preorden.
@@ -93,7 +105,7 @@ export default function CartPanel({ open, onClose }: CartPanelProps) {
         )}
 
         {items.length > 0 && (
-          <Box sx={{ flex: 1, overflowY: 'auto' }}>
+          <Box sx={{ flex: 1, overflowY: "auto" }}>
             <Stack spacing={1}>
               {items.map((item) => (
                 <PanelCard key={item.id}>
@@ -106,6 +118,7 @@ export default function CartPanel({ open, onClose }: CartPanelProps) {
 
                   <Box mt={1}>
                     <IncrementDecrementButtons
+                      inStock={Number(0)}
                       quantity={item.quantity}
                       onChange={(q) =>
                         updateItemQuantity(
@@ -113,6 +126,7 @@ export default function CartPanel({ open, onClose }: CartPanelProps) {
                             id: item.id,
                             title: item.title,
                             price: item.price,
+                            available: item.available,
                           },
                           q,
                         )
@@ -136,7 +150,7 @@ export default function CartPanel({ open, onClose }: CartPanelProps) {
               rows={2}
               sx={{ mt: 2 }}
             />
-            <Box sx={{ p: 2, borderTop: '1px solid #eee' }}>
+            <Box sx={{ p: 2, borderTop: "1px solid #eee" }}>
               <Row sx={{ mb: 1 }}>
                 <Typography variant="subtitle1">Total:</Typography>
                 <Typography variant="subtitle1">

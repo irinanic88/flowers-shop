@@ -24,10 +24,6 @@ export default function IncrementDecrementButtons({
     return onChange(quantity - 1);
   };
 
-  useEffect(() => {
-    onChange(quantity);
-  }, [quantity]);
-
   return (
     <Box display="flex" alignItems="center" gap={1}>
       <IconButton
