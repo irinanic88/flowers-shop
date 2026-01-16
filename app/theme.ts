@@ -35,7 +35,7 @@ export const theme = createTheme({
     divider: '#E5E7EB',
 
     warning: {
-      main: '#EFE7D8',
+      main: '#f6a351',
     },
 
     success: {

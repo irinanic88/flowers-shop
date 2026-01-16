@@ -8,7 +8,7 @@ import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/src/context/AuthContext';
 import { UiAlert } from '@/src/types';
 import { AppDrawer } from '@/src/components/AppDrawer';
-import { RoundIconButton, SecondaryButton } from '@/src/styledComponents';
+import { RoundIconButton } from '@/src/styledComponents';
 import CloseIcon from '@mui/icons-material/Close';
 import { useRef } from 'react';
 import PasswordFields, {
@@ -126,12 +126,7 @@ export default function UpdateUser({ open, onClose }: UpdateUserProps) {
 
   return (
     <>
-      <AppDrawer
-        open={open}
-        onClose={onClose}
-        title="Configuración de usuario"
-        actions={<SecondaryButton onClick={onClose}>Cerrar</SecondaryButton>}
-      >
+      <AppDrawer open={open} onClose={onClose} title="Configuración de usuario">
         <Stack
           spacing={4}
           sx={{

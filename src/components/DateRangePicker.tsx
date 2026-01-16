@@ -84,10 +84,7 @@ export function DateRangePicker({
 
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
-      <Box
-        onClick={(e) => !disabled && setAnchorEl(e.currentTarget)}
-        sx={{ display: 'inline-block', width: 'fit-content' }}
-      >
+      <Box onClick={(e) => !disabled && setAnchorEl(e.currentTarget)}>
         <FilterPillValue label={label} value={display || 'Todas'} />
       </Box>
 

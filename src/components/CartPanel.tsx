@@ -13,6 +13,7 @@ import { supabase } from '@/lib/supabase';
 import React, { useEffect, useState } from 'react';
 import { useOrders } from '@/src/context/OrdersContext';
 import { AppDrawer } from '@/src/components/AppDrawer';
+import { isEmpty } from 'ramda';
 
 export interface CartPanelProps {
   open: boolean;
@@ -28,11 +29,7 @@ export default function CartPanel({ open, onClose }: CartPanelProps) {
   const { refreshOrders } = useOrders();
 
   useEffect(() => {
-    if (items.length) {
-      setIsCartEmpty(false);
-    } else {
-      setIsCartEmpty(true);
-    }
+    setIsCartEmpty(isEmpty(items.length));
   }, [items]);
 
   const handleSubmitPreorder = async () => {
@@ -118,7 +115,7 @@ export default function CartPanel({ open, onClose }: CartPanelProps) {
 
                   <Box mt={1}>
                     <IncrementDecrementButtons
-                      inStock={Number(0)}
+                      inStock={item.available}
                       quantity={item.quantity}
                       onChange={(q) =>
                         updateItemQuantity(
@@ -140,7 +137,7 @@ export default function CartPanel({ open, onClose }: CartPanelProps) {
         )}
 
         {items.length > 0 && (
-          <Stack spacing={2}>
+          <Stack spacing={2} sx={{ mt: 2 }}>
             <TextField
               label="Comentario (opcional)"
               value={comment}
@@ -148,8 +145,8 @@ export default function CartPanel({ open, onClose }: CartPanelProps) {
               fullWidth
               multiline
               rows={2}
-              sx={{ mt: 2 }}
             />
+
             <Box sx={{ p: 2, borderTop: '1px solid #eee' }}>
               <Row sx={{ mb: 1 }}>
                 <Typography variant="subtitle1">Total:</Typography>

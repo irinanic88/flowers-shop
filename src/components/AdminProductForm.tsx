@@ -6,7 +6,7 @@ import { PrimaryButton, SecondaryButton } from '@/src/styledComponents';
 import { supabase } from '@/lib/supabase';
 import { ProductType, UiAlert } from '@/src/types';
 import ImageUploader from '@/src/components/ImageUploader';
-import { isEmpty } from 'ramda';
+import { isEmpty, all } from 'ramda';
 import { AppDrawer } from '@/src/components/AppDrawer';
 
 interface AdminProductFormProps {
@@ -55,6 +55,7 @@ export default function AdminProductForm({
 
   const [form, setForm] = useState<ProductForm>(emptyForm);
   const [loading, setLoading] = useState(false);
+  const [isReadyToSubmit, setIsReadyToSubmit] = useState(false);
 
   const [alertState, setAlertState] = useState<UiAlert>(alertInitialState);
 
@@ -74,6 +75,16 @@ export default function AdminProductForm({
     }
   }, []);
 
+  useEffect(() => {
+    const { title, price, pots_count, available } = form;
+    const isFormFilled = all(
+      (v) => !isEmpty(v.trim()),
+      [title, price, pots_count, available],
+    );
+
+    setIsReadyToSubmit(isFormFilled);
+  }, [form]);
+
   const handleChange = (key: keyof ProductForm, value: string) => {
     setForm((prev) => ({ ...prev, [key]: value }));
   };
@@ -82,25 +93,7 @@ export default function AdminProductForm({
     onNotify?.(message, severity);
   };
 
-  const showAlert = (message: string, severity: 'success' | 'error') => {
-    setAlertState({
-      open: true,
-      message,
-      severity,
-    });
-  };
-
   const handleCreate = async () => {
-    if (
-      isEmpty(form.title.trim()) ||
-      isEmpty(form.price) ||
-      isEmpty(form.pots_count) ||
-      isEmpty(form.available)
-    ) {
-      showAlert('Completa todos los campos correctamente.', 'error');
-      return;
-    }
-
     setLoading(true);
 
     const { error } = await supabase
@@ -147,17 +140,17 @@ export default function AdminProductForm({
           <Stack spacing={1}>
             <PrimaryButton
               onClick={isEdit ? handleUpdate : handleCreate}
-              disabled={loading}
+              disabled={loading || !isReadyToSubmit}
             >
               {isEdit ? 'Guardar cambios' : 'Agregar producto'}
             </PrimaryButton>
 
             <SecondaryButton
-              onClick={onClose}
-              disabled={loading}
+              onClick={() => setForm(emptyForm)}
+              disabled={loading || !isReadyToSubmit}
               variant="outlined"
             >
-              Cancelar
+              Borrar formulario
             </SecondaryButton>
           </Stack>
         }
