@@ -63,7 +63,6 @@ export function FilterSelect<T extends string>({
         </Select>
         {!equals(value, 'all') && (
           <Button
-            type="link"
             sx={{
               padding: 0,
               minWidth: 0,

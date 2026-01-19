@@ -1,73 +1,49 @@
-"use client";
+'use client';
 
-import React, { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabase";
-import { Stack, TextField, Typography, Link } from "@mui/material";
-import { AuthFormType } from "@/src/types";
-import { PrimaryButton } from "@/src/styledComponents";
-import CustomAlert from "@/src/components/CustomAlert";
-import { equals } from "ramda";
+import React, { useEffect, useState } from 'react';
+import { supabase } from '@/lib/supabase';
+import { Stack, TextField } from '@mui/material';
+import { AlertType, AuthFormType } from '@/src/types';
+import { PrimaryButton } from '@/src/styledComponents';
+import { equals } from 'ramda';
+import { AuthTitlesDict } from '@/src/constants';
+import { useAlert } from '@/src/context/AlertContext';
 
 import {
   isEmailValid,
   isPasswordValid,
   isRequired,
-} from "@/src/helpers/validators";
-import Loader from "@/src/components/Loader";
-import { AppDrawer } from "@/src/components/AppDrawer";
-import PasswordFields from "@/src/components/PasswordFields";
-import { notEqual } from "ramda";
+} from '@/src/helpers/validators';
+import { AppDrawer } from '@/src/components/AppDrawer';
+import PasswordFields from '@/src/components/PasswordFields';
+import RedirectionLink from '@/src/components/auth/RedirectionLink';
 
 type AuthFormProps = {
   open: boolean;
   onClose: () => void;
 };
 
-type AuthMode = "signIn" | "signUp" | "forgotPassword";
-
-const AuthTitlesDict = {
-  signIn: {
-    title: "Iniciar sesión",
-    submitButton: "Iniciar sesión",
-    linkText: "Aún no estás registrado?",
-    linkTitle: "Registrarse",
-  },
-  signUp: {
-    title: "Registrarse",
-    submitButton: "Registrarse",
-    linkText: "Ya tienes una cuenta?",
-    linkTitle: "Iniciar sesión",
-  },
-  forgotPassword: {
-    title: "Recuperar contraseña",
-    submitButton: "Enviar enlace",
-    linkText: "Recordaste los datos?",
-    linkTitle: "Ir al registro",
-  },
-};
+type AuthMode = 'signIn' | 'signUp' | 'forgotPassword';
 
 export default function AuthForm({ open, onClose }: AuthFormProps) {
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState<AuthFormType>({
-    email: "",
-    password: "",
-    name: "",
+    email: '',
+    password: '',
+    name: '',
   });
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [alert, setAlert] = useState<{
-    message: string;
-    severity?: "error" | "success";
-  } | null>(null);
-  const [mode, setMode] = useState<AuthMode>("signIn");
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [alert, setAlert] = useState<AlertType>(null);
+  const [mode, setMode] = useState<AuthMode>('signIn');
   const [isSignIn, setIsSignIn] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
-  const [isForgotPassword, setIsForgotPassword] = useState(false);
-  const [title, setTitle] = useState("");
+  const [title, setTitle] = useState('');
+
+  const { showAlert } = useAlert();
 
   useEffect(() => {
-    setIsSignIn(equals(mode, "signIn"));
-    setIsSignUp(equals(mode, "signUp"));
-    setIsForgotPassword(equals(mode, "forgotPassword"));
+    setIsSignIn(equals(mode, 'signIn'));
+    setIsSignUp(equals(mode, 'signUp'));
 
     setTitle(AuthTitlesDict[mode].title);
   }, [mode]);
@@ -78,14 +54,14 @@ export default function AuthForm({ open, onClose }: AuthFormProps) {
 
   const handleSubmit = async () => {
     if (!isEmailValid(form.email))
-      return setAlert({ message: "Correo inválido", severity: "error" });
+      return setAlert({ message: 'Correo inválido', severity: 'error' });
 
     switch (mode) {
-      case "signIn":
+      case 'signIn':
         return submitSignIn(form);
-      case "signUp":
+      case 'signUp':
         return submitSignUp(form);
-      case "forgotPassword":
+      case 'forgotPassword':
         return submitForgotPassword(form.email);
     }
   };
@@ -93,8 +69,8 @@ export default function AuthForm({ open, onClose }: AuthFormProps) {
   const submitSignIn = async ({ email, password }: AuthFormType) => {
     if (!isPasswordValid(password))
       return setAlert({
-        message: "Contraseña inválida (≥8 caracteres, letras y números)",
-        severity: "error",
+        message: 'Contraseña inválida (≥8 caracteres, letras y números)',
+        severity: 'error',
       });
 
     setLoading(true);
@@ -107,11 +83,11 @@ export default function AuthForm({ open, onClose }: AuthFormProps) {
       if (error) throw error;
       onClose();
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : "Error desconocido";
+      const message = err instanceof Error ? err.message : 'Error desconocido';
 
       setAlert({
         message,
-        severity: "error",
+        severity: 'error',
       });
     } finally {
       setLoading(false);
@@ -121,19 +97,19 @@ export default function AuthForm({ open, onClose }: AuthFormProps) {
   const submitSignUp = async ({ email, password, name }: AuthFormType) => {
     if (!isPasswordValid(password))
       return setAlert({
-        message: "Contraseña inválida (≥8 caracteres, letras y números)",
-        severity: "error",
+        message: 'Contraseña inválida (≥8 caracteres, letras y números)',
+        severity: 'error',
       });
     if (!isRequired(name))
       return setAlert({
-        message: "El nombre es obligatorio",
-        severity: "error",
+        message: 'El nombre es obligatorio',
+        severity: 'error',
       });
 
-    if (notEqual(password, confirmPassword)) {
+    if (!equals(password, confirmPassword)) {
       return setAlert({
-        message: "Las contraseñas no coinciden",
-        severity: "error",
+        message: 'Las contraseñas no coinciden',
+        severity: 'error',
       });
     }
 
@@ -144,24 +120,24 @@ export default function AuthForm({ open, onClose }: AuthFormProps) {
         password,
         options: {
           data: { name },
-          emailRedirectTo: "http://localhost:3000",
+          emailRedirectTo: 'http://localhost:3000',
         },
       });
 
       if (error) throw error;
 
-      setAlert({
-        message: "Revisa tu correo para confirmar el registro",
-        severity: "success",
+      showAlert({
+        message: 'Revisa tu correo para confirmar el registro',
+        severity: 'success',
       });
 
       onClose();
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : "Error desconocido";
+      const message = err instanceof Error ? err.message : 'Error desconocido';
 
       setAlert({
         message,
-        severity: "error",
+        severity: 'error',
       });
     } finally {
       setLoading(false);
@@ -172,24 +148,24 @@ export default function AuthForm({ open, onClose }: AuthFormProps) {
     setLoading(true);
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: "http://localhost:3000/reset-password",
+        redirectTo: 'http://localhost:3000/reset-password',
       });
 
       if (error) throw error;
 
-      setAlert({
+      showAlert({
         message:
-          "Revisa tu correo. Te enviamos un enlace para cambiar tu contraseña.",
-        severity: "success",
+          'Revisa tu correo. Te enviamos un enlace para cambiar tu contraseña.',
+        severity: 'success',
       });
 
       onClose();
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : "Error desconocido";
+      const message = err instanceof Error ? err.message : 'Error desconocido';
 
       setAlert({
         message,
-        severity: "error",
+        severity: 'error',
       });
     } finally {
       setLoading(false);
@@ -208,96 +184,70 @@ export default function AuthForm({ open, onClose }: AuthFormProps) {
           </PrimaryButton>
         </Stack>
       }
+      alertState={alert}
+      setAlertState={(v) => setAlert(v)}
+      loading={loading}
     >
-      <Stack sx={{ height: "100%" }} justifyContent="center">
-        {alert && (
-          <CustomAlert
-            message={alert.message}
-            severity={alert.severity}
-            onClose={() => setAlert(null)}
+      <Stack sx={{ height: '100%' }} justifyContent="center">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            void handleSubmit();
+          }}
+          style={{
+            width: '100%',
+          }}
+        >
+          <Stack
+            sx={{
+              borderRadius: 2,
+              backgroundColor: (theme) => theme.palette.background.paper,
+            }}
+            spacing={2}
+          >
+            <Stack spacing={2}>
+              {isSignUp && (
+                <TextField
+                  label="Nombre de usuario"
+                  value={form.name}
+                  onChange={(e) => handleFieldChange('name', e.target.value)}
+                  fullWidth
+                />
+              )}
+
+              <TextField
+                label="Correo electrónico"
+                value={form.email}
+                onChange={(e) => handleFieldChange('email', e.target.value)}
+                fullWidth
+              />
+
+              {(isSignIn || isSignUp) && (
+                <PasswordFields
+                  password={form.password}
+                  onChangePassword={(v) => handleFieldChange('password', v)}
+                  showConfirm={isSignUp}
+                  confirmPassword={confirmPassword}
+                  onChangeConfirmPassword={setConfirmPassword}
+                />
+              )}
+            </Stack>
+          </Stack>
+        </form>
+
+        {isSignIn && (
+          <RedirectionLink
+            linkText="Olvidaste tu contraseña?"
+            linkTitle="Recuperar"
+            onLinkClick={() => setMode('forgotPassword')}
           />
         )}
 
-        {loading ? (
-          <Loader />
-        ) : (
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              void handleSubmit(form);
-            }}
-            style={{
-              width: "100%",
-            }}
-          >
-            <Stack
-              sx={{
-                borderRadius: 2,
-                backgroundColor: (theme) => theme.palette.background.paper,
-              }}
-              spacing={2}
-            >
-              <Stack spacing={2}>
-                {isSignUp && (
-                  <TextField
-                    label="Nombre de usuario"
-                    value={form.name}
-                    onChange={(e) => handleFieldChange("name", e.target.value)}
-                    fullWidth
-                  />
-                )}
-
-                <TextField
-                  label="Correo electrónico"
-                  value={form.email}
-                  onChange={(e) => handleFieldChange("email", e.target.value)}
-                  fullWidth
-                />
-
-                {(isSignIn || isSignUp) && (
-                  <PasswordFields
-                    password={form.password}
-                    onChangePassword={(v) => handleFieldChange("password", v)}
-                    showConfirm={isSignUp}
-                    confirmPassword={confirmPassword}
-                    onChangeConfirmPassword={setConfirmPassword}
-                  />
-                )}
-              </Stack>
-            </Stack>
-          </form>
-        )}
-
-        {isSignIn && (
-          <Stack direction="row" spacing={0.5} mt={2} ml={1}>
-            <Typography color="text.secondary" sx={{ fontSize: 12 }}>
-              Olvidaste tu contraseña?
-            </Typography>
-            <Link
-              component="button"
-              underline="hover"
-              onClick={() => setMode("forgotPassword")}
-              sx={{ cursor: "pointer", fontSize: 12 }}
-            >
-              Recuperar
-            </Link>
-          </Stack>
-        )}
-
-        <Stack direction="row" spacing={0.5} mt={1} ml={1}>
-          <Typography color="text.secondary" sx={{ fontSize: 12 }}>
-            {AuthTitlesDict[mode].linkText}
-          </Typography>
-          <Link
-            component="button"
-            variant="body2"
-            underline="hover"
-            onClick={() => setMode(isSignIn ? "signUp" : "signIn")}
-            sx={{ cursor: "pointer", fontSize: 12 }}
-          >
-            {AuthTitlesDict[mode].linkTitle}
-          </Link>
-        </Stack>
+        <RedirectionLink
+          linkTitle={AuthTitlesDict[mode].linkTitle}
+          linkText={AuthTitlesDict[mode].linkText}
+          onLinkClick={() => setMode(isSignIn ? 'signUp' : 'signIn')}
+        />
       </Stack>
     </AppDrawer>
   );

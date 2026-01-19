@@ -230,7 +230,6 @@ export default function PreordersTab() {
 
             {isAnyDatePicked && (
               <Button
-                type="link"
                 sx={{
                   padding: 0,
                   minWidth: 0,

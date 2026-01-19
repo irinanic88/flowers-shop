@@ -17,3 +17,24 @@ export const statusColorsDict: Record<OrderStatusType, ChipProps['color']> = {
   cancelled: 'error',
   pending: 'warning',
 };
+
+export const AuthTitlesDict = {
+  signIn: {
+    title: 'Iniciar sesión',
+    submitButton: 'Iniciar sesión',
+    linkText: 'Aún no estás registrado?',
+    linkTitle: 'Registrarse',
+  },
+  signUp: {
+    title: 'Registrarse',
+    submitButton: 'Registrarse',
+    linkText: 'Ya tienes una cuenta?',
+    linkTitle: 'Iniciar sesión',
+  },
+  forgotPassword: {
+    title: 'Recuperar contraseña',
+    submitButton: 'Enviar enlace',
+    linkText: 'Recordaste los datos?',
+    linkTitle: 'Ir al registro',
+  },
+};

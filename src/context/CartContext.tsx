@@ -9,7 +9,7 @@ type CartContextType = {
     product: Omit<CartItem, 'quantity'>,
     quantity: number,
   ) => void;
-  removeFromCart: (id: number) => void;
+  removeFromCart: (id: string) => void;
   clearCart: () => void;
   total: number;
 };
@@ -48,7 +48,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     });
   };
 
-  const removeFromCart = (id: number) => {
+  const removeFromCart = (id: string) => {
     setItems((prev) => prev.filter((item) => item.id !== id));
   };
 

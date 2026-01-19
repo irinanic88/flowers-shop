@@ -1,22 +1,19 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { TextField, Stack, Snackbar, Alert } from '@mui/material';
+import { TextField, Stack } from '@mui/material';
 import { PrimaryButton, SecondaryButton } from '@/src/styledComponents';
 import { supabase } from '@/lib/supabase';
-import { ProductType, UiAlert } from '@/src/types';
+import { AlertType, ProductType } from '@/src/types';
 import ImageUploader from '@/src/components/ImageUploader';
 import { isEmpty, all } from 'ramda';
 import { AppDrawer } from '@/src/components/AppDrawer';
+import { useAlert } from '@/src/context/AlertContext';
 
 interface AdminProductFormProps {
   open: boolean;
   onClose: () => void;
   product?: ProductType | null;
-  onNotify?: (
-    message: string,
-    severity: 'success' | 'error' | 'info' | 'warning',
-  ) => void;
 }
 
 interface ProductForm {
@@ -39,16 +36,9 @@ const emptyForm: ProductForm = {
   height: '',
 };
 
-const alertInitialState = {
-  open: false,
-  message: '',
-  severity: 'success' as 'success' | 'error',
-};
-
 export default function AdminProductForm({
   open,
   onClose,
-  onNotify,
   product = null,
 }: AdminProductFormProps) {
   const isEdit = !!product;
@@ -56,8 +46,9 @@ export default function AdminProductForm({
   const [form, setForm] = useState<ProductForm>(emptyForm);
   const [loading, setLoading] = useState(false);
   const [isReadyToSubmit, setIsReadyToSubmit] = useState(false);
+  const [alertState, setAlertState] = useState<AlertType>(null);
 
-  const [alertState, setAlertState] = useState<UiAlert>(alertInitialState);
+  const { showAlert } = useAlert();
 
   useEffect(() => {
     if (product) {
@@ -77,8 +68,9 @@ export default function AdminProductForm({
 
   useEffect(() => {
     const { title, price, pots_count, available } = form;
+
     const isFormFilled = all(
-      (v) => !isEmpty(v.trim()),
+      (v) => !isEmpty(String(v).trim()),
       [title, price, pots_count, available],
     );
 
@@ -87,10 +79,6 @@ export default function AdminProductForm({
 
   const handleChange = (key: keyof ProductForm, value: string) => {
     setForm((prev) => ({ ...prev, [key]: value }));
-  };
-
-  const notify = (message: string, severity: 'success' | 'error') => {
-    onNotify?.(message, severity);
   };
 
   const handleCreate = async () => {
@@ -102,9 +90,13 @@ export default function AdminProductForm({
       .select()
       .single();
 
-    if (error) notify(`Error: ${error.message}`, 'error');
+    if (error)
+      setAlertState({ message: `Error: ${error.message}`, severity: 'error' });
     else {
-      notify('Producto agregado!', 'success');
+      showAlert({
+        message: `Producto ${form.title} agregado!`,
+        severity: 'success',
+      });
       onClose();
     }
 
@@ -121,9 +113,13 @@ export default function AdminProductForm({
       .select()
       .single();
 
-    if (error) notify(`Error: ${error.message}`, 'error');
+    if (error)
+      setAlertState({ message: `Error: ${error.message}`, severity: 'error' });
     else {
-      notify('Producto actualizado!', 'success');
+      showAlert({
+        message: `Producto ${form.title} actualizado!`,
+        severity: 'success',
+      });
       onClose();
     }
 
@@ -131,103 +127,89 @@ export default function AdminProductForm({
   };
 
   return (
-    <>
-      <AppDrawer
-        open={open}
-        onClose={onClose}
-        title={isEdit ? 'Editar producto' : 'Agregar producto'}
-        actions={
-          <Stack spacing={1}>
-            <PrimaryButton
-              onClick={isEdit ? handleUpdate : handleCreate}
-              disabled={loading || !isReadyToSubmit}
-            >
-              {isEdit ? 'Guardar cambios' : 'Agregar producto'}
-            </PrimaryButton>
+    <AppDrawer
+      open={open}
+      onClose={onClose}
+      title={isEdit ? 'Editar producto' : 'Agregar producto'}
+      actions={
+        <Stack spacing={1}>
+          <PrimaryButton
+            onClick={isEdit ? handleUpdate : handleCreate}
+            disabled={loading || !isReadyToSubmit}
+          >
+            {isEdit ? 'Guardar cambios' : 'Agregar producto'}
+          </PrimaryButton>
 
-            <SecondaryButton
-              onClick={() => setForm(emptyForm)}
-              disabled={loading || !isReadyToSubmit}
-              variant="outlined"
-            >
-              Borrar formulario
-            </SecondaryButton>
-          </Stack>
-        }
-      >
-        <Stack spacing={2}>
-          <TextField
-            label="Título"
-            value={form.title}
-            onChange={(e) => handleChange('title', e.target.value)}
-            fullWidth
-            required
-          />
-
-          <TextField
-            label="Precio"
-            type="number"
-            value={form.price}
-            onChange={(e) => handleChange('price', e.target.value)}
-            fullWidth
-            required
-          />
-
-          <TextField
-            label="Cantidad de plantas"
-            type="number"
-            value={form.pots_count}
-            onChange={(e) => handleChange('pots_count', e.target.value)}
-            fullWidth
-            required
-          />
-
-          <TextField
-            label="Disponible"
-            type="number"
-            value={form.available}
-            onChange={(e) => handleChange('available', e.target.value)}
-            fullWidth
-            required
-          />
-
-          <TextField
-            label="Altura"
-            value={form.height}
-            onChange={(e) => handleChange('height', e.target.value)}
-            fullWidth
-          />
-
-          <TextField
-            label="Comentario"
-            value={form.comment}
-            onChange={(e) => handleChange('comment', e.target.value)}
-            fullWidth
-            multiline
-            rows={3}
-          />
-
-          <ImageUploader
-            initialImages={form.images}
-            onChange={(urls) => setForm((prev) => ({ ...prev, images: urls }))}
-          />
+          <SecondaryButton
+            onClick={() => setForm(emptyForm)}
+            disabled={loading || !isReadyToSubmit}
+            variant="outlined"
+          >
+            Borrar formulario
+          </SecondaryButton>
         </Stack>
-      </AppDrawer>
+      }
+      alertState={alertState}
+      setAlertState={(v) => setAlertState(v)}
+      loading={loading}
+    >
+      <Stack spacing={2}>
+        <TextField
+          label="Título"
+          value={form.title}
+          onChange={(e) => handleChange('title', e.target.value)}
+          fullWidth
+          required
+        />
 
-      <Snackbar
-        open={alertState.open}
-        autoHideDuration={4000}
-        onClose={() => setAlertState(alertInitialState)}
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-      >
-        <Alert
-          onClose={() => setAlertState(alertInitialState)}
-          severity={alertState.severity}
-          sx={{ width: '100%' }}
-        >
-          {alertState.message}
-        </Alert>
-      </Snackbar>
-    </>
+        <TextField
+          label="Precio"
+          type="number"
+          value={form.price}
+          onChange={(e) => handleChange('price', e.target.value)}
+          fullWidth
+          required
+        />
+
+        <TextField
+          label="Cantidad de plantas"
+          type="number"
+          value={form.pots_count}
+          onChange={(e) => handleChange('pots_count', e.target.value)}
+          fullWidth
+          required
+        />
+
+        <TextField
+          label="Disponible"
+          type="number"
+          value={form.available}
+          onChange={(e) => handleChange('available', e.target.value)}
+          fullWidth
+          required
+        />
+
+        <TextField
+          label="Altura"
+          value={form.height}
+          onChange={(e) => handleChange('height', e.target.value)}
+          fullWidth
+        />
+
+        <TextField
+          label="Comentario"
+          value={form.comment}
+          onChange={(e) => handleChange('comment', e.target.value)}
+          fullWidth
+          multiline
+          rows={3}
+        />
+
+        <ImageUploader
+          initialImages={form.images}
+          onChange={(urls) => setForm((prev) => ({ ...prev, images: urls }))}
+        />
+      </Stack>
+    </AppDrawer>
   );
 }

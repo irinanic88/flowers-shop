@@ -1,3 +1,5 @@
+import { AlertColor } from '@mui/material';
+
 export interface ProductType {
   id: string;
   title: string;
@@ -26,7 +28,7 @@ export type AuthFormType = {
 };
 
 export interface CartItem {
-  id: number;
+  id: string;
   title: string;
   price: number;
   quantity: number;
@@ -55,8 +57,8 @@ export interface OrderType {
   profile_name?: string;
 }
 
-export type UiAlert = {
-  open: boolean;
+export type AlertType = {
   message: string;
-  severity: 'success' | 'error' | 'info' | 'warning';
-};
+  severity: AlertColor;
+  duration?: number | null;
+} | null;

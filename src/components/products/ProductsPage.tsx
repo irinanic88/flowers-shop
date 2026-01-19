@@ -1,23 +1,16 @@
 'use client';
 
-import {
-  Stack,
-  Typography,
-  Snackbar,
-  Alert,
-  DialogContent,
-  Dialog,
-  Box,
-} from '@mui/material';
+import { Stack, Typography, DialogContent, Dialog, Box } from '@mui/material';
 import ProductCard from '@/src/components/products/ProductCard';
 import { useAuth } from '@/src/context/AuthContext';
 import { useProducts } from '@/src/context/ProductsContext';
-import React, { useCallback, useMemo, useState } from 'react';
-import type { DisponibilityType, ProductType, UiAlert } from '@/src/types';
+import React, { useMemo, useState } from 'react';
+import type { AlertType, DisponibilityType, ProductType } from '@/src/types';
 import { supabase } from '@/lib/supabase';
 import { PrimaryButton, SecondaryButton } from '@/src/styledComponents';
 import { equals, isNotEmpty } from 'ramda';
 import { ProductsFilters } from '@/src/components/products/ProductsFilters';
+import { useAlert } from '@/src/context/AlertContext';
 
 export default function ProductsPage() {
   const [selectedProduct, setSelectedProduct] = useState<ProductType | null>(
@@ -27,14 +20,11 @@ export default function ProductsPage() {
     DisponibilityType | 'all'
   >('all');
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
-  const [alert, setAlert] = useState<UiAlert>({
-    open: false,
-    message: '',
-    severity: 'success',
-  });
+  const [alert, setAlert] = useState<AlertType>(null);
 
   const { products, loading } = useProducts();
   const { isUnknownUser, isAdmin } = useAuth();
+  const { showAlert } = useAlert();
 
   const filteredProducts = useMemo(() => {
     return products.filter((product) => {
@@ -50,26 +40,25 @@ export default function ProductsPage() {
     });
   }, [products, availabilityFilter, isAdmin]);
 
-  const notify = useCallback(
-    (message: string, severity: UiAlert['severity']) => {
-      setAlert({ open: true, message, severity });
-    },
-    [],
-  );
-
-  const handleDeleteProduct = async (p: ProductType) => {
-    if (!p) return;
+  const handleDeleteProduct = async () => {
+    if (!selectedProduct) return;
 
     try {
-      const { error } = await supabase.from('products').delete().eq('id', p.id);
+      const { error } = await supabase
+        .from('products')
+        .delete()
+        .eq('id', selectedProduct.id);
 
       if (error) {
-        notify(`No se pudo eliminar el producto: ${error.message}`, 'error');
+        showAlert({
+          message: `No se pudo eliminar el producto: ${error.message}`,
+          severity: 'error',
+        });
         return;
       }
 
-      if (p.images?.length) {
-        const filePaths = p.images
+      if (selectedProduct.images?.length) {
+        const filePaths = selectedProduct.images
           .map((url) => url.split('product-images/')[1])
           .filter(Boolean);
 
@@ -80,10 +69,15 @@ export default function ProductsPage() {
 
       setOpenDeleteDialog(false);
 
-      notify(`Producto ${p.title} eliminado.`, 'success');
+      showAlert({
+        message: `Producto ${selectedProduct.title} eliminado.`,
+        severity: 'success',
+      });
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Error desconocido';
-      notify(message, 'error');
+      showAlert({
+        message: err instanceof Error ? err.message : 'Error desconocido',
+        severity: 'error',
+      });
     }
   };
 
@@ -144,8 +138,10 @@ export default function ProductsPage() {
                   <ProductCard
                     key={product.id}
                     product={product}
-                    onNotify={(m, s) => notify(m, s)}
-                    onDelete={(p: ProductType) => setSelectedProduct(p)}
+                    onDelete={(p: ProductType) => {
+                      setSelectedProduct(p);
+                      setOpenDeleteDialog(true);
+                    }}
                   />
                 ))}
               </Box>
@@ -164,21 +160,6 @@ export default function ProductsPage() {
         )}
       </Stack>
 
-      <Snackbar
-        open={alert.open}
-        autoHideDuration={4000}
-        onClose={() => setAlert((p) => ({ ...p, open: false }))}
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-      >
-        <Alert
-          onClose={() => setAlert((p) => ({ ...p, open: false }))}
-          severity={alert.severity}
-          sx={{ width: '100%' }}
-        >
-          {alert.message}
-        </Alert>
-      </Snackbar>
-
       {openDeleteDialog && (
         <Dialog
           open={openDeleteDialog}
@@ -194,11 +175,7 @@ export default function ProductsPage() {
               <SecondaryButton onClick={() => setOpenDeleteDialog(false)}>
                 Cancelar
               </SecondaryButton>
-              <PrimaryButton
-                onClick={() =>
-                  handleDeleteProduct(selectedProduct as ProductType)
-                }
-              >
+              <PrimaryButton onClick={handleDeleteProduct}>
                 Eliminar
               </PrimaryButton>
             </Stack>

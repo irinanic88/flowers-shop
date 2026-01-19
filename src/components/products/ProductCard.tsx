@@ -11,26 +11,19 @@ import { CardEditButton, CardDeleteButton } from '@/src/styledComponents';
 import { useAuth } from '@/src/context/AuthContext';
 import AdminProductForm from '@/src/components/AdminProductForm';
 import ProductImages from '@/src/components/products/ProductImages';
-import type { UiAlert } from '@/src/types';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 
 interface ProductCardProps {
   product: ProductType;
-  onNotify: (message: string, severity: UiAlert['severity']) => void;
   onDelete: (p: ProductType) => void;
 }
 
-export default function ProductCard({
-  product,
-  onNotify,
-  onDelete,
-}: ProductCardProps) {
+export default function ProductCard({ product, onDelete }: ProductCardProps) {
   const [openUpdate, setOpenUpdate] = useState(false);
 
   const { isAdmin, isUser, isUnknownUser } = useAuth();
   const { items, updateItemQuantity } = useCart();
-
   const itemInCart = items.find((i) => i.id === product.id);
   const quantity = itemInCart?.quantity ?? 0;
 
@@ -164,7 +157,6 @@ export default function ProductCard({
         <AdminProductForm
           open={openUpdate}
           onClose={() => setOpenUpdate(false)}
-          onNotify={onNotify}
           product={product}
         />
       )}

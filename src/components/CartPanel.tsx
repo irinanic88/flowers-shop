@@ -14,6 +14,8 @@ import React, { useEffect, useState } from 'react';
 import { useOrders } from '@/src/context/OrdersContext';
 import { AppDrawer } from '@/src/components/AppDrawer';
 import { isEmpty } from 'ramda';
+import { AlertType } from '@/src/types';
+import { useAlert } from '@/src/context/AlertContext';
 
 export interface CartPanelProps {
   open: boolean;
@@ -22,23 +24,32 @@ export interface CartPanelProps {
 
 export default function CartPanel({ open, onClose }: CartPanelProps) {
   const [isCartEmpty, setIsCartEmpty] = useState(true);
+  const [comment, setComment] = useState('');
+  const [alert, setAlert] = useState<AlertType>(null);
+  const [loading, setLoading] = useState(false);
 
   const { items, total, updateItemQuantity, clearCart } = useCart();
-  const [comment, setComment] = useState('');
-
   const { refreshOrders } = useOrders();
+  const { showAlert } = useAlert();
 
   useEffect(() => {
-    setIsCartEmpty(isEmpty(items.length));
+    setIsCartEmpty(isEmpty(items));
   }, [items]);
 
   const handleSubmitPreorder = async () => {
-    if (!items.length) return;
+    if (isCartEmpty) return;
+
+    setLoading(true);
 
     const { data } = await supabase.auth.getUser();
     const userId = data.user?.id;
 
     if (!userId) {
+      setLoading(false);
+      setAlert({
+        message: 'Error',
+        severity: 'error',
+      });
       return;
     }
 
@@ -60,9 +71,19 @@ export default function CartPanel({ open, onClose }: CartPanelProps) {
     ]);
 
     if (err) {
-      console.error(err);
-      return;
+      setAlert({
+        message: `Error: ${err.message}`,
+        severity: 'error',
+      });
     } else {
+      showAlert({
+        message:
+          'Preorden enviada con éxito!\n' +
+          'Tu pedido está en estado pendiente.\n' +
+          'Los productos han sido reservados hasta que el administrador lo apruebe o lo cancele.\n' +
+          'Puedes consultar el estado y los detalles en la tabla de preórdenes',
+        severity: 'success',
+      });
       void refreshOrders();
     }
 
@@ -87,6 +108,9 @@ export default function CartPanel({ open, onClose }: CartPanelProps) {
           </SecondaryButton>
         </Stack>
       }
+      alertState={alert}
+      setAlertState={(v) => setAlert(v)}
+      loading={loading}
     >
       <Stack justifyContent="space-between" sx={{ height: '100%' }}>
         {!items.length && (
