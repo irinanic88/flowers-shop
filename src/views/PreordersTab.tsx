@@ -10,12 +10,12 @@ import {
   TableHead,
   TableRow,
   Paper,
-  Chip,
   TableSortLabel,
   Stack,
   TablePagination,
   IconButton,
   Typography,
+  Button,
 } from '@mui/material';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
@@ -29,6 +29,7 @@ import {
   PrimaryButton,
   RoundIconButton,
   SecondaryRoundIconButton,
+  StyledChip,
 } from '@/src/styledComponents';
 import DownloadIcon from '@mui/icons-material/Download';
 import CheckIcon from '@mui/icons-material/Check';
@@ -41,6 +42,8 @@ import { exportOrdersToExcel } from '@/src/helpers/exportToExcel';
 import { DateRangePicker } from '@/src/components/DateRangePicker';
 import { endOfDay, startOfDay } from 'date-fns';
 import TuneIcon from '@mui/icons-material/Tune';
+import CloseIcon from '@mui/icons-material/Close';
+import { any, isNotNil } from 'ramda';
 
 export default function PreordersTab() {
   const [statusFilter, setStatusFilter] = useState<OrderStatusType | 'all'>(
@@ -191,6 +194,8 @@ export default function PreordersTab() {
       </Stack>
     );
 
+  const isAnyDatePicked = any(isNotNil, dateRange);
+
   return (
     <>
       <Stack direction="row" justifyContent="space-between" mb={1}>
@@ -220,7 +225,33 @@ export default function PreordersTab() {
             users={users}
           />
 
-          <DateRangePicker value={dateRange} onChange={setDateRange} />
+          <Stack direction="row" spacing={1} sx={{ width: 'fit-content' }}>
+            <DateRangePicker value={dateRange} onChange={setDateRange} />
+
+            {isAnyDatePicked && (
+              <Button
+                sx={{
+                  padding: 0,
+                  minWidth: 0,
+                  '&:hover, &:active': {
+                    backgroundColor: 'transparent',
+                  },
+                }}
+                onClick={() => setDateRange([null, null])}
+              >
+                <CloseIcon
+                  sx={(theme) => ({
+                    width: 20,
+                    height: 20,
+                    color: theme.palette.text.secondary,
+                    '&:hover': {
+                      color: theme.palette.text.primary,
+                    },
+                  })}
+                />
+              </Button>
+            )}
+          </Stack>
         </Stack>
       )}
 
@@ -316,7 +347,7 @@ export default function PreordersTab() {
                   )}
 
                   <TableCell>
-                    <Chip
+                    <StyledChip
                       label={orderStatusesDict[order.status]}
                       color={statusColorsDict[order.status]}
                       variant="outlined"

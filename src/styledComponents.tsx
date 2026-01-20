@@ -1,6 +1,6 @@
 import { styled } from '@mui/material/styles';
 import Button from '@mui/material/Button';
-import { Card, IconButton, Stack, Box } from '@mui/material';
+import { Card, IconButton, Stack, Box, Chip } from '@mui/material';
 
 export const PrimaryButton = styled(Button)(({ theme }) => ({
   backgroundColor: theme.palette.primary.main,
@@ -87,7 +87,6 @@ export const RoundIconButton = styled(IconButton)(({ theme }) => ({
 export const SecondaryRoundIconButton = styled(IconButton)(({ theme }) => ({
   width: 36,
   height: 36,
-
   borderRadius: '50%',
   backgroundColor: 'transparent',
   color: theme.palette.text.secondary,
@@ -122,8 +121,7 @@ export const CardEditButton = styled(Button)(({ theme }) => ({
   },
 
   '&:hover': {
-    backgroundColor: theme.palette.action.hover,
-    color: theme.palette.text.secondary,
+    backgroundColor: theme.palette.success.light,
   },
 }));
 
@@ -142,8 +140,7 @@ export const CardDeleteButton = styled(Button)(({ theme }) => ({
   },
 
   '&:hover': {
-    backgroundColor: theme.palette.error.main,
-    color: theme.palette.error.contrastText,
+    backgroundColor: theme.palette.error.light,
   },
 }));
 
@@ -187,4 +184,9 @@ export const FilterPillBox = styled(Box)(({ theme }) => ({
   transition: 'border-color 0.2s ease, background-color 0.2s ease',
   overflow: 'hidden',
   maxWidth: '100%',
+}));
+
+export const StyledChip = styled(Chip)(() => ({
+  borderRadius: 999,
+  height: 24,
 }));

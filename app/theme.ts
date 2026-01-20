@@ -29,17 +29,19 @@ export const theme = createTheme({
 
     error: {
       main: '#C94A4A',
+      light: '#f3ecec',
       contrastText: '#FFFFFF',
     },
 
     divider: '#E5E7EB',
 
     warning: {
-      main: '#EFE7D8',
+      main: '#f6a351',
     },
 
     success: {
       main: '#4F7F52',
+      light: '#E6F0E8',
     },
   },
 

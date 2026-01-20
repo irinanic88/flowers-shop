@@ -1,33 +1,31 @@
 'use client';
 
-import { useState } from 'react';
-import { Snackbar, Alert, AlertColor } from '@mui/material';
+import { Snackbar, Alert } from '@mui/material';
+import { AlertType } from '@/src/types';
 
 interface CustomAlertProps {
-  message: string;
-  severity?: AlertColor;
-  duration?: number;
-  onClose?: () => void;
+  alertState: AlertType;
+  onClose: () => void;
 }
 
-export default function CustomAlert({
-  message,
-  severity = 'info',
-  duration = 4000,
-  onClose,
-}: CustomAlertProps) {
-  const [open, setOpen] = useState(true);
-
-  const handleClose = (_?: unknown, reason?: string) => {
-    if (reason === 'clickaway') return;
-    setOpen(false);
-    if (onClose) onClose();
-  };
-
+export default function CustomAlert({ alertState, onClose }: CustomAlertProps) {
   return (
-    <Snackbar open={open} autoHideDuration={duration} onClose={handleClose}>
-      <Alert onClose={handleClose} severity={severity} variant="filled">
-        {message}
+    <Snackbar
+      open
+      autoHideDuration={alertState?.duration}
+      onClose={onClose}
+      sx={{
+        position: 'relative',
+        top: 8,
+        left: '0 !important',
+        right: 0,
+        width: '100%',
+        justifyContent: 'center',
+        px: 1,
+      }}
+    >
+      <Alert onClose={onClose} severity={alertState?.severity} variant="filled">
+        {alertState?.message}
       </Alert>
     </Snackbar>
   );

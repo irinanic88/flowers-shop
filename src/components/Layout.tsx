@@ -3,6 +3,8 @@
 import React, { ReactNode } from 'react';
 import { Divider, Stack } from '@mui/material';
 import Logo from '@/src/components/Logo';
+import CustomAlert from '@/src/components/CustomAlert';
+import { useAlert } from '@/src/context/AlertContext';
 
 interface LayoutProps {
   actions: ReactNode;
@@ -10,6 +12,8 @@ interface LayoutProps {
 }
 
 export default function Layout({ actions, children }: LayoutProps) {
+  const { alert, clearAlert } = useAlert();
+
   return (
     <Stack
       sx={{
@@ -39,6 +43,8 @@ export default function Layout({ actions, children }: LayoutProps) {
         })}
         flexItem
       />
+
+      {alert && <CustomAlert alertState={alert} onClose={clearAlert} />}
 
       <Stack
         sx={{

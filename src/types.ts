@@ -1,3 +1,5 @@
+import { AlertColor } from '@mui/material';
+
 export interface ProductType {
   id: string;
   title: string;
@@ -55,8 +57,8 @@ export interface OrderType {
   profile_name?: string;
 }
 
-export type UiAlert = {
-  open: boolean;
+export type AlertType = {
   message: string;
-  severity: 'success' | 'error' | 'info' | 'warning';
-};
+  severity: AlertColor;
+  duration?: number | null;
+} | null;

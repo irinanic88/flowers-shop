@@ -3,14 +3,20 @@
 import { Drawer, Box, IconButton, Typography, Stack } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import React from 'react';
+import CustomAlert from '@/src/components/CustomAlert';
+import { AlertType } from '@/src/types';
+import Loader from '@/src/components/Loader';
 
 interface AppDrawerProps {
   actions?: React.ReactNode;
+  alertState: AlertType;
+  setAlertState: (state: AlertType) => void;
   open: boolean;
   onClose: () => void;
   title?: string;
   children: React.ReactNode;
   header?: React.ReactNode;
+  loading: boolean;
 }
 
 export function AppDrawer({
@@ -20,6 +26,9 @@ export function AppDrawer({
   title,
   header,
   children,
+  alertState,
+  setAlertState,
+  loading,
 }: AppDrawerProps) {
   return (
     <Drawer
@@ -29,7 +38,8 @@ export function AppDrawer({
       PaperProps={{
         sx: {
           backgroundColor: 'secondary',
-          minWidth: '300px',
+          maxWidth: '400px',
+          width: '100%',
         },
       }}
     >
@@ -57,20 +67,31 @@ export function AppDrawer({
 
       {header}
 
-      <Stack alignItems="center" sx={{ width: '100%', height: '100%' }}>
-        <Stack
-          sx={{
-            height: '100%',
-            p: 2,
-            overflowY: 'auto',
-            width: { xs: '100%', md: 400 },
-          }}
-          justifyContent="space-between"
-        >
-          {children}
-          <Stack mt={2}>{actions}</Stack>
+      {alertState && (
+        <CustomAlert
+          alertState={alertState}
+          onClose={() => setAlertState(null)}
+        />
+      )}
+
+      {loading ? (
+        <Loader />
+      ) : (
+        <Stack alignItems="center" sx={{ width: '100%', height: '100%' }}>
+          <Stack
+            sx={{
+              height: '100%',
+              p: 2,
+              overflowY: 'auto',
+              width: { xs: '100%', md: 400 },
+            }}
+            justifyContent="space-between"
+          >
+            {children}
+            <Stack mt={2}>{actions}</Stack>
+          </Stack>
         </Stack>
-      </Stack>
+      )}
     </Drawer>
   );
 }
