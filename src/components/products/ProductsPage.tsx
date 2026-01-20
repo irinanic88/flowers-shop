@@ -5,7 +5,7 @@ import ProductCard from '@/src/components/products/ProductCard';
 import { useAuth } from '@/src/context/AuthContext';
 import { useProducts } from '@/src/context/ProductsContext';
 import React, { useMemo, useState } from 'react';
-import type { AlertType, DisponibilityType, ProductType } from '@/src/types';
+import type { DisponibilityType, ProductType } from '@/src/types';
 import { supabase } from '@/lib/supabase';
 import { PrimaryButton, SecondaryButton } from '@/src/styledComponents';
 import { equals, isNotEmpty } from 'ramda';
@@ -20,7 +20,6 @@ export default function ProductsPage() {
     DisponibilityType | 'all'
   >('all');
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
-  const [alert, setAlert] = useState<AlertType>(null);
 
   const { products, loading } = useProducts();
   const { isUnknownUser, isAdmin } = useAuth();
@@ -66,9 +65,6 @@ export default function ProductsPage() {
           await supabase.storage.from('product-images').remove(filePaths);
         }
       }
-
-      setOpenDeleteDialog(false);
-
       showAlert({
         message: `Producto ${selectedProduct.title} eliminado.`,
         severity: 'success',
@@ -78,6 +74,8 @@ export default function ProductsPage() {
         message: err instanceof Error ? err.message : 'Error desconocido',
         severity: 'error',
       });
+    } finally {
+      setOpenDeleteDialog(false);
     }
   };
 

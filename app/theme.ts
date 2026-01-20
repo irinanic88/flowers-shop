@@ -29,6 +29,7 @@ export const theme = createTheme({
 
     error: {
       main: '#C94A4A',
+      light: '#f3ecec',
       contrastText: '#FFFFFF',
     },
 
@@ -40,6 +41,7 @@ export const theme = createTheme({
 
     success: {
       main: '#4F7F52',
+      light: '#E6F0E8',
     },
   },
 

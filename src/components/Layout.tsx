@@ -44,7 +44,7 @@ export default function Layout({ actions, children }: LayoutProps) {
         flexItem
       />
 
-      <CustomAlert alertState={alert} onClose={clearAlert} />
+      {alert && <CustomAlert alertState={alert} onClose={clearAlert} />}
 
       <Stack
         sx={{

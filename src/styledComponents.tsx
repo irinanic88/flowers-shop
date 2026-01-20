@@ -121,8 +121,7 @@ export const CardEditButton = styled(Button)(({ theme }) => ({
   },
 
   '&:hover': {
-    backgroundColor: theme.palette.action.hover,
-    color: theme.palette.text.secondary,
+    backgroundColor: theme.palette.success.light,
   },
 }));
 
@@ -141,8 +140,7 @@ export const CardDeleteButton = styled(Button)(({ theme }) => ({
   },
 
   '&:hover': {
-    backgroundColor: theme.palette.error.main,
-    color: theme.palette.error.contrastText,
+    backgroundColor: theme.palette.error.light,
   },
 }));
 
