@@ -41,7 +41,8 @@ export function ProductsProvider({ children }: { children: ReactNode }) {
       console.error('Error loading products:', error);
       setProducts([]);
     } else {
-      setProducts(data ?? []);
+      const productsData = data ? data.map(p => ({ ...p, price: p.price.toFixed(2)})) : [];
+      setProducts(productsData);
     }
 
     setLoading(false);

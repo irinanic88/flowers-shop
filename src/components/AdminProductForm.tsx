@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { TextField, Stack } from '@mui/material';
-import { PrimaryButton, SecondaryButton } from '@/src/styledComponents';
-import { supabase } from '@/lib/supabase';
-import { AlertType, ProductType } from '@/src/types';
-import ImageUploader from '@/src/components/ImageUploader';
-import { isEmpty, all } from 'ramda';
-import { AppDrawer } from '@/src/components/AppDrawer';
-import { useAlert } from '@/src/context/AlertContext';
+import React, { useState, useEffect } from "react";
+import { TextField, Stack } from "@mui/material";
+import { PrimaryButton, SecondaryButton } from "@/src/styledComponents";
+import { supabase } from "@/lib/supabase";
+import { AlertType, ProductType } from "@/src/types";
+import ImageUploader from "@/src/components/ImageUploader";
+import { isEmpty, all } from "ramda";
+import { AppDrawer } from "@/src/components/AppDrawer";
+import { useAlert } from "@/src/context/AlertContext";
 
 interface AdminProductFormProps {
   open: boolean;
@@ -24,16 +24,18 @@ interface ProductForm {
   images: string[];
   available: number | string;
   height: string;
+  width: string;
 }
 
 const emptyForm: ProductForm = {
-  title: '',
-  price: '',
-  comment: '',
-  pots_count: '',
+  title: "",
+  price: "",
+  comment: "",
+  pots_count: "",
   images: [],
-  available: '',
-  height: '',
+  available: "",
+  height: "",
+  width: "",
 };
 
 export default function AdminProductForm({
@@ -55,11 +57,12 @@ export default function AdminProductForm({
       setForm({
         title: product.title,
         price: product.price,
-        comment: product.comment ?? '',
-        pots_count: product.pots_count ?? '',
+        comment: product.comment ?? "",
+        pots_count: product.pots_count ?? "",
         images: product.images ?? [],
         available: product.available,
-        height: product.height ?? '',
+        height: product.height ?? "",
+        width: product.width ?? "",
       });
     } else {
       setForm(emptyForm);
@@ -85,17 +88,17 @@ export default function AdminProductForm({
     setLoading(true);
 
     const { error } = await supabase
-      .from('products')
+      .from("products")
       .insert([form])
       .select()
       .single();
 
     if (error)
-      setAlertState({ message: `Error: ${error.message}`, severity: 'error' });
+      setAlertState({ message: `Error: ${error.message}`, severity: "error" });
     else {
       showAlert({
         message: `Producto ${form.title} agregado!`,
-        severity: 'success',
+        severity: "success",
       });
       onClose();
     }
@@ -107,18 +110,18 @@ export default function AdminProductForm({
     setLoading(true);
 
     const { error } = await supabase
-      .from('products')
+      .from("products")
       .update(form)
-      .eq('id', product!.id)
+      .eq("id", product!.id)
       .select()
       .single();
 
     if (error)
-      setAlertState({ message: `Error: ${error.message}`, severity: 'error' });
+      setAlertState({ message: `Error: ${error.message}`, severity: "error" });
     else {
       showAlert({
-        message: `Producto ${form.title} actualizado!`,
-        severity: 'success',
+        message: `Articulo ${form.title} actualizado!`,
+        severity: "success",
       });
       onClose();
     }
@@ -130,14 +133,14 @@ export default function AdminProductForm({
     <AppDrawer
       open={open}
       onClose={onClose}
-      title={isEdit ? 'Editar producto' : 'Agregar producto'}
+      title={isEdit ? "Editar articulo" : "Agregar articulo"}
       actions={
         <Stack spacing={1}>
           <PrimaryButton
             onClick={isEdit ? handleUpdate : handleCreate}
             disabled={loading || !isReadyToSubmit}
           >
-            {isEdit ? 'Guardar cambios' : 'Agregar producto'}
+            {isEdit ? "Guardar cambios" : "Agregar"}
           </PrimaryButton>
 
           <SecondaryButton
@@ -157,7 +160,7 @@ export default function AdminProductForm({
         <TextField
           label="Título"
           value={form.title}
-          onChange={(e) => handleChange('title', e.target.value)}
+          onChange={(e) => handleChange("title", e.target.value)}
           fullWidth
           required
         />
@@ -166,7 +169,7 @@ export default function AdminProductForm({
           label="Precio"
           type="number"
           value={form.price}
-          onChange={(e) => handleChange('price', e.target.value)}
+          onChange={(e) => handleChange("price", e.target.value)}
           fullWidth
           required
         />
@@ -175,7 +178,7 @@ export default function AdminProductForm({
           label="Cantidad de plantas"
           type="number"
           value={form.pots_count}
-          onChange={(e) => handleChange('pots_count', e.target.value)}
+          onChange={(e) => handleChange("pots_count", e.target.value)}
           fullWidth
           required
         />
@@ -184,7 +187,7 @@ export default function AdminProductForm({
           label="Disponible"
           type="number"
           value={form.available}
-          onChange={(e) => handleChange('available', e.target.value)}
+          onChange={(e) => handleChange("available", e.target.value)}
           fullWidth
           required
         />
@@ -192,14 +195,21 @@ export default function AdminProductForm({
         <TextField
           label="Altura"
           value={form.height}
-          onChange={(e) => handleChange('height', e.target.value)}
+          onChange={(e) => handleChange("height", e.target.value)}
+          fullWidth
+        />
+
+        <TextField
+          label="Diámetro maceta"
+          value={form.width}
+          onChange={(e) => handleChange("width", e.target.value)}
           fullWidth
         />
 
         <TextField
           label="Comentario"
           value={form.comment}
-          onChange={(e) => handleChange('comment', e.target.value)}
+          onChange={(e) => handleChange("comment", e.target.value)}
           fullWidth
           multiline
           rows={3}
