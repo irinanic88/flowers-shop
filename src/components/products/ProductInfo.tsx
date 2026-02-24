@@ -31,20 +31,20 @@ export default function ProductInfo({
           <Stack direction="row" spacing={0.5}>
             <HeightIcon fontSize="small" />
             <Typography variant="body2">
-              Altura: {product.height ? `${product.height} cm` : "--"}
+              Altura: {product.height ? `${product.height} cms` : "--"}
             </Typography>
           </Stack>
           <Stack direction="row" spacing={0.5}>
             <CircleOutlinedIcon fontSize="small" />
             <Typography variant="body2">
-              Diám. maceta: {product.width ? `${product.width} cm` : "--"}
+              Maceta: {product.width ? `${product.width} cms` : "--"}
             </Typography>
           </Stack>
           <Stack direction="row" spacing={0.5}>
             <GrassIcon fontSize="small" />
             <Stack>
               <Typography variant="body2">
-                Plantas por caja: {product.pots_count}
+                Uds x caja: {product.pots_count}
               </Typography>{" "}
             </Stack>
           </Stack>

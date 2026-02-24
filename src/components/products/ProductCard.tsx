@@ -55,7 +55,7 @@ export default function ProductCard({ product, onDelete }: ProductCardProps) {
                 variant="body2"
                 color={product.available > 0 ? "primary" : "error"}
               >
-                Cajas En Stock: {product.available}
+                En Stock: {product.available}
               </Typography>
             )}
           </Stack>
@@ -132,7 +132,7 @@ export default function ProductCard({ product, onDelete }: ProductCardProps) {
               alignItems="center"
               sx={{ mt: 2 }}
             >
-              <Typography variant="body2">Preordenar:</Typography>
+              <Typography variant="body2">Pedir:</Typography>
               <IncrementDecrementButtons
                 inStock={product.available}
                 quantity={quantity}

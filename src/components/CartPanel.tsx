@@ -78,10 +78,10 @@ export default function CartPanel({ open, onClose }: CartPanelProps) {
     } else {
       showAlert({
         message:
-          "Preorden enviada con éxito!\n" +
+          "Pedido enviado con éxito!\n" +
           "Tu pedido está en estado pendiente.\n" +
-          "Los productos han sido reservados hasta que el administrador lo apruebe o lo cancele.\n" +
-          "Puedes consultar el estado y los detalles en la tabla de preórdenes",
+          "Los articulos han sido reservados hasta que el administrador lo apruebe o lo cancele.\n" +
+          "Puedes consultar el estado y los detalles en la tabla de pedidos",
         severity: "success",
       });
       void refreshOrders();

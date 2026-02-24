@@ -140,7 +140,7 @@ export default function Page() {
 
             <Typography variant="body1" color="text.secondary">
               Ahora puedes{' '}
-              <strong>explorar la lista de productos disponibles</strong>, que
+              <strong>explorar la lista de articulos disponibles</strong>, que
               se actualiza con cada nueva llegada.
             </Typography>
 

@@ -24,7 +24,6 @@ interface ProductForm {
   images: string[];
   available: number | string;
   height: string;
-  width: string;
 }
 
 const emptyForm: ProductForm = {
@@ -35,7 +34,6 @@ const emptyForm: ProductForm = {
   images: [],
   available: "",
   height: "",
-  width: "",
 };
 
 export default function AdminProductForm({
@@ -97,7 +95,7 @@ export default function AdminProductForm({
       setAlertState({ message: `Error: ${error.message}`, severity: "error" });
     else {
       showAlert({
-        message: `Producto ${form.title} agregado!`,
+        message: `Articulo ${form.title} agregado!`,
         severity: "success",
       });
       onClose();
@@ -142,14 +140,6 @@ export default function AdminProductForm({
           >
             {isEdit ? "Guardar cambios" : "Agregar"}
           </PrimaryButton>
-
-          <SecondaryButton
-            onClick={() => setForm(emptyForm)}
-            disabled={loading || !isReadyToSubmit}
-            variant="outlined"
-          >
-            Borrar formulario
-          </SecondaryButton>
         </Stack>
       }
       alertState={alertState}

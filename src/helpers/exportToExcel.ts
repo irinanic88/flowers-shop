@@ -67,7 +67,7 @@ export function exportOrdersToExcel(orders: OrderType[]) {
     rows.push([]);
 
     rows.push([
-      { v: 'Producto', s: headerStyle },
+      { v: 'Articulo', s: headerStyle },
       { v: 'Cantidad', s: headerStyle },
       { v: 'Precio', s: headerStyle },
       { v: 'Total', s: headerStyle },

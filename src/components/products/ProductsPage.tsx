@@ -50,7 +50,7 @@ export default function ProductsPage() {
 
       if (error) {
         showAlert({
-          message: `No se pudo eliminar el producto: ${error.message}`,
+          message: `No se pudo eliminar el articulo: ${error.message}`,
           severity: 'error',
         });
         return;
@@ -66,7 +66,7 @@ export default function ProductsPage() {
         }
       }
       showAlert({
-        message: `Producto ${selectedProduct.title} eliminado.`,
+        message: `Articulo ${selectedProduct.title} eliminado.`,
         severity: 'success',
       });
     } catch (err) {
@@ -82,7 +82,7 @@ export default function ProductsPage() {
   if (loading) {
     return (
       <Stack mt={20} alignItems="center">
-        <Typography color="text.secondary">Cargando productos…</Typography>
+        <Typography color="text.secondary">Cargando articulos…</Typography>
       </Stack>
     );
   }
@@ -96,7 +96,7 @@ export default function ProductsPage() {
             variant="h4"
             color="text.primary"
           >
-            Disponible para preordenar
+            Disponible para pedir
           </Typography>
         )}
 
@@ -166,7 +166,7 @@ export default function ProductsPage() {
         >
           <DialogContent>
             <Typography sx={{ mb: 1 }}>
-              Eliminar producto {selectedProduct?.title}?
+              Eliminar articulo {selectedProduct?.title}?
             </Typography>
 
             <Stack direction="row" justifyContent="center" spacing={1} mt={2}>

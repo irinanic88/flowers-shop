@@ -1,5 +1,5 @@
-import { Link, Stack, Typography } from '@mui/material';
-import React from 'react';
+import { Link, Stack, Typography } from "@mui/material";
+import React from "react";
 
 type RedirectionLinkProps = {
   linkText: string;
@@ -14,7 +14,7 @@ export default function RedirectionLink({
 }: RedirectionLinkProps) {
   return (
     <Stack direction="row" spacing={0.5} mt={1} ml={1}>
-      <Typography color="text.secondary" sx={{ fontSize: 12 }}>
+      <Typography color="text.secondary" sx={{ fontSize: 14 }}>
         {linkText}
       </Typography>
       <Link
@@ -22,7 +22,7 @@ export default function RedirectionLink({
         variant="body2"
         underline="hover"
         onClick={onLinkClick}
-        sx={{ cursor: 'pointer', fontSize: 12 }}
+        sx={{ cursor: 'pointer', fontSize: 14 }}
       >
         {linkTitle}
       </Link>

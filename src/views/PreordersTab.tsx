@@ -190,7 +190,7 @@ export default function PreordersTab() {
   if (!orders.length)
     return (
       <Stack mt={20} alignItems="center" justifyContent="center">
-        <Typography color="text.secondary">No hay preordenes aún.</Typography>
+        <Typography color="text.secondary">No hay pedidos aún.</Typography>
       </Stack>
     );
 
