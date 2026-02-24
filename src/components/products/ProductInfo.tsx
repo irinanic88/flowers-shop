@@ -29,15 +29,15 @@ export default function ProductInfo({
 
         <Stack spacing={1} alignItems="flex-start" sx={{ mt: 0.5 }}>
           <Stack direction="row" spacing={0.5}>
-            <HeightIcon fontSize="small" />
-            <Typography variant="body2">
-              Altura: {product.height ? `${product.height} cms` : "--"}
-            </Typography>
-          </Stack>
-          <Stack direction="row" spacing={0.5}>
             <CircleOutlinedIcon fontSize="small" />
             <Typography variant="body2">
               Maceta: {product.width ? `${product.width} cms` : "--"}
+            </Typography>
+          </Stack>
+          <Stack direction="row" spacing={0.5}>
+            <HeightIcon fontSize="small" />
+            <Typography variant="body2">
+              Altura: {product.height ? `${product.height} cms` : "--"}
             </Typography>
           </Stack>
           <Stack direction="row" spacing={0.5}>

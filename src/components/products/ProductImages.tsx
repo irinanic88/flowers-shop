@@ -12,6 +12,7 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import ImageNotSupportedIcon from "@mui/icons-material/ImageNotSupported";
 import { useTheme } from "@mui/material/styles";
 import Image from "next/image";
 
@@ -29,8 +30,8 @@ export default function ProductImages({ images, title }: ProductImagesProps) {
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up("md"));
 
-  if (!images?.length) return null;
-  const hasMany = images.length > 1;
+  const hasImages = images && images.length > 0;
+  const hasMany = images?.length > 1;
 
   const next = () => {
     setFade(true);
@@ -65,6 +66,35 @@ export default function ProductImages({ images, title }: ProductImagesProps) {
   const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!isDesktop) setOpen(false);
   };
+
+  if (!hasImages) {
+    return (
+      <Stack
+        sx={{
+          width: "100%",
+          aspectRatio: "1 / 1",
+          border: "1px solid",
+          borderColor: (theme) => theme.palette.grey[300],
+          borderRadius: 1,
+          bgcolor: (theme) => theme.palette.grey[100],
+          px: 1,
+          py: 1,
+        }}
+        alignItems="center"
+        justifyContent="center"
+        spacing={0.5} // меньше расстояния между иконкой и текстом
+      >
+        <ImageNotSupportedIcon sx={{ fontSize: 28, color: "grey.500" }} />
+        <Typography
+          color="text.secondary"
+          variant="body2"
+          sx={{ textAlign: "center" }}
+        >
+          No hay imágenes
+        </Typography>
+      </Stack>
+    );
+  }
 
   return (
     <>
@@ -138,9 +168,7 @@ export default function ProductImages({ images, title }: ProductImagesProps) {
               fontWeight: 500,
               cursor: "pointer",
               transition: "background-color 0.2s",
-              "&:hover": {
-                bgcolor: "rgba(255,255,255,0.9)",
-              },
+              "&:hover": { bgcolor: "rgba(255,255,255,0.9)" },
             }}
           >
             + {images.length - 1}
