@@ -12,7 +12,7 @@ interface AppDrawerProps {
   alertState: AlertType;
   setAlertState: (state: AlertType) => void;
   open: boolean;
-  onClose: () => void;
+  onClose?: () => void;
   title?: string;
   children: React.ReactNode;
   header?: React.ReactNode;
@@ -59,9 +59,11 @@ export function AppDrawer({
         >
           <Typography variant="h6">{title}</Typography>
 
-          <IconButton onClick={onClose}>
-            <CloseIcon />
-          </IconButton>
+          {onClose && (
+            <IconButton onClick={onClose}>
+              <CloseIcon />
+            </IconButton>
+          )}
         </Box>
       )}
 
