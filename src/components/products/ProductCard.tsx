@@ -1,18 +1,18 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { Typography, Box, Stack, Divider } from '@mui/material';
-import { ProductType } from '@/src/types';
-import ProductInfo from '@/src/components/products/ProductInfo';
-import IncrementDecrementButtons from '@/src/components/products/IncrementDecrementButtons';
-import { PanelCard } from '@/src/styledComponents';
-import { useCart } from '@/src/context/CartContext';
-import { CardEditButton, CardDeleteButton } from '@/src/styledComponents';
-import { useAuth } from '@/src/context/AuthContext';
-import AdminProductForm from '@/src/components/AdminProductForm';
-import ProductImages from '@/src/components/products/ProductImages';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
+import React, { useState } from "react";
+import { Typography, Box, Stack, Divider } from "@mui/material";
+import { ProductType } from "@/src/types";
+import ProductInfo from "@/src/components/products/ProductInfo";
+import IncrementDecrementButtons from "@/src/components/products/IncrementDecrementButtons";
+import { PanelCard } from "@/src/styledComponents";
+import { useCart } from "@/src/context/CartContext";
+import { CardEditButton, CardDeleteButton } from "@/src/styledComponents";
+import { useAuth } from "@/src/context/AuthContext";
+import AdminProductForm from "@/src/components/AdminProductForm";
+import ProductImages from "@/src/components/products/ProductImages";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 interface ProductCardProps {
   product: ProductType;
@@ -34,16 +34,16 @@ export default function ProductCard({ product, onDelete }: ProductCardProps) {
         maxWidth: 350,
       }}
     >
-      <Stack sx={{ height: '100%', p: 0.5 }} justifyContent="space-between">
+      <Stack sx={{ height: "100%", p: 0.5 }} justifyContent="space-between">
         <Stack spacing={2.5}>
           <Stack spacing={1}>
             <Typography
               sx={{
                 lineHeight: 1.35,
-                display: '-webkit-box',
+                display: "-webkit-box",
                 WebkitLineClamp: 2,
-                WebkitBoxOrient: 'vertical',
-                overflow: 'hidden',
+                WebkitBoxOrient: "vertical",
+                overflow: "hidden",
                 fontWeight: 600,
                 fontSize: 20,
               }}
@@ -53,7 +53,7 @@ export default function ProductCard({ product, onDelete }: ProductCardProps) {
             {!isUnknownUser && (
               <Typography
                 variant="body2"
-                color={product.available > 0 ? 'primary' : 'error'}
+                color={product.available > 0 ? "primary" : "error"}
               >
                 En Stock: {product.available}
               </Typography>
@@ -65,11 +65,11 @@ export default function ProductCard({ product, onDelete }: ProductCardProps) {
               sx={{
                 width: 96,
                 height: 96,
-                border: '1px solid',
+                border: "1px solid",
                 borderRadius: 1,
                 borderColor: (theme) => theme.palette.grey[200],
                 bgcolor: (theme) => theme.palette.grey[200],
-                overflow: 'hidden',
+                overflow: "hidden",
               }}
             >
               <ProductImages
@@ -84,7 +84,7 @@ export default function ProductCard({ product, onDelete }: ProductCardProps) {
           <Stack spacing={1}>
             {product.comment && (
               <Stack spacing={0.5}>
-                <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
+                <Typography variant="body2" sx={{ fontWeight: "bold" }}>
                   Detalles:
                 </Typography>
                 <Typography variant="body2">{product.comment}</Typography>
@@ -132,7 +132,7 @@ export default function ProductCard({ product, onDelete }: ProductCardProps) {
               alignItems="center"
               sx={{ mt: 2 }}
             >
-              <Typography variant="body2">Preordenar:</Typography>
+              <Typography variant="body2">Pedir:</Typography>
               <IncrementDecrementButtons
                 inStock={product.available}
                 quantity={quantity}

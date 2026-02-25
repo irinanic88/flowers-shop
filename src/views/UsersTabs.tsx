@@ -19,8 +19,8 @@ export default function UsersTabs() {
   };
 
   const tabs = [
-    { label: 'Productos', content: <ProductsTab /> },
-    { label: 'Preordenado', content: <PreordersTab /> },
+    { label: 'Articulos', content: <ProductsTab /> },
+    { label: 'Pedidos', content: <PreordersTab /> },
   ];
 
   const currentTab = R.nth(tab, tabs) ?? { label: '', content: null };

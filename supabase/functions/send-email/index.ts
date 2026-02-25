@@ -35,12 +35,12 @@ serve(async (req: Request) => {
       .join('');
 
     const html = `
-      <h2>🛒 Nuevo preorden recibido</h2>
+      <h2>🛒 Nuevo pedido recibido</h2>
       <p><strong>ID:</strong> ${order.id}</p>
       <p><strong>Name:</strong> ${profileName}</p>
       ${order.comment ? `<p><strong>Comentario:</strong> ${order.comment}</p>` : ''}
       <p><strong>Total:</strong> € ${order.total}</p>
-      <h3>Productos</h3>
+      <h3>Articulos</h3>
       <ul>${itemsHtml}</ul>
     `;
 
