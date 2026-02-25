@@ -24,6 +24,7 @@ interface ProductForm {
   images: string[];
   available: number | string;
   height: string;
+  width: string;
 }
 
 const emptyForm: ProductForm = {
@@ -34,6 +35,7 @@ const emptyForm: ProductForm = {
   images: [],
   available: "",
   height: "",
+  width: "",
 };
 
 export default function AdminProductForm({
