@@ -1,16 +1,16 @@
 import PasswordFields, {
   PasswordFieldsRef,
-} from '@/src/components/PasswordFields';
-import { Stack } from '@mui/material';
-import { RoundIconButton } from '@/src/styledComponents';
-import CloseIcon from '@mui/icons-material/Close';
-import CheckIcon from '@mui/icons-material/Check';
-import EditIcon from '@mui/icons-material/Edit';
-import React, { useRef, useState } from 'react';
-import { AlertType } from '@/src/types';
-import { isPasswordValid, isRequired } from '@/src/helpers/validators';
-import { equals } from 'ramda';
-import { supabase } from '@/lib/supabase';
+} from "@/src/components/PasswordFields";
+import { Stack } from "@mui/material";
+import { RoundIconButton } from "@/src/styledComponents";
+import CloseIcon from "@mui/icons-material/Close";
+import CheckIcon from "@mui/icons-material/Check";
+import EditIcon from "@mui/icons-material/Edit";
+import React, { useRef, useState } from "react";
+import { AlertType } from "@/src/types";
+import { validatePasswordUpdate } from "@/src/helpers/validators";
+import { supabase } from "@/lib/supabase";
+import ValidationErrorsList from "@/src/components/ValidationErrorsList.tsx";
 
 type PasswordUpdateFormProps = {
   setLoading: (v: boolean) => void;
@@ -24,34 +24,15 @@ export default function PasswordUpdateForm({
   onSubmit,
 }: PasswordUpdateFormProps) {
   const [editingPassword, setEditingPassword] = useState(false);
-  const [password, setPassword] = useState('');
-  const [confirm, setConfirm] = useState('');
+  const [password, setPassword] = useState("");
+  const [confirm, setConfirm] = useState("");
 
   const passwordRef = useRef<PasswordFieldsRef>(null);
 
   const handleSavePassword = async () => {
-    if (!isPasswordValid(password))
-      return setAlert({
-        message: 'Contraseña inválida (≥8 caracteres, letras y números)',
-        severity: 'error',
-      });
-    if (!isRequired(password))
-      return setAlert({
-        message: 'Completa todos los campos',
-        severity: 'error',
-      });
-    if (!isRequired(confirm))
-      return setAlert({
-        message: 'Completa todos los campos',
-        severity: 'error',
-      });
+    const validationErrors = validatePasswordUpdate(password, confirm);
 
-    if (!equals(password, confirm)) {
-      return setAlert({
-        message: 'Las contraseñas no coinciden',
-        severity: 'error',
-      });
-    }
+    if (validationErrors.length > 0) return;
 
     setLoading(true);
 
@@ -62,14 +43,14 @@ export default function PasswordUpdateForm({
     setLoading(false);
 
     if (error) {
-      setAlert({ message: `Error: ${error.message}`, severity: 'error' });
+      setAlert({ message: `Error: ${error.message}`, severity: "error" });
     } else {
       setEditingPassword(false);
-      setPassword('');
-      setConfirm('');
+      setPassword("");
+      setConfirm("");
       setAlert({
-        message: 'Contraseña actualizada correctamente.',
-        severity: 'success',
+        message: "Contraseña actualizada correctamente.",
+        severity: "success",
       });
       onSubmit?.();
     }
@@ -77,17 +58,17 @@ export default function PasswordUpdateForm({
 
   const handleCancelPassword = () => {
     setEditingPassword(false);
-    setPassword('');
-    setConfirm('');
+    setPassword("");
+    setConfirm("");
 
     passwordRef.current?.resetVisibility();
   };
 
   return (
     <Stack
-      direction={editingPassword ? 'column' : 'row'}
+      direction={editingPassword ? "column" : "row"}
       spacing={1}
-      alignItems={editingPassword ? 'flex-start' : 'center'}
+      alignItems={editingPassword ? "flex-start" : "center"}
     >
       <PasswordFields
         ref={passwordRef}
@@ -100,16 +81,21 @@ export default function PasswordUpdateForm({
       />
 
       {editingPassword ? (
-        <Stack direction="row" spacing={1}>
-          <RoundIconButton onClick={() => handleCancelPassword()}>
-            <CloseIcon />
-          </RoundIconButton>
-          <RoundIconButton
-            onClick={() => handleSavePassword()}
-            disabled={!password || !confirm}
-          >
-            <CheckIcon />
-          </RoundIconButton>
+        <Stack>
+          <Stack direction="row" spacing={1}>
+            <RoundIconButton onClick={() => handleCancelPassword()}>
+              <CloseIcon />
+            </RoundIconButton>
+            <RoundIconButton
+              onClick={() => handleSavePassword()}
+              disabled={!password || !confirm}
+            >
+              <CheckIcon />
+            </RoundIconButton>
+          </Stack>
+          {validationErrors.length > 0 && (
+            <ValidationErrorsList validationErrors={validationErrors} />
+          )}
         </Stack>
       ) : (
         <RoundIconButton onClick={() => setEditingPassword(true)}>

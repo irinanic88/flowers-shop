@@ -23,13 +23,13 @@ import PersonIcon from "@mui/icons-material/Person";
 import Layout from "@/src/components/Layout";
 import UsersTabs from "@/src/views/UsersTabs";
 import UpdateUser from "@/src/components/UpdateUser";
-import AuthForm from "@/src/AuthForm";
+import AuthForm from "@/src/components/auth/AuthForm.tsx";
 import { useEffect } from "react";
 import MenuIcon from "@mui/icons-material/Menu";
 import LogoutIcon from "@mui/icons-material/Logout";
 import EditIcon from "@mui/icons-material/Edit";
 import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
-import InviteDialog from "@/src/components/InviteDialog.tsx";
+import InviteDialog from "@/src/components/auth/InviteDialog.tsx";
 
 export default function Page() {
   const [openUserForm, setOpenUserForm] = useState(false);

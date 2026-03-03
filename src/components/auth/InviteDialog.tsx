@@ -11,7 +11,7 @@ import {
 import React, { useState } from "react";
 import CloseIcon from "@mui/icons-material/Close";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
-import { SecondaryRoundIconButton } from "@/src/styledComponents";
+import { SecondaryRoundIconButton } from "@/src/styledComponents.tsx";
 
 type InviteDialogProps = {
   link: string;

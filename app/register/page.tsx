@@ -1,88 +1,124 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { Stack, TextField } from "@mui/material";
 import { AlertType, AuthFormType } from "@/src/types";
 import { PanelCard, PrimaryButton } from "@/src/styledComponents";
-import { equals } from "ramda";
 import { useAlert } from "@/src/context/AlertContext";
-
-import {
-  isEmailValid,
-  isPasswordValid,
-  isRequired,
-} from "@/src/helpers/validators";
 import PasswordFields from "@/src/components/PasswordFields";
 import Loader from "@/src/components/Loader.tsx";
 import Logo from "@/src/components/Logo.tsx";
+import { useRouter } from "next/navigation";
+import { validateRegistrationForm } from "@/src/helpers/validators.ts";
+import ValidationErrorsList from "@/src/components/ValidationErrorsList.tsx";
+import CustomAlert from "@/src/components/CustomAlert.tsx";
 
 export default function SignUpForm() {
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [form, setForm] = useState<AuthFormType>({
     email: "",
     password: "",
     name: "",
   });
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [validationErrors, setValidationErrors] = useState<string[]>([]);
+  const [inviteId, setInviteId] = useState<string | null>(null);
   const [alert, setAlert] = useState<AlertType>(null);
 
+  const router = useRouter();
   const { showAlert } = useAlert();
+
+  useEffect(() => {
+    const checkInviteToken = async () => {
+      const params = new URLSearchParams(window.location.search);
+      const token = params.get("invite");
+
+      if (!token) {
+        setAlert({
+          message: "Token de invitación no proporcionado",
+          severity: "error",
+        });
+        return;
+      }
+
+      try {
+        const { data, error } = await supabase.functions.invoke(
+          "check-invite",
+          {
+            body: { invite: token },
+          },
+        );
+
+        if (error) throw error;
+
+        const parsed = JSON.parse(data);
+
+        if (!parsed?.inviteId) throw new Error("Token inválido o ya usado");
+
+        setInviteId(parsed.inviteId);
+      } catch (err) {
+        setAlert({
+          message: err instanceof Error ? err.message : "Error desconocido",
+          severity: "error",
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    void checkInviteToken();
+  }, []);
 
   const handleFieldChange = (field: keyof AuthFormType, value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleSubmit = () => {
-    if (!isEmailValid(form.email))
-      return setAlert({ message: "Correo inválido", severity: "error" });
+    const errors = validateRegistrationForm({ ...form, confirmPassword });
 
-    void submitSignUp(form);
-  };
-
-  const submitSignUp = async ({ email, password, name }: AuthFormType) => {
-    if (!isPasswordValid(password))
-      return setAlert({
-        message: "Contraseña inválida (≥8 caracteres, letras y números)",
-        severity: "error",
-      });
-    if (!isRequired(name))
-      return setAlert({
-        message: "El nombre es obligatorio",
-        severity: "error",
-      });
-
-    if (!equals(password, confirmPassword)) {
-      return setAlert({
-        message: "Las contraseñas no coinciden",
-        severity: "error",
-      });
+    if (errors.length > 0) {
+      setValidationErrors(errors);
+      return;
     }
 
-    setLoading(true);
-    try {
-      const { error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: { name },
-          emailRedirectTo: "http://localhost:3000",
-        },
-      });
+    void createUser(form);
+  };
 
-      if (error) throw error;
+  const createUser = async ({ email, password, name }: AuthFormType) => {
+    if (!inviteId) return;
+
+    setLoading(true);
+
+    try {
+      const { error: signUpError, data: signUpData } =
+        await supabase.auth.signUp({
+          email,
+          password,
+          options: { data: { name } },
+        });
+      if (signUpError) throw signUpError;
+
+      const { error: consumeError } = await supabase.functions.invoke(
+        "consume-invite",
+        {
+          body: {
+            inviteId,
+            userId: signUpData.user.id,
+          },
+        },
+      );
+
+      if (consumeError) throw consumeError;
 
       showAlert({
-        message: "Revisa tu correo para confirmar el registro",
+        message: "Tu cuenta ha sido creada correctamente!",
         severity: "success",
       });
-
-      onClose();
-    } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : "Error desconocido";
-
+      router.push("/");
+    } catch (err) {
       setAlert({
-        message,
+        message: err instanceof Error ? err.message : "Error desconocido",
         severity: "error",
       });
     } finally {
@@ -90,63 +126,77 @@ export default function SignUpForm() {
     }
   };
 
+  if (loading) {
+    return <Loader />;
+  }
+
   return (
     <Stack
       sx={{ height: "100vh", position: "relative" }}
       justifyContent="center"
       alignItems="center"
     >
-      {loading ? (
-        <Loader />
+      {alert ? (
+        <CustomAlert alertState={alert} onClose={() => setAlert(null)} />
       ) : (
         <PanelCard
           sx={{
-            p: 2,
-            width: "320px",
+            p: 4,
+            maxWidth: "320px",
           }}
         >
           <Stack alignItems="center" spacing={4}>
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                void handleSubmit();
-              }}
-              style={{
-                width: "100%",
-              }}
-            >
-              <Stack
-                sx={{
-                  borderRadius: 2,
-                  backgroundColor: (theme) => theme.palette.background.paper,
+            <Stack alignItems="flex-start" spacing={2} sx={{ width: "100%" }}>
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  void handleSubmit();
                 }}
-                spacing={2}
+                style={{
+                  width: "100%",
+                }}
               >
-                <Stack spacing={2}>
-                  <TextField
-                    label="Nombre de usuario"
-                    value={form.name}
-                    onChange={(e) => handleFieldChange("name", e.target.value)}
-                    fullWidth
-                  />
+                <Stack
+                  sx={{
+                    borderRadius: 2,
+                    backgroundColor: (theme) => theme.palette.background.paper,
+                  }}
+                  spacing={2}
+                >
+                  <Stack spacing={2}>
+                    <TextField
+                      label="Nombre de usuario"
+                      value={form.name}
+                      onChange={(e) =>
+                        handleFieldChange("name", e.target.value)
+                      }
+                      fullWidth
+                    />
 
-                  <TextField
-                    label="Correo electrónico"
-                    value={form.email}
-                    onChange={(e) => handleFieldChange("email", e.target.value)}
-                    fullWidth
-                  />
+                    <TextField
+                      label="Correo electrónico"
+                      value={form.email}
+                      onChange={(e) =>
+                        handleFieldChange("email", e.target.value)
+                      }
+                      fullWidth
+                    />
 
-                  <PasswordFields
-                    password={form.password}
-                    onChangePassword={(v) => handleFieldChange("password", v)}
-                    showConfirm={true}
-                    confirmPassword={confirmPassword}
-                    onChangeConfirmPassword={setConfirmPassword}
-                  />
+                    <PasswordFields
+                      password={form.password}
+                      onChangePassword={(v) => handleFieldChange("password", v)}
+                      showConfirm={true}
+                      confirmPassword={confirmPassword}
+                      onChangeConfirmPassword={setConfirmPassword}
+                    />
+                  </Stack>
                 </Stack>
-              </Stack>
-            </form>
+              </form>
+
+              {validationErrors.length > 0 && (
+                <ValidationErrorsList validationErrors={validationErrors} />
+              )}
+            </Stack>
 
             <PrimaryButton type="submit" onClick={handleSubmit}>
               Iniciar sesion
