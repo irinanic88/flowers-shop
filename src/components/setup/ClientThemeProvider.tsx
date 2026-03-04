@@ -2,7 +2,7 @@
 
 import { ThemeProvider, CssBaseline } from '@mui/material';
 import { ReactNode } from 'react';
-import { theme } from '@/app/theme';
+import { theme } from '@/app/theme.ts';
 
 export default function ClientThemeProvider({
   children,

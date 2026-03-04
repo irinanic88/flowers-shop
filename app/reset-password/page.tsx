@@ -2,17 +2,17 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { Stack } from "@mui/material";
-import Loader from "@/src/components/Loader";
+import Loader from "@/src/components/common/Loader.tsx";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase.js";
 import { useAlert } from "@/src/context/AlertContext.tsx";
 import { PanelCard, PrimaryButton } from "@/src/styledComponents.tsx";
 import PasswordFields, {
   PasswordFieldsRef,
-} from "@/src/components/PasswordFields.tsx";
-import ValidationErrorsList from "@/src/components/ValidationErrorsList.tsx";
+} from "@/src/components/common/PasswordFields.tsx";
+import ValidationErrorsList from "@/src/components/common/ValidationErrorsList.tsx";
 import { validatePasswordUpdate } from "@/src/helpers/validators.ts";
-import Logo from "@/src/components/Logo.tsx";
+import Logo from "@/src/components/common/Logo.tsx";
 
 export default function Page() {
   const [password, setPassword] = useState("");

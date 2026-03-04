@@ -32,3 +32,10 @@ export const AuthTitlesDict = {
     linkTitle: "Ir al registro",
   },
 };
+
+export const RESET_PASSWORD_URL_dev = "http://localhost:3000/reset-password";
+export const REGISTER_URL_dev = "http://localhost:3000/register";
+export const RESET_PASSWORD_URL =
+  "https://andresplantselect.netlify.app/reset-password";
+export const REGISTER_URL =
+  "https://andresplantselect.netlify.app/reset-password";

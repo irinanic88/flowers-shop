@@ -1,4 +1,4 @@
-import { FilterSelect } from '@/src/components/FilterSelect';
+import { FilterSelect } from '@/src/components/common/FilterSelect.tsx';
 import { useAuth } from '@/src/context/AuthContext';
 import { Stack } from '@mui/material';
 import { orderStatusesDict } from '@/src/constants';

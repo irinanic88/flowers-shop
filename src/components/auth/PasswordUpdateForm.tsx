@@ -1,6 +1,6 @@
 import PasswordFields, {
   PasswordFieldsRef,
-} from "@/src/components/PasswordFields";
+} from "@/src/components/common/PasswordFields.tsx";
 import { Stack } from "@mui/material";
 import { RoundIconButton } from "@/src/styledComponents";
 import CloseIcon from "@mui/icons-material/Close";
@@ -10,7 +10,7 @@ import React, { useRef, useState } from "react";
 import { AlertType } from "@/src/types";
 import { validatePasswordUpdate } from "@/src/helpers/validators";
 import { supabase } from "@/lib/supabase";
-import ValidationErrorsList from "@/src/components/ValidationErrorsList.tsx";
+import ValidationErrorsList from "@/src/components/common/ValidationErrorsList.tsx";
 
 type PasswordUpdateFormProps = {
   setLoading: (v: boolean) => void;

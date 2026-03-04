@@ -2,13 +2,13 @@
 
 import React, { useState, useEffect } from "react";
 import { TextField, Stack } from "@mui/material";
-import { PrimaryButton, SecondaryButton } from "@/src/styledComponents";
-import { supabase } from "@/lib/supabase";
-import { AlertType, ProductType } from "@/src/types";
-import ImageUploader from "@/src/components/ImageUploader";
+import { PrimaryButton, SecondaryButton } from "@/src/styledComponents.tsx";
+import { supabase } from "@/lib/supabase.js";
+import { AlertType, ProductType } from "@/src/types.ts";
+import ImageUploader from "@/src/components/common/ImageUploader.tsx";
 import { isEmpty, all } from "ramda";
-import { AppDrawer } from "@/src/components/AppDrawer";
-import { useAlert } from "@/src/context/AlertContext";
+import { AppDrawer } from "@/src/components/common/AppDrawer.tsx";
+import { useAlert } from "@/src/context/AlertContext.tsx";
 
 interface AdminProductFormProps {
   open: boolean;
@@ -38,7 +38,7 @@ const emptyForm: ProductForm = {
   width: "",
 };
 
-export default function AdminProductForm({
+export default function AdminProductFormView({
   open,
   onClose,
   product = null,

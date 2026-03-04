@@ -22,10 +22,9 @@ export interface UserType {
   email?: string;
 }
 
-export type AuthFormType = {
+export type SignInFormType = {
   email: string;
   password: string;
-  name: string;
 };
 
 export interface CartItem {
@@ -63,3 +62,22 @@ export type AlertType = {
   severity: AlertColor;
   duration?: number | null;
 } | null;
+
+export type FormField<Form> = {
+  disabled?: boolean;
+  key: keyof Form;
+  label?: string;
+  initialValue: string;
+  type: string;
+  visibility: boolean;
+  rules: ValidationRule<Form>[];
+};
+
+export type ValidationRule<Form> = (
+  value: unknown,
+  form: Form,
+) => string | null;
+
+export type ValidationSchema<Form> = {
+  [K in keyof Form]?: ValidationRule<Form>[];
+};

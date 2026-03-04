@@ -1,28 +1,28 @@
 "use client";
 
 import { Box, Typography, Stack, TextField } from "@mui/material";
-import { useCart } from "@/src/context/CartContext";
+import { useCart } from "@/src/context/CartContext.tsx";
 import {
   PrimaryButton,
   Row,
   PanelCard,
   SecondaryButton,
-} from "@/src/styledComponents";
-import IncrementDecrementButtons from "@/src/components/products/IncrementDecrementButtons";
-import { supabase } from "@/lib/supabase";
+} from "@/src/styledComponents.tsx";
+import IncrementDecrementButtons from "@/src/components/common/IncrementDecrementButtons.tsx";
+import { supabase } from "@/lib/supabase.js";
 import React, { useEffect, useState } from "react";
-import { useOrders } from "@/src/context/OrdersContext";
-import { AppDrawer } from "@/src/components/AppDrawer";
+import { useOrders } from "@/src/context/OrdersContext.tsx";
+import { AppDrawer } from "@/src/components/common/AppDrawer.tsx";
 import { isEmpty } from "ramda";
-import { AlertType } from "@/src/types";
-import { useAlert } from "@/src/context/AlertContext";
+import { AlertType } from "@/src/types.ts";
+import { useAlert } from "@/src/context/AlertContext.tsx";
 
 export interface CartPanelProps {
   open: boolean;
   onClose: () => void;
 }
 
-export default function CartPanel({ open, onClose }: CartPanelProps) {
+export default function CartPanelView({ open, onClose }: CartPanelProps) {
   const [isCartEmpty, setIsCartEmpty] = useState(true);
   const [comment, setComment] = useState("");
   const [alert, setAlert] = useState<AlertType>(null);

@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { FilterSelect } from "@/src/components/FilterSelect";
+import { FilterSelect } from "@/src/components/common/FilterSelect.tsx";
 import {
   Stack,
   OutlinedInput,

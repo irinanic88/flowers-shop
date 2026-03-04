@@ -3,10 +3,12 @@ import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 import React from "react";
 
 export default function ValidationErrorsList({
-  validationErrors,
+  formErrors,
 }: {
-  validationErrors: string[];
+  formErrors: Record<string, string[]>;
 }) {
+  const validationErrors = [...new Set(Object.values(formErrors).flat())];
+
   return (
     <Stack spacing={0.5}>
       {validationErrors.map((e, i) => (

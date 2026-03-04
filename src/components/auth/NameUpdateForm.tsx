@@ -1,66 +1,57 @@
-import { Stack, TextField } from '@mui/material';
-import { RoundIconButton } from '@/src/styledComponents';
-import CloseIcon from '@mui/icons-material/Close';
-import CheckIcon from '@mui/icons-material/Check';
-import EditIcon from '@mui/icons-material/Edit';
-import React, { useEffect, useState } from 'react';
-import { useAuth } from '@/src/context/AuthContext';
-import { supabase } from '@/lib/supabase';
-import { AlertType } from '@/src/types';
+import { Stack, TextField } from "@mui/material";
+import { RoundIconButton } from "@/src/styledComponents";
+import CloseIcon from "@mui/icons-material/Close";
+import CheckIcon from "@mui/icons-material/Check";
+import EditIcon from "@mui/icons-material/Edit";
+import React, { useEffect, useState } from "react";
+import { useAuth } from "@/src/context/AuthContext";
+import { supabase } from "@/lib/supabase";
+import { AlertType } from "@/src/types";
+import { useUpdateUserName } from "@/src/hooks/api.ts";
 
 type NameUpdateFormProps = {
   setLoading: (v: boolean) => void;
   setAlert: (v: AlertType) => void;
 };
 
-export default function NameUpdateForm({
-  setLoading,
-  setAlert,
-}: NameUpdateFormProps) {
+export default function NameUpdateForm({ setAlert }: NameUpdateFormProps) {
   const { name: userName, user, refreshProfile } = useAuth();
+  const { updateUserName, updateError } = useUpdateUserName();
 
   const [editingName, setEditingName] = useState(false);
-  const [name, setName] = useState('');
+  const [name, setName] = useState("");
 
   useEffect(() => {
-    if (userName) {
-      setName(userName);
-    }
+    if (userName) setName(userName);
   }, [userName]);
+
+  useEffect(() => {
+    if (updateError) setAlert(updateError);
+  }, [updateError]);
+
   const handleSaveName = async () => {
     if (!user) return;
 
-    setLoading(true);
+    const success = await updateUserName(userName, user.id);
 
-    const { error } = await supabase
-      .from('profiles')
-      .update({ name })
-      .eq('id', user.id);
+    if (!success) return;
 
-    setLoading(false);
+    await refreshProfile();
 
-    if (error) {
-      setAlert({
-        message: `Error: ${error.message}`,
-        severity: 'error',
-      });
-    } else {
-      await refreshProfile();
-
-      setEditingName(false);
-      setAlert({
-        message: 'Nombre actualizado correctamente',
-        severity: 'success',
-      });
-    }
+    setEditingName(false);
+    setAlert({
+      message: "Nombre actualizado correctamente",
+      severity: "success",
+    });
   };
+
   return (
     <Stack spacing={1} pt={1}>
       <Stack
-        direction={editingName ? 'column' : 'row'}
+        direction={editingName ? "column" : "row"}
         spacing={1}
-        alignItems={editingName ? 'flex-start' : 'center'}
-        sx={{ width: '100%' }}
+        alignItems={editingName ? "flex-start" : "center"}
+        sx={{ width: "100%" }}
       >
         <TextField
           label="Nombre"
@@ -75,7 +66,7 @@ export default function NameUpdateForm({
             <RoundIconButton
               onClick={() => {
                 setEditingName(false);
-                setName('');
+                setName("");
               }}
             >
               <CloseIcon />

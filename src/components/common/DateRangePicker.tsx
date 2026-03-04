@@ -2,11 +2,11 @@
 
 import * as React from 'react';
 import { Popover, Stack, Box, ClickAwayListener } from '@mui/material';
-import { FilterPillValue } from '@/src/components/FilterPillValue';
+import { FilterPillValue } from '@/src/components/common/FilterPillValue.tsx';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { PrimaryButton, SecondaryButton } from '@/src/styledComponents';
+import { PrimaryButton, SecondaryButton } from '@/src/styledComponents.tsx';
 
 type DateRange = [Date | null, Date | null];
 

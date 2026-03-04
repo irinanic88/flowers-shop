@@ -6,13 +6,13 @@ import { Stack, TextField } from "@mui/material";
 import { AlertType, AuthFormType } from "@/src/types";
 import { PanelCard, PrimaryButton } from "@/src/styledComponents";
 import { useAlert } from "@/src/context/AlertContext";
-import PasswordFields from "@/src/components/PasswordFields";
-import Loader from "@/src/components/Loader.tsx";
-import Logo from "@/src/components/Logo.tsx";
+import PasswordFields from "@/src/components/common/PasswordFields.tsx";
+import Loader from "@/src/components/common/Loader.tsx";
+import Logo from "@/src/components/common/Logo.tsx";
 import { useRouter } from "next/navigation";
 import { validateRegistrationForm } from "@/src/helpers/validators.ts";
-import ValidationErrorsList from "@/src/components/ValidationErrorsList.tsx";
-import CustomAlert from "@/src/components/CustomAlert.tsx";
+import ValidationErrorsList from "@/src/components/common/ValidationErrorsList.tsx";
+import CustomAlert from "@/src/components/common/CustomAlert.tsx";
 
 export default function SignUpForm() {
   const [loading, setLoading] = useState(true);

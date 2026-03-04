@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Typography } from '@mui/material';
-import { FilterPillBox } from '@/src/styledComponents';
+import { FilterPillBox } from '@/src/styledComponents.tsx';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 
 interface FilterPillValueProps {

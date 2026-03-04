@@ -1,17 +1,13 @@
-import { ReactNode } from 'react';
-import { CssBaseline } from '@mui/material';
-import './globals.css';
+import { ReactNode } from "react";
+import { CssBaseline } from "@mui/material";
+import "./globals.css";
 
-import { AuthProvider } from '@/src/context/AuthContext';
-import { CartProvider } from '@/src/context/CartContext';
-import { OrdersProvider } from '@/src/context/OrdersContext';
-import { ProductsProvider } from '@/src/context/ProductsContext';
-import ThemeRegistry from '@/src/components/ThemeRegistry';
-import ClientThemeProvider from '@/src/components/ClientThemeProvider';
-import { AlertProvider } from '@/src/context/AlertContext';
+import ThemeRegistry from "@/src/components/setup/ThemeRegistry.tsx";
+import ClientThemeProvider from "@/src/components/setup/ClientThemeProvider.tsx";
+import AppProviders from "@/src/components/setup/AppProviders.tsx";
 
 export const metadata = {
-  title: 'APS',
+  title: "APS",
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
@@ -22,15 +18,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           <ClientThemeProvider>
             <CssBaseline />
 
-            <AuthProvider>
-              <AlertProvider>
-                <ProductsProvider>
-                  <OrdersProvider>
-                    <CartProvider>{children}</CartProvider>
-                  </OrdersProvider>
-                </ProductsProvider>
-              </AlertProvider>
-            </AuthProvider>
+            <AppProviders>{children}</AppProviders>
           </ClientThemeProvider>
         </ThemeRegistry>
       </body>

@@ -1,6 +1,6 @@
 "use client";
 
-import Loader from "@/src/components/Loader";
+import Loader from "@/src/components/common/Loader.tsx";
 import React, { useEffect } from "react";
 import {
   Table,
@@ -40,7 +40,7 @@ import { PreordersStatusDialog } from "@/src/components/orders/PreordersStatusDi
 import { PreordersFilters } from "@/src/components/orders/PreordersFilters";
 import { PreordersTableContent } from "@/src/components/orders/PreordersTableContent";
 import { exportOrdersToExcel } from "@/src/helpers/exportToExcel";
-import { DateRangePicker } from "@/src/components/DateRangePicker";
+import { DateRangePicker } from "@/src/components/common/DateRangePicker.tsx";
 import { endOfDay, startOfDay } from "date-fns";
 import TuneIcon from "@mui/icons-material/Tune";
 import CloseIcon from "@mui/icons-material/Close";

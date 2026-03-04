@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Select, MenuItem, FormControl, Button, Stack } from '@mui/material';
-import { FilterPillValue } from '@/src/components/FilterPillValue';
+import { FilterPillValue } from '@/src/components/common/FilterPillValue.tsx';
 import CloseIcon from '@mui/icons-material/Close';
 import { equals } from 'ramda';
 

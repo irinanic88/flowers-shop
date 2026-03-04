@@ -3,7 +3,7 @@
 import { Box, Fab } from '@mui/material';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { useState } from 'react';
-import CartPanel from '@/src/components/CartPanel';
+import CartPanelView from '@/src/views/CartPanelView.tsx';
 import UsersTabs from '@/src/views/UsersTabs';
 import { useCart } from '@/src/context/CartContext';
 import { Badge } from '@mui/material';
@@ -46,7 +46,7 @@ export default function UserView() {
         </Badge>
       </Fab>
 
-      {cartOpen && <CartPanel open={cartOpen} onClose={handleToggleCart} />}
+      {cartOpen && <CartPanelView open={cartOpen} onClose={handleToggleCart} />}
     </Box>
   );
 }

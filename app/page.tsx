@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import { useAuth } from "@/src/context/AuthContext";
 import ProductsPage from "@/src/components/products/ProductsPage";
-import Loader from "@/src/components/Loader";
+import Loader from "@/src/components/common/Loader.tsx";
 import UserView from "@/src/views/UserView";
 import {
   RoundIconButton,
@@ -20,9 +20,9 @@ import {
 import { supabase } from "@/lib/supabase";
 import React, { useState } from "react";
 import PersonIcon from "@mui/icons-material/Person";
-import Layout from "@/src/components/Layout";
+import Layout from "@/src/components/common/Layout.tsx";
 import UsersTabs from "@/src/views/UsersTabs";
-import UpdateUser from "@/src/components/UpdateUser";
+import UpdateUserView from "@/src/views/UpdateUserView.tsx";
 import AuthForm from "@/src/components/auth/AuthForm.tsx";
 import { useEffect } from "react";
 import MenuIcon from "@mui/icons-material/Menu";
@@ -30,6 +30,7 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import EditIcon from "@mui/icons-material/Edit";
 import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
 import InviteDialog from "@/src/components/auth/InviteDialog.tsx";
+import RedirectionLink from "@/src/components/common/RedirectionLink.tsx";
 
 export default function Page() {
   const [openUserForm, setOpenUserForm] = useState(false);
@@ -156,26 +157,29 @@ export default function Page() {
         <Stack sx={{ width: "100%" }} alignItems="center">
           <WelcomeBox spacing={2} sx={{ mt: 2 }}>
             <Typography variant="h5" color="text.primary">
-              ¡Bienvenido a Andrés Plant Select! 🌿
+              Bienvenido a Andrés Plant Select! 🌿
             </Typography>
 
             <Typography variant="body1" color="text.secondary">
-              Esta aplicación fue creada para que nuestra comunicación sea más
-              simple y cómoda.
+              Aquí puedes explorar la lista de artículos disponibles, que se
+              actualiza con cada nueva llegada.
             </Typography>
 
             <Typography variant="body1" color="text.secondary">
-              Ahora puedes{" "}
-              <strong>explorar la lista de articulos disponibles</strong>, que
-              se actualiza con cada nueva llegada.
+              Para ver los precios y realizar pedidos anticipados,{" "}
+              <RedirectionLink
+                linkText={""}
+                linkTitle={"Inicia session"}
+                onLinkClick={() => setOpenAuthForm(true)}
+              />{" "}
+              o <strong>regístrate con una invitación</strong>.
             </Typography>
 
-            <Typography variant="body1" color="text.secondary">
-              Si quieres{" "}
-              <strong>ver los precios y realizar un pedido anticipado</strong>,
-              por favor <strong>regístrate</strong> o{" "}
-              <strong>inicia sesión</strong>.
-            </Typography>
+            <RedirectionLink
+              linkText={"Primera vez aquí?"}
+              linkTitle={"Aprende cómo funciona la aplicación"}
+              onLinkClick={() => {}}
+            />
           </WelcomeBox>
 
           <ProductsPage />
@@ -183,7 +187,7 @@ export default function Page() {
       )}
 
       {openUserForm && (
-        <UpdateUser
+        <UpdateUserView
           open={openUserForm}
           onClose={() => setOpenUserForm(false)}
         />
