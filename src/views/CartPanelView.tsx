@@ -1,33 +1,21 @@
-'use client';
+"use client";
 
-import { Box, Typography, Stack, TextField } from '@mui/material';
-import { isEmpty } from 'ramda';
-import React, { useEffect, useState } from 'react';
+import { Box, Typography, Stack, TextField } from "@mui/material";
+import { isEmpty } from "ramda";
+import React, { useEffect, useState } from "react";
 
-import { supabase } from '@/lib/supabase';
-import { AppDrawer } from '@/src/components/common/AppDrawer';
-import IncrementDecrementButtons from '@/src/components/common/IncrementDecrementButtons';
-import { useAlert } from '@/src/context/AlertContext';
-import { useCart } from '@/src/context/CartContext';
-import { useOrders } from '@/src/context/OrdersContext';
-import {
-  PrimaryButton,
-  Row,
-  PanelCard,
-  SecondaryButton,
-} from '@/src/styledComponents';
-import { AlertType } from '@/src/types/types';
-
-export interface CartPanelProps {
-  open: boolean;
-  onClose: () => void;
-}
+import { supabase } from "@/lib/supabase";
+import { AppDrawer } from "@/src/components/common/AppDrawer";
+import IncrementDecrementButtons from "@/src/components/common/IncrementDecrementButtons";
+import { useAlert } from "@/src/context/AlertContext";
+import { useCart } from "@/src/context/CartContext";
+import { useOrders } from "@/src/context/OrdersContext";
+import { Row, PanelCard } from "@/src/styledComponents";
+import { CartPanelProps } from "@/src/types/propsTypes";
 
 export default function CartPanelView({ open, onClose }: CartPanelProps) {
   const [isCartEmpty, setIsCartEmpty] = useState(true);
-  const [comment, setComment] = useState('');
-  const [alert, setAlert] = useState<AlertType>(null);
-  const [loading, setLoading] = useState(false);
+  const [comment, setComment] = useState("");
 
   const { items, total, updateItemQuantity, clearCart } = useCart();
   const { refreshOrders } = useOrders();
@@ -48,8 +36,8 @@ export default function CartPanelView({ open, onClose }: CartPanelProps) {
     if (!userId) {
       setLoading(false);
       setAlert({
-        message: 'Error',
-        severity: 'error',
+        message: "Error",
+        severity: "error",
       });
       return;
     }
@@ -61,35 +49,35 @@ export default function CartPanelView({ open, onClose }: CartPanelProps) {
       quantity: i.quantity,
     }));
 
-    const { error: err } = await supabase.from('orders').insert([
+    const { error: err } = await supabase.from("orders").insert([
       {
         user_id: userId,
         items: orderItems,
         total: Number(total.toFixed(2)),
         comment: comment || null,
-        status: 'pending',
+        status: "pending",
       },
     ]);
 
     if (err) {
-      setAlert({
+      showAlert({
         message: `Error: ${err.message}`,
-        severity: 'error',
+        severity: "error",
       });
     } else {
       showAlert({
         message:
-          'Pedido enviado con éxito!\n' +
-          'Tu pedido está en estado pendiente.\n' +
-          'Los articulos han sido reservados hasta que el administrador lo apruebe o lo cancele.\n' +
-          'Puedes consultar el estado y los detalles en la tabla de pedidos',
-        severity: 'success',
+          "Pedido enviado con éxito!\n" +
+          "Tu pedido está en estado pendiente.\n" +
+          "Los articulos han sido reservados hasta que el administrador lo apruebe o lo cancele.\n" +
+          "Puedes consultar el estado y los detalles en la tabla de pedidos",
+        severity: "success",
       });
       void refreshOrders();
     }
 
     clearCart();
-    setComment('');
+    setComment("");
     onClose();
   };
 
@@ -98,27 +86,23 @@ export default function CartPanelView({ open, onClose }: CartPanelProps) {
       open={open}
       onClose={onClose}
       title="Preorden"
-      actions={
-        <Stack spacing={1}>
-          <PrimaryButton disabled={isCartEmpty} onClick={handleSubmitPreorder}>
-            Enviar Preorden
-          </PrimaryButton>
-
-          <SecondaryButton disabled={isCartEmpty} onClick={clearCart}>
-            Vaciar
-          </SecondaryButton>
-        </Stack>
-      }
-      alertState={alert}
-      setAlertState={(v) => setAlert(v)}
-      loading={loading}
+      primaryButton={{
+        title: "Enviar Pedido",
+        handleSubmit: handleSubmitPreorder,
+        disabled: isCartEmpty,
+      }}
+      secondaryButton={{
+        title: "Vaciar",
+        handleSubmit: clearCart,
+        disabled: isCartEmpty,
+      }}
     >
-      <Stack justifyContent="space-between" sx={{ height: '100%' }}>
+      <Stack justifyContent="space-between" sx={{ height: "100%" }}>
         {!items.length && (
           <Stack
             justifyContent="center"
             alignItems="center"
-            sx={{ height: '100%' }}
+            sx={{ height: "100%" }}
           >
             <Typography color="text.secondary">
               No hay productos en tu preorden.
@@ -127,34 +111,46 @@ export default function CartPanelView({ open, onClose }: CartPanelProps) {
         )}
 
         {items.length > 0 && (
-          <Box sx={{ flex: 1, overflowY: 'auto' }}>
+          <Box sx={{ flex: 1, overflowY: "auto" }}>
             <Stack spacing={1}>
               {items.map((item) => (
                 <PanelCard key={item.id}>
-                  <Row>
-                    <Typography>{item.title}</Typography>
-                    <Typography color="primary" sx={{ minWidth: 75 }}>
-                      € {(item.price * item.quantity).toFixed(2)}
-                    </Typography>
-                  </Row>
+                  <Stack spacing={3}>
+                    <Row>
+                      <Typography sx={{ fontWeight: 600 }}>
+                        {item.title}
+                      </Typography>
+                      <IncrementDecrementButtons
+                        inStock={item.available}
+                        quantity={item.quantity}
+                        onChange={(q) =>
+                          updateItemQuantity(
+                            {
+                              id: item.id,
+                              title: item.title,
+                              price: item.price,
+                              available: item.available,
+                              pots_count: item.pots_count,
+                            },
+                            q,
+                          )
+                        }
+                      />
+                    </Row>
 
-                  <Box mt={1}>
-                    <IncrementDecrementButtons
-                      inStock={item.available}
-                      quantity={item.quantity}
-                      onChange={(q) =>
-                        updateItemQuantity(
-                          {
-                            id: item.id,
-                            title: item.title,
-                            price: item.price,
-                            available: item.available,
-                          },
-                          q,
-                        )
-                      }
-                    />
-                  </Box>
+                    <Row mt={1}>
+                      <Typography variant="body1">
+                        Total : {item.quantity} Cajas x {item.pots_count} Uds ={" "}
+                        {item.quantity * item.pots_count} Uds
+                      </Typography>
+                      <Typography color="primary">
+                        €{" "}
+                        {(item.price * item.quantity * item.pots_count).toFixed(
+                          2,
+                        )}
+                      </Typography>
+                    </Row>
+                  </Stack>
                 </PanelCard>
               ))}
             </Stack>
@@ -172,7 +168,7 @@ export default function CartPanelView({ open, onClose }: CartPanelProps) {
               rows={2}
             />
 
-            <Box sx={{ p: 2, borderTop: '1px solid #eee' }}>
+            <Box sx={{ p: 2, borderTop: "1px solid #eee" }}>
               <Row sx={{ mb: 1 }}>
                 <Typography variant="subtitle1">Total:</Typography>
                 <Typography variant="subtitle1">

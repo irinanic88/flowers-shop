@@ -25,6 +25,7 @@ export default function ProductImages({ images, title }: ProductImagesProps) {
   const [index, setIndex] = useState(0);
   const [open, setOpen] = useState(false);
   const [fade, setFade] = useState(false);
+  const [animating, setAnimating] = useState(false);
   const startX = useRef<number | null>(null);
 
   const theme = useTheme();
@@ -34,22 +35,31 @@ export default function ProductImages({ images, title }: ProductImagesProps) {
   const hasMany = images?.length > 1;
 
   const next = () => {
+    if (animating || !hasMany) return;
+
+    setAnimating(true);
     setFade(true);
+
     setTimeout(() => {
       setIndex((prev) => (prev + 1) % images.length);
       setFade(false);
+      setAnimating(false);
     }, 200);
   };
 
   const prev = () => {
+    if (animating || !hasMany) return;
+
+    setAnimating(true);
     setFade(true);
+
     setTimeout(() => {
       setIndex((prev) => (prev - 1 + images.length) % images.length);
       setFade(false);
+      setAnimating(false);
     }, 200);
   };
 
-  // --- Swipe logic ---
   const handleTouchStart = (e: React.TouchEvent) => {
     startX.current = e.touches[0].clientX;
   };
@@ -62,8 +72,16 @@ export default function ProductImages({ images, title }: ProductImagesProps) {
     startX.current = null;
   };
 
+  const handleClose = () => {
+    setOpen(false);
+    setIndex(0);
+    setFade(false);
+    setAnimating(false);
+    startX.current = null;
+  };
+
   const handleBackdropClick = () => {
-    if (!isDesktop) setOpen(false);
+    if (!isDesktop) void handleClose();
   };
 
   if (!hasImages) {
@@ -81,7 +99,7 @@ export default function ProductImages({ images, title }: ProductImagesProps) {
         }}
         alignItems="center"
         justifyContent="center"
-        spacing={0.5} // меньше расстояния между иконкой и текстом
+        spacing={0.5}
       >
         <ImageNotSupportedIcon sx={{ fontSize: 28, color: 'grey.500' }} />
         <Typography
@@ -176,7 +194,7 @@ export default function ProductImages({ images, title }: ProductImagesProps) {
       </Box>
 
       {/* FULLSCREEN */}
-      <Modal open={open} onClose={() => setOpen(false)}>
+      <Modal open={open} onClose={handleClose}>
         <Box
           sx={{
             width: '100vw',
@@ -215,7 +233,7 @@ export default function ProductImages({ images, title }: ProductImagesProps) {
           {/* Close button только desktop */}
           {isDesktop && (
             <IconButton
-              onClick={() => setOpen(false)}
+              onClick={handleClose}
               sx={{
                 position: 'absolute',
                 top: 16,

@@ -39,6 +39,7 @@ export interface CartItem {
   price: number;
   quantity: number;
   available: number;
+  pots_count: number;
 }
 
 export interface OrderItem {

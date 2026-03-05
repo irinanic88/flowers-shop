@@ -106,7 +106,7 @@ export function AppDrawer({
               {children}
 
               <Stack direction="row" justifyContent="right" mt={2}>
-                <Stack spacing={1}>
+                <Stack spacing={1} alignItems="flex-end">
                   {primaryButton && (
                     <PrimaryButton
                       disabled={primaryButton.disabled}

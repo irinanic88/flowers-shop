@@ -25,6 +25,7 @@ export default function ProductCard({ product, onDelete }: ProductCardProps) {
   const { items, updateItemQuantity } = useCart();
   const itemInCart = items.find((i) => i.id === product.id);
   const quantity = itemInCart?.quantity ?? 0;
+  const totalUds = product.pots_count * quantity;
 
   return (
     <PanelCard
@@ -54,7 +55,7 @@ export default function ProductCard({ product, onDelete }: ProductCardProps) {
                 variant="body2"
                 color={product.available > 0 ? 'primary' : 'error'}
               >
-                En Stock: {product.available}
+                En Stock: {product.available - quantity}
               </Typography>
             )}
           </Stack>
@@ -125,28 +126,32 @@ export default function ProductCard({ product, onDelete }: ProductCardProps) {
             </Stack>
           )}
           {isUser && (
-            <Stack
-              direction="row"
-              spacing={1}
-              alignItems="center"
-              sx={{ mt: 2 }}
-            >
-              <Typography variant="body2">Pedir:</Typography>
-              <IncrementDecrementButtons
-                inStock={product.available}
-                quantity={quantity}
-                onChange={(q) =>
-                  updateItemQuantity(
-                    {
-                      id: product.id,
-                      title: product.title,
-                      price: product.price,
-                      available: product.available,
-                    },
-                    q,
-                  )
-                }
-              />
+            <Stack spacing={2} sx={{ mt: 2 }}>
+              <Stack direction="row" spacing={1} alignItems="center">
+                <Typography variant="body1">Pedir:</Typography>
+                <IncrementDecrementButtons
+                  inStock={product.available}
+                  quantity={quantity}
+                  onChange={(q) =>
+                    updateItemQuantity(
+                      {
+                        id: product.id,
+                        title: product.title,
+                        price: product.price,
+                        available: product.available,
+                        pots_count: product.pots_count,
+                      },
+                      q,
+                    )
+                  }
+                />
+              </Stack>
+              <Typography variant="body1">
+                {totalUds
+                  ? `Total : ${quantity} Cajas x ${product.pots_count} Uds = 
+                ${totalUds} Uds`
+                  : 'Total: 0 Uds'}
+              </Typography>
             </Stack>
           )}
         </Stack>

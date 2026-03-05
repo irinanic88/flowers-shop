@@ -2,18 +2,8 @@
 
 import { createContext, useContext, useState, ReactNode } from 'react';
 
+import { CartContextType } from '@/src/types/propsTypes';
 import { CartItem } from '@/src/types/types';
-
-type CartContextType = {
-  items: CartItem[];
-  updateItemQuantity: (
-    product: Omit<CartItem, 'quantity'>,
-    quantity: number,
-  ) => void;
-  removeFromCart: (id: string) => void;
-  clearCart: () => void;
-  total: number;
-};
 
 const CartContext = createContext<CartContextType>({
   items: [],
@@ -56,7 +46,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const clearCart = () => setItems([]);
 
   const total = items.reduce(
-    (sum, item) => sum + item.price * item.quantity,
+    (sum, item) => sum + item.price * item.quantity * item.pots_count,
     0,
   );
 

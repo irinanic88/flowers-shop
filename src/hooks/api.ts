@@ -1,8 +1,8 @@
-import { supabase } from '@/lib/supabase';
-import { RESET_PASSWORD_URL_dev } from '@/src/constants';
-import { useLoading } from '@/src/context/LoadingContext';
-import { AlertType, SignInFormType, SignUpFormType } from '@/src/types/types';
-import { ProductForm } from '@/src/views/AdminProductFormView';
+import { supabase } from "@/lib/supabase";
+import { RESET_PASSWORD_URL_dev } from "@/src/constants";
+import { useLoading } from "@/src/context/LoadingContext";
+import { AlertType, SignInFormType, SignUpFormType } from "@/src/types/types";
+import { ProductForm } from "@/src/views/AdminProductFormView";
 
 export const useRequest = () => {
   const { setLoading } = useLoading();
@@ -24,7 +24,7 @@ export const useRequest = () => {
       if (result.error) throw result.error;
 
       const success = successMessage
-        ? { message: successMessage, severity: 'success' }
+        ? { message: successMessage, severity: "success" }
         : null;
 
       return {
@@ -33,13 +33,13 @@ export const useRequest = () => {
         data: result.data ?? null,
       };
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'Error desconocido';
+      const message = err instanceof Error ? err.message : "Error desconocido";
 
       return {
         success: null,
         error: {
           message: errorMessage || message,
-          severity: 'error',
+          severity: "error",
         },
         data: null,
       };
@@ -78,7 +78,7 @@ export const useResetPassword = () => {
         supabase.auth.resetPasswordForEmail(email, {
           redirectTo: RESET_PASSWORD_URL_dev,
         }),
-      'Si el correo está registrado, recibirás un email con instrucciones para restablecer tu contraseña.',
+      "Si el correo está registrado, recibirás un email con instrucciones para restablecer tu contraseña.",
     );
 
   return { resetPassword };
@@ -93,7 +93,7 @@ export const useUpdatePassword = () => {
         supabase.auth.updateUser({
           password,
         }),
-      'Contraseña actualizada',
+      "Contraseña actualizada",
     );
 
   return { updatePassword };
@@ -104,8 +104,8 @@ export const useUpdateUserName = () => {
 
   const updateUserName = (name: string, userId: string) =>
     request(
-      () => supabase.from('profiles').update({ name }).eq('id', userId),
-      'Nombre actualizado',
+      () => supabase.from("profiles").update({ name }).eq("id", userId),
+      "Nombre actualizado",
     );
 
   return { updateUserName };
@@ -116,7 +116,7 @@ export const useInviteToken = () => {
 
   const checkInviteToken = (token: string) =>
     request<{ inviteId: string }>(() =>
-      supabase.functions.invoke('check-invite', {
+      supabase.functions.invoke("check-invite", {
         body: { invite: token },
       }),
     );
@@ -129,8 +129,8 @@ export const useConsumeInvite = () => {
 
   const consumeInvite = (body: { inviteId: string; userId: string }) =>
     request<{ inviteId: string }>(
-      () => supabase.functions.invoke('consume-invite', { body }),
-      'Tu cuenta ha sido creada correctamente!',
+      () => supabase.functions.invoke("consume-invite", { body }),
+      "Tu cuenta ha sido creada correctamente!",
     );
 
   return { consumeInvite };
@@ -141,7 +141,7 @@ export const useCreateProduct = () => {
 
   const createProduct = (form: ProductForm) =>
     request(
-      () => supabase.from('produ').insert([form]).select().single(),
+      () => supabase.from("produ").insert([form]).select().single(),
 
       `Articulo ${form.title} agregado!`,
     );
@@ -156,9 +156,9 @@ export const useUpdateProduct = () => {
     request(
       () =>
         supabase
-          .from('produ')
+          .from("produ")
           .update(form)
-          .eq('id', productId)
+          .eq("id", productId)
           .select()
           .single(),
 
@@ -175,19 +175,19 @@ export const useDeleteProduct = () => {
     const successMessage = `Articulo ${selectedProduct.title} eliminado.`;
 
     const { error } = await request(() =>
-      supabase.from('produ').delete().eq('id', selectedProduct.id),
+      supabase.from("produ").delete().eq("id", selectedProduct.id),
     );
 
     if (error) return { success: null, error };
 
     if (selectedProduct.images?.length) {
       const filePaths = selectedProduct.images
-        .map((url) => url.split('product-images/')[1])
+        .map((url) => url.split("product-images/")[1])
         .filter(Boolean);
 
       if (filePaths.length) {
         const result = await request(() =>
-          supabase.storage.from('product-images').remove(filePaths),
+          supabase.storage.from("product-images").remove(filePaths),
         );
 
         if (result.error) return result;
@@ -197,7 +197,7 @@ export const useDeleteProduct = () => {
     return {
       success: {
         message: successMessage,
-        severity: 'success',
+        severity: "success",
       },
       error: null,
     };
@@ -210,31 +210,31 @@ export const useUpdateOrderStatus = () => {
   const { request } = useRequest();
 
   const updateOrderStatus = async (
-    orderId: string,
-    nextStatus: 'approved' | 'cancelled',
+    orderId: number,
+    nextStatus: "approved" | "cancelled",
     adminComment?: string,
   ) => {
-    if (nextStatus === 'approved') {
+    if (nextStatus === "approved") {
       return request(
         () =>
-          supabase.rpc('approve_order', {
+          supabase.rpc("approve_order", {
             p_order_id: orderId,
             p_admin_comment: adminComment || null,
           }),
-        'Pedido aprobado',
+        "Pedido aprobado",
       );
     }
 
     return request(
       () =>
         supabase
-          .from('orders')
+          .from("orders")
           .update({
-            status: 'cancelled',
+            status: "cancelled",
             admin_comment: adminComment || null,
           })
-          .eq('id', orderId),
-      'Pedido cancelado',
+          .eq("id", orderId),
+      "Pedido cancelado",
     );
   };
 

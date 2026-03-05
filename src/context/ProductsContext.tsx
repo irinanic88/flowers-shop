@@ -34,7 +34,7 @@ export function ProductsProvider({ children }: { children: ReactNode }) {
     setLoading(true);
 
     const { data, error } = await supabase
-      .from('produ')
+      .from('products')
       .select('*')
       .order('created_at', { ascending: false });
 
@@ -47,7 +47,6 @@ export function ProductsProvider({ children }: { children: ReactNode }) {
         : [];
       setProducts(productsData);
     }
-
     setLoading(false);
   }, []);
 
@@ -58,7 +57,7 @@ export function ProductsProvider({ children }: { children: ReactNode }) {
       .channel('products-realtime')
       .on(
         'postgres_changes',
-        { event: '*', schema: 'public', table: 'produ' },
+        { event: '*', schema: 'public', table: 'products' },
         (payload) => {
           setProducts((prev) => {
             switch (payload.eventType) {

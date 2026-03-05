@@ -1,4 +1,4 @@
-import { FormField, ProductType } from '@/src/types/types';
+import { CartItem, FormField, ProductType } from '@/src/types/types';
 
 export interface AdminProductFormProps {
   open: boolean;
@@ -27,4 +27,20 @@ export type FieldProps = {
 export interface ProductCardProps {
   product: ProductType;
   onDelete: (p: ProductType) => void;
+}
+
+export type CartContextType = {
+  items: CartItem[];
+  updateItemQuantity: (
+    product: Omit<CartItem, 'quantity'>,
+    quantity: number,
+  ) => void;
+  removeFromCart: (id: string) => void;
+  clearCart: () => void;
+  total: number;
+};
+
+export interface CartPanelProps {
+  open: boolean;
+  onClose: () => void;
 }
