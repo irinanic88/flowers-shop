@@ -1,6 +1,9 @@
-"use client";
+'use client';
 
-import React, { useRef, useState } from "react";
+import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import CloseIcon from '@mui/icons-material/Close';
+import ImageNotSupportedIcon from '@mui/icons-material/ImageNotSupported';
 import {
   Box,
   Stack,
@@ -8,13 +11,10 @@ import {
   IconButton,
   Typography,
   useMediaQuery,
-} from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
-import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
-import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
-import ImageNotSupportedIcon from "@mui/icons-material/ImageNotSupported";
-import { useTheme } from "@mui/material/styles";
-import Image from "next/image";
+} from '@mui/material';
+import { useTheme } from '@mui/material/styles';
+import Image from 'next/image';
+import React, { useRef, useState } from 'react';
 
 interface ProductImagesProps {
   images: string[];
@@ -28,7 +28,7 @@ export default function ProductImages({ images, title }: ProductImagesProps) {
   const startX = useRef<number | null>(null);
 
   const theme = useTheme();
-  const isDesktop = useMediaQuery(theme.breakpoints.up("md"));
+  const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
 
   const hasImages = images && images.length > 0;
   const hasMany = images?.length > 1;
@@ -62,8 +62,7 @@ export default function ProductImages({ images, title }: ProductImagesProps) {
     startX.current = null;
   };
 
-  // Закрытие по клику на backdrop для mobile
-  const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
+  const handleBackdropClick = () => {
     if (!isDesktop) setOpen(false);
   };
 
@@ -71,9 +70,9 @@ export default function ProductImages({ images, title }: ProductImagesProps) {
     return (
       <Stack
         sx={{
-          width: "100%",
-          aspectRatio: "1 / 1",
-          border: "1px solid",
+          width: '100%',
+          aspectRatio: '1 / 1',
+          border: '1px solid',
           borderColor: (theme) => theme.palette.grey[300],
           borderRadius: 1,
           bgcolor: (theme) => theme.palette.grey[100],
@@ -84,11 +83,11 @@ export default function ProductImages({ images, title }: ProductImagesProps) {
         justifyContent="center"
         spacing={0.5} // меньше расстояния между иконкой и текстом
       >
-        <ImageNotSupportedIcon sx={{ fontSize: 28, color: "grey.500" }} />
+        <ImageNotSupportedIcon sx={{ fontSize: 28, color: 'grey.500' }} />
         <Typography
           color="text.secondary"
           variant="body2"
-          sx={{ textAlign: "center" }}
+          sx={{ textAlign: 'center' }}
         >
           No hay imágenes
         </Typography>
@@ -101,13 +100,13 @@ export default function ProductImages({ images, title }: ProductImagesProps) {
       {/* CARD GALLERY */}
       <Box
         sx={{
-          position: "relative",
-          width: "100%",
-          aspectRatio: "1 / 1",
-          overflow: "hidden",
-          cursor: hasMany ? "pointer" : "default",
-          "&:hover img": {
-            transform: hasMany ? "scale(1.05)" : "none",
+          position: 'relative',
+          width: '100%',
+          aspectRatio: '1 / 1',
+          overflow: 'hidden',
+          cursor: hasMany ? 'pointer' : 'default',
+          '&:hover img': {
+            transform: hasMany ? 'scale(1.05)' : 'none',
           },
         }}
         onClick={() => setOpen(true)}
@@ -119,8 +118,8 @@ export default function ProductImages({ images, title }: ProductImagesProps) {
           alt={title}
           fill
           style={{
-            objectFit: "cover",
-            transition: "transform 0.3s ease",
+            objectFit: 'cover',
+            transition: 'transform 0.3s ease',
           }}
         />
 
@@ -130,10 +129,10 @@ export default function ProductImages({ images, title }: ProductImagesProps) {
             direction="row"
             spacing={0.5}
             sx={{
-              position: "absolute",
+              position: 'absolute',
               bottom: 6,
-              left: "50%",
-              transform: "translateX(-50%)",
+              left: '50%',
+              transform: 'translateX(-50%)',
             }}
           >
             {images.map((_, i) => (
@@ -142,9 +141,9 @@ export default function ProductImages({ images, title }: ProductImagesProps) {
                 sx={{
                   width: 6,
                   height: 6,
-                  borderRadius: "50%",
-                  bgcolor: i === index ? "rgba(0,0,0,0.8)" : "rgba(0,0,0,0.3)",
-                  transition: "background-color 0.3s",
+                  borderRadius: '50%',
+                  bgcolor: i === index ? 'rgba(0,0,0,0.8)' : 'rgba(0,0,0,0.3)',
+                  transition: 'background-color 0.3s',
                 }}
               />
             ))}
@@ -156,19 +155,19 @@ export default function ProductImages({ images, title }: ProductImagesProps) {
           <Typography
             onClick={() => setOpen(true)}
             sx={{
-              position: "absolute",
+              position: 'absolute',
               bottom: 8,
               right: 8,
-              bgcolor: "rgba(255,255,255,0.7)",
-              color: "black",
+              bgcolor: 'rgba(255,255,255,0.7)',
+              color: 'black',
               px: 1.5,
               py: 0.5,
               borderRadius: 1,
               fontSize: 12,
               fontWeight: 500,
-              cursor: "pointer",
-              transition: "background-color 0.2s",
-              "&:hover": { bgcolor: "rgba(255,255,255,0.9)" },
+              cursor: 'pointer',
+              transition: 'background-color 0.2s',
+              '&:hover': { bgcolor: 'rgba(255,255,255,0.9)' },
             }}
           >
             + {images.length - 1}
@@ -180,23 +179,23 @@ export default function ProductImages({ images, title }: ProductImagesProps) {
       <Modal open={open} onClose={() => setOpen(false)}>
         <Box
           sx={{
-            width: "100vw",
-            height: "100vh",
-            bgcolor: "rgba(255,255,255,0.9)",
-            position: "relative",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            cursor: hasMany && !isDesktop ? "grab" : "default",
+            width: '100vw',
+            height: '100vh',
+            bgcolor: 'rgba(255,255,255,0.9)',
+            position: 'relative',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: hasMany && !isDesktop ? 'grab' : 'default',
           }}
           onClick={handleBackdropClick}
         >
           <Box
             sx={{
-              position: "relative",
-              width: "90%",
-              height: "90%",
-              transition: "opacity 0.2s ease",
+              position: 'relative',
+              width: '90%',
+              height: '90%',
+              transition: 'opacity 0.2s ease',
               opacity: fade ? 0 : 1,
             }}
             onTouchStart={handleTouchStart}
@@ -207,8 +206,8 @@ export default function ProductImages({ images, title }: ProductImagesProps) {
               alt={`${title}-${index}`}
               fill
               style={{
-                objectFit: "contain",
-                transition: "transform 0.3s ease",
+                objectFit: 'contain',
+                transition: 'transform 0.3s ease',
               }}
             />
           </Box>
@@ -218,11 +217,11 @@ export default function ProductImages({ images, title }: ProductImagesProps) {
             <IconButton
               onClick={() => setOpen(false)}
               sx={{
-                position: "absolute",
+                position: 'absolute',
                 top: 16,
                 right: 16,
-                bgcolor: "rgba(255,255,255,0.8)",
-                "&:hover": { bgcolor: "rgba(255,255,255,1)" },
+                bgcolor: 'rgba(255,255,255,0.8)',
+                '&:hover': { bgcolor: 'rgba(255,255,255,1)' },
               }}
             >
               <CloseIcon />
@@ -235,12 +234,12 @@ export default function ProductImages({ images, title }: ProductImagesProps) {
               <IconButton
                 onClick={prev}
                 sx={{
-                  position: "absolute",
+                  position: 'absolute',
                   left: 16,
-                  top: "50%",
-                  transform: "translateY(-50%)",
-                  bgcolor: "rgba(255,255,255,0.6)",
-                  "&:hover": { bgcolor: "rgba(255,255,255,0.9)" },
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  bgcolor: 'rgba(255,255,255,0.6)',
+                  '&:hover': { bgcolor: 'rgba(255,255,255,0.9)' },
                 }}
               >
                 <ArrowBackIosNewIcon />
@@ -249,12 +248,12 @@ export default function ProductImages({ images, title }: ProductImagesProps) {
               <IconButton
                 onClick={next}
                 sx={{
-                  position: "absolute",
+                  position: 'absolute',
                   right: 16,
-                  top: "50%",
-                  transform: "translateY(-50%)",
-                  bgcolor: "rgba(255,255,255,0.6)",
-                  "&:hover": { bgcolor: "rgba(255,255,255,0.9)" },
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  bgcolor: 'rgba(255,255,255,0.6)',
+                  '&:hover': { bgcolor: 'rgba(255,255,255,0.9)' },
                 }}
               >
                 <ArrowForwardIosIcon />

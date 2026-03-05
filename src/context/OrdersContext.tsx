@@ -8,9 +8,10 @@ import {
   ReactNode,
   useCallback,
 } from 'react';
+
 import { supabase } from '@/lib/supabase';
-import { OrderType } from '@/src/types/types.ts';
 import { useAuth } from '@/src/context/AuthContext';
+import { OrderType } from '@/src/types/types';
 
 interface OrdersContextType {
   orders: OrderType[];

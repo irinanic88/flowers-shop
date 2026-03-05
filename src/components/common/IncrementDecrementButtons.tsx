@@ -1,7 +1,7 @@
-import React from 'react';
-import { Box, IconButton, Typography } from '@mui/material';
 import { Add, Remove } from '@mui/icons-material';
+import { Box, IconButton, Typography } from '@mui/material';
 import { equals } from 'ramda';
+import React from 'react';
 
 interface PreorderButtonProps {
   inStock: number;

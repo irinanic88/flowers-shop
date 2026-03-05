@@ -1,4 +1,4 @@
-import { AlertColor } from "@mui/material";
+import { AlertColor } from '@mui/material';
 
 export interface ProductType {
   id: string;
@@ -17,7 +17,7 @@ export interface ProductType {
 export interface UserType {
   id: string;
   name?: string;
-  role?: "user" | "admin";
+  role?: 'user' | 'admin';
   created_at?: string;
   email?: string;
 }
@@ -48,8 +48,8 @@ export interface OrderItem {
   quantity: number;
 }
 
-export type OrderStatusType = "pending" | "approved" | "cancelled";
-export type DisponibilityType = "available" | "outOfStock";
+export type OrderStatusType = 'pending' | 'approved' | 'cancelled';
+export type DisponibilityType = 'available' | 'outOfStock';
 
 export interface OrderType {
   id: number;

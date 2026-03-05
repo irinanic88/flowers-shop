@@ -7,6 +7,7 @@ import {
   Typography,
   Stack,
 } from '@mui/material';
+
 import { PrimaryButton, SecondaryButton } from '@/src/styledComponents';
 
 interface Props {

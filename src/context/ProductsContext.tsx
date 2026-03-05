@@ -8,8 +8,9 @@ import {
   ReactNode,
   useCallback,
 } from 'react';
+
 import { supabase } from '@/lib/supabase';
-import { ProductType } from '@/src/types/types.ts';
+import { ProductType } from '@/src/types/types';
 
 interface ProductsContextType {
   products: ProductType[];
@@ -33,7 +34,7 @@ export function ProductsProvider({ children }: { children: ReactNode }) {
     setLoading(true);
 
     const { data, error } = await supabase
-      .from('products')
+      .from('produ')
       .select('*')
       .order('created_at', { ascending: false });
 
@@ -41,7 +42,9 @@ export function ProductsProvider({ children }: { children: ReactNode }) {
       console.error('Error loading products:', error);
       setProducts([]);
     } else {
-      const productsData = data ? data.map(p => ({ ...p, price: p.price.toFixed(2)})) : [];
+      const productsData = data
+        ? data.map((p) => ({ ...p, price: p.price.toFixed(2) }))
+        : [];
       setProducts(productsData);
     }
 
@@ -55,7 +58,7 @@ export function ProductsProvider({ children }: { children: ReactNode }) {
       .channel('products-realtime')
       .on(
         'postgres_changes',
-        { event: '*', schema: 'public', table: 'products' },
+        { event: '*', schema: 'public', table: 'produ' },
         (payload) => {
           setProducts((prev) => {
             switch (payload.eventType) {

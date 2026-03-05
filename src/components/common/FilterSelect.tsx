@@ -1,10 +1,11 @@
 'use client';
 
-import React from 'react';
-import { Select, MenuItem, FormControl, Button, Stack } from '@mui/material';
-import { FilterPillValue } from '@/src/components/common/FilterPillValue.tsx';
 import CloseIcon from '@mui/icons-material/Close';
+import { Select, MenuItem, FormControl, Button, Stack } from '@mui/material';
 import { equals } from 'ramda';
+import React from 'react';
+
+import { FilterPillValue } from '@/src/components/common/FilterPillValue';
 
 type OptionDict = Record<string, string>;
 

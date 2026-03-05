@@ -1,12 +1,12 @@
 'use client';
 
-import { Box, Fab } from '@mui/material';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import { Box, Fab, Badge } from '@mui/material';
 import { useState } from 'react';
-import CartPanelView from '@/src/views/CartPanelView.tsx';
-import UsersTabs from '@/src/views/UsersTabs';
+
 import { useCart } from '@/src/context/CartContext';
-import { Badge } from '@mui/material';
+import CartPanelView from '@/src/views/CartPanelView';
+import UsersTabs from '@/src/views/UsersTabs';
 
 export default function UserView() {
   const [cartOpen, setCartOpen] = useState(false);

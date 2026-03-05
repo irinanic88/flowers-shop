@@ -1,12 +1,13 @@
-import { Stack, TextField } from "@mui/material";
-import { RoundIconButton } from "@/src/styledComponents";
-import CloseIcon from "@mui/icons-material/Close";
-import CheckIcon from "@mui/icons-material/Check";
-import EditIcon from "@mui/icons-material/Edit";
-import React, { useEffect, useState } from "react";
-import { useAuth } from "@/src/context/AuthContext";
-import { useUpdateUserName } from "@/src/hooks/api.ts";
-import { useAlert } from "@/src/context/AlertContext.tsx";
+import CheckIcon from '@mui/icons-material/Check';
+import CloseIcon from '@mui/icons-material/Close';
+import EditIcon from '@mui/icons-material/Edit';
+import { Stack, TextField } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+
+import { useAlert } from '@/src/context/AlertContext';
+import { useAuth } from '@/src/context/AuthContext';
+import { useUpdateUserName } from '@/src/hooks/api';
+import { RoundIconButton } from '@/src/styledComponents';
 
 export default function NameUpdateForm() {
   const { name: userName, user, refreshProfile } = useAuth();
@@ -14,7 +15,7 @@ export default function NameUpdateForm() {
   const { showAlert } = useAlert();
 
   const [editingName, setEditingName] = useState(false);
-  const [name, setName] = useState("");
+  const [name, setName] = useState('');
 
   useEffect(() => {
     if (userName) setName(userName);
@@ -36,10 +37,10 @@ export default function NameUpdateForm() {
   return (
     <Stack spacing={1} pt={1}>
       <Stack
-        direction={editingName ? "column" : "row"}
+        direction={editingName ? 'column' : 'row'}
         spacing={1}
-        alignItems={editingName ? "flex-start" : "center"}
-        sx={{ width: "100%" }}
+        alignItems={editingName ? 'flex-start' : 'center'}
+        sx={{ width: '100%' }}
       >
         <TextField
           label="Nombre"
@@ -54,7 +55,7 @@ export default function NameUpdateForm() {
             <RoundIconButton
               onClick={() => {
                 setEditingName(false);
-                setName("");
+                setName('');
               }}
             >
               <CloseIcon />

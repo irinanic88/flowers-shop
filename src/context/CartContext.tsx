@@ -1,7 +1,8 @@
 'use client';
 
 import { createContext, useContext, useState, ReactNode } from 'react';
-import { CartItem } from '@/src/types/types.ts';
+
+import { CartItem } from '@/src/types/types';
 
 type CartContextType = {
   items: CartItem[];

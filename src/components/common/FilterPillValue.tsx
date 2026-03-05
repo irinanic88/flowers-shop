@@ -1,9 +1,10 @@
 'use client';
 
-import React from 'react';
-import { Typography } from '@mui/material';
-import { FilterPillBox } from '@/src/styledComponents.tsx';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import { Typography } from '@mui/material';
+import React from 'react';
+
+import { FilterPillBox } from '@/src/styledComponents';
 
 interface FilterPillValueProps {
   label: string;

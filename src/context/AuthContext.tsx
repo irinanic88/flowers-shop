@@ -1,9 +1,10 @@
 'use client';
 
-import { createContext, useContext, useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabase';
-import { UserType } from '@/src/types/types.ts';
 import { equals, anyPass } from 'ramda';
+import { createContext, useContext, useEffect, useState } from 'react';
+
+import { supabase } from '@/lib/supabase';
+import { UserType } from '@/src/types/types';
 
 type AuthContextType = {
   userId: string | null;

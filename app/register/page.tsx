@@ -1,16 +1,13 @@
-"use client";
+'use client';
 
-import React, { useState, useEffect } from "react";
-import { AlertType } from "@/src/types/types.ts";
-import { useRouter } from "next/navigation";
-import {
-  useConsumeInvite,
-  useInviteToken,
-  useSignUp,
-} from "@/src/hooks/api.ts";
-import PanelCardFormLayout from "@/src/components/auth/PanelCardFormLayout.tsx";
-import CommonForm from "@/src/components/form/CommonForm.tsx";
-import { SignUpFormConfig } from "@/src/components/form/formConfigs.ts";
+import { useRouter } from 'next/navigation';
+import React, { useState, useEffect } from 'react';
+
+import PanelCardFormLayout from '@/src/components/auth/PanelCardFormLayout';
+import CommonForm from '@/src/components/form/CommonForm';
+import { SignUpFormConfig } from '@/src/components/form/formConfigs';
+import { useConsumeInvite, useInviteToken, useSignUp } from '@/src/hooks/api';
+import { AlertType } from '@/src/types/types';
 
 export default function SignUpForm() {
   const [signUpForm, setSignUpForm] = useState({});
@@ -26,12 +23,12 @@ export default function SignUpForm() {
   useEffect(() => {
     const verifyToken = async () => {
       const params = new URLSearchParams(window.location.search);
-      const token = params.get("invite");
+      const token = params.get('invite');
 
       if (!token) {
         setAlert({
-          message: "Token de invitación no proporcionado",
-          severity: "error",
+          message: 'Token de invitación no proporcionado',
+          severity: 'error',
         });
         return;
       }
@@ -47,8 +44,8 @@ export default function SignUpForm() {
 
       if (!parsed?.inviteId) {
         setAlert({
-          message: "Token inválido o ya usado",
-          severity: "error",
+          message: 'Token inválido o ya usado',
+          severity: 'error',
         });
         return;
       }
@@ -86,13 +83,13 @@ export default function SignUpForm() {
     }
 
     setAlert(success);
-    router.push("/");
+    router.push('/');
   };
 
   return (
     <PanelCardFormLayout
       submit={{
-        title: "Registrarse",
+        title: 'Registrarse',
         handler: handleSubmit,
       }}
       alert={alert}

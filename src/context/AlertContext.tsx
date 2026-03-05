@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, {
   createContext,
@@ -6,8 +6,9 @@ import React, {
   useContext,
   useState,
   ReactNode,
-} from "react";
-import { AlertType } from "@/src/types/types.ts";
+} from 'react';
+
+import { AlertType } from '@/src/types/types';
 
 type AlertContextType = {
   alert: AlertType;

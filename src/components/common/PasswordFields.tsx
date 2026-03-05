@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { Stack, TextField, IconButton, InputAdornment } from "@mui/material";
-import Visibility from "@mui/icons-material/Visibility";
-import VisibilityOff from "@mui/icons-material/VisibilityOff";
-import { useState, forwardRef, useImperativeHandle } from "react";
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import { Stack, TextField, IconButton, InputAdornment } from '@mui/material';
+import { useState, forwardRef, useImperativeHandle } from 'react';
 
 export type PasswordFieldsRef = {
   resetVisibility: () => void;
@@ -37,13 +37,13 @@ const PasswordFields = forwardRef<PasswordFieldsRef, PasswordFieldsProps>(
     }));
 
     return (
-      <Stack spacing={2} sx={{ width: "100%" }}>
+      <Stack spacing={2} sx={{ width: '100%' }}>
         {password && (
           <TextField
             label="Contraseña"
-            type={showPassword && !disabled ? "text" : "password"}
+            type={showPassword && !disabled ? 'text' : 'password'}
             value={
-              !password.value && disabled ? "00000000000000" : password.value
+              !password.value && disabled ? '00000000000000' : password.value
             }
             onBlur={() => password?.onBlur?.()}
             onChange={(e) => password?.onChange(e.target.value)}
@@ -54,7 +54,7 @@ const PasswordFields = forwardRef<PasswordFieldsRef, PasswordFieldsProps>(
               endAdornment: (
                 <InputAdornment
                   position="end"
-                  sx={{ display: disabled ? "none" : "flex" }}
+                  sx={{ display: disabled ? 'none' : 'flex' }}
                 >
                   <IconButton
                     onClick={() => setShowPassword((p) => !p)}
@@ -72,7 +72,7 @@ const PasswordFields = forwardRef<PasswordFieldsRef, PasswordFieldsProps>(
         {confirm && (
           <TextField
             label="Confirmar Contraseña"
-            type={showConfirmPassword ? "text" : "password"}
+            type={showConfirmPassword ? 'text' : 'password'}
             value={confirm.value}
             onBlur={() => password?.onBlur?.()}
             onChange={(e) => confirm?.onChange(e.target.value)}
@@ -98,6 +98,6 @@ const PasswordFields = forwardRef<PasswordFieldsRef, PasswordFieldsProps>(
   },
 );
 
-PasswordFields.displayName = "PasswordFields";
+PasswordFields.displayName = 'PasswordFields';
 
 export default PasswordFields;

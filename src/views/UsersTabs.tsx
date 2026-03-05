@@ -1,10 +1,11 @@
 'use client';
 
-import React, { JSX, useState } from 'react';
 import { Box, Tabs, Tab } from '@mui/material';
 import * as R from 'ramda';
-import ProductsTab from '@/src/views/ProductsTab';
+import React, { JSX, useState } from 'react';
+
 import PreordersTab from '@/src/views/PreordersTab';
+import ProductsTab from '@/src/views/ProductsTab';
 
 interface TabItem {
   label: string;

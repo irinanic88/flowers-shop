@@ -1,13 +1,14 @@
-"use client";
+'use client';
 
-import React, { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { supabase } from "@/lib/supabase.js";
-import PanelCardFormLayout from "@/src/components/auth/PanelCardFormLayout.tsx";
-import CommonForm from "@/src/components/form/CommonForm.tsx";
-import { ResetPasswordFormConfig } from "@/src/components/form/formConfigs.ts";
-import { useUpdatePassword } from "@/src/hooks/api.ts";
-import { AlertType } from "@/src/types/types.ts";
+import { useRouter } from 'next/navigation';
+import React, { useState, useEffect } from 'react';
+
+import { supabase } from '@/lib/supabase';
+import PanelCardFormLayout from '@/src/components/auth/PanelCardFormLayout';
+import CommonForm from '@/src/components/form/CommonForm';
+import { ResetPasswordFormConfig } from '@/src/components/form/formConfigs';
+import { useUpdatePassword } from '@/src/hooks/api';
+import { AlertType } from '@/src/types/types';
 
 export default function Page() {
   const [passwordForm, setPasswordForm] = useState({});
@@ -19,11 +20,11 @@ export default function Page() {
 
   useEffect(() => {
     const hash = window.location.hash;
-    const params = new URLSearchParams(hash.replace("#", "?"));
-    const access_token = params.get("access_token");
-    const type = params.get("type");
+    const params = new URLSearchParams(hash.replace('#', '?'));
+    const access_token = params.get('access_token');
+    const type = params.get('type');
 
-    if (access_token && type === "recovery") {
+    if (access_token && type === 'recovery') {
       supabase.auth.setSession({ access_token });
     }
   }, []);
@@ -39,7 +40,7 @@ export default function Page() {
     }
 
     showAlert(success);
-    router.push("/");
+    router.push('/');
   };
 
   return (
@@ -47,7 +48,7 @@ export default function Page() {
       alert={alert}
       setAlert={(v) => setAlert(v)}
       submit={{
-        title: "Actualizar",
+        title: 'Actualizar',
         handler: handleSubmit,
       }}
     >

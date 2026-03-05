@@ -1,3 +1,5 @@
+import CloseIcon from '@mui/icons-material/Close';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import {
   Stack,
   Dialog,
@@ -7,11 +9,10 @@ import {
   IconButton,
   Snackbar,
   Alert,
-} from "@mui/material";
-import React, { useState } from "react";
-import CloseIcon from "@mui/icons-material/Close";
-import ContentCopyIcon from "@mui/icons-material/ContentCopy";
-import { SecondaryRoundIconButton } from "@/src/styledComponents.tsx";
+} from '@mui/material';
+import React, { useState } from 'react';
+
+import { SecondaryRoundIconButton } from '@/src/styledComponents';
 
 type InviteDialogProps = {
   link: string;
@@ -32,14 +33,14 @@ export default function InviteDialog({
       if (navigator.clipboard && window.isSecureContext) {
         await navigator.clipboard.writeText(link);
       } else {
-        const textArea = document.createElement("textarea");
+        const textArea = document.createElement('textarea');
         textArea.value = link;
-        textArea.style.position = "fixed";
-        textArea.style.left = "-999999px";
+        textArea.style.position = 'fixed';
+        textArea.style.left = '-999999px';
         document.body.appendChild(textArea);
         textArea.focus();
         textArea.select();
-        document.execCommand("copy");
+        document.execCommand('copy');
         document.body.removeChild(textArea);
       }
 
@@ -50,7 +51,7 @@ export default function InviteDialog({
         setCopied(false);
       }, 2000);
     } catch (err) {
-      console.error("Copy failed", err);
+      console.error('Copy failed', err);
     }
   };
 
@@ -76,8 +77,8 @@ export default function InviteDialog({
             <Typography
               color="text.secondary"
               sx={{
-                wordBreak: "break-all",
-                textAlign: "center",
+                wordBreak: 'break-all',
+                textAlign: 'center',
               }}
             >
               {link}
@@ -94,7 +95,7 @@ export default function InviteDialog({
         open={snackbarOpen}
         autoHideDuration={2500}
         onClose={() => setSnackbarOpen(false)}
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
       >
         <Alert
           severity="success"

@@ -1,6 +1,6 @@
-import { Stack, Typography } from "@mui/material";
-import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
-import React from "react";
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import { Stack, Typography } from '@mui/material';
+import React from 'react';
 
 export default function ValidationErrorsList({
   formErrors,

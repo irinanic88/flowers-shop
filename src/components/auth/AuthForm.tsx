@@ -1,36 +1,36 @@
-"use client";
+'use client';
 
-import React, { useEffect, useState } from "react";
-import { Stack } from "@mui/material";
-import { equals } from "ramda";
-import { AuthTitlesDict } from "@/src/constants.ts";
+import { Stack } from '@mui/material';
+import { equals } from 'ramda';
+import React, { useState } from 'react';
 
-import { AppDrawer } from "@/src/components/common/AppDrawer.tsx";
-import RedirectionLink from "@/src/components/common/RedirectionLink.tsx";
-import CommonForm from "@/src/components/form/CommonForm.tsx";
-import { useResetPassword, useSignIn } from "@/src/hooks/api.ts";
+import { AppDrawer } from '@/src/components/common/AppDrawer';
+import RedirectionLink from '@/src/components/common/RedirectionLink';
+import CommonForm from '@/src/components/form/CommonForm';
 import {
   AuthFormConfig,
   RequestResetPasswordFormConfig,
-} from "@/src/components/form/formConfigs.ts";
-import { useAlert } from "@/src/context/AlertContext.tsx";
+} from '@/src/components/form/formConfigs';
+import { AuthTitlesDict } from '@/src/constants';
+import { useAlert } from '@/src/context/AlertContext';
+import { useResetPassword, useSignIn } from '@/src/hooks/api';
 
 type AuthFormProps = {
   open: boolean;
   onClose: () => void;
 };
 
-type AuthMode = "signIn" | "forgotPassword";
+type AuthMode = 'signIn' | 'forgotPassword';
 
 export default function AuthForm({ open, onClose }: AuthFormProps) {
-  const [mode, setMode] = useState<AuthMode>("signIn");
+  const [mode, setMode] = useState<AuthMode>('signIn');
   const [authForm, setAuthForm] = useState<Record<string, string>>({});
   const [isFormValid, setIsFormValid] = useState(false);
   const [cooldown, setCooldown] = useState(0);
 
-  const isSignIn = equals(mode, "signIn");
-  const isForgotPassword = equals(mode, "forgotPassword");
-  const title = AuthTitlesDict[mode].title || "";
+  const isSignIn = equals(mode, 'signIn');
+  const isForgotPassword = equals(mode, 'forgotPassword');
+  const title = AuthTitlesDict[mode].title || '';
 
   const { signIn } = useSignIn();
   const { resetPassword } = useResetPassword();
@@ -87,7 +87,7 @@ export default function AuthForm({ open, onClose }: AuthFormProps) {
             : AuthTitlesDict[mode].submitButton,
       }}
     >
-      <Stack sx={{ height: "100%" }} justifyContent="center">
+      <Stack sx={{ height: '100%' }} justifyContent="center">
         {isSignIn && (
           <Stack spacing={2}>
             <CommonForm
@@ -104,7 +104,7 @@ export default function AuthForm({ open, onClose }: AuthFormProps) {
               onLinkClick={() => {
                 setAuthForm({});
                 setIsFormValid(false);
-                setMode("forgotPassword");
+                setMode('forgotPassword');
               }}
             />
           </Stack>

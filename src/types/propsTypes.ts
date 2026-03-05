@@ -1,4 +1,4 @@
-import { FormField, ProductType } from "@/src/types/types.ts";
+import { FormField, ProductType } from '@/src/types/types';
 
 export interface AdminProductFormProps {
   open: boolean;

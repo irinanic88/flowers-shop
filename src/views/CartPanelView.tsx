@@ -1,21 +1,22 @@
-"use client";
+'use client';
 
-import { Box, Typography, Stack, TextField } from "@mui/material";
-import { useCart } from "@/src/context/CartContext.tsx";
+import { Box, Typography, Stack, TextField } from '@mui/material';
+import { isEmpty } from 'ramda';
+import React, { useEffect, useState } from 'react';
+
+import { supabase } from '@/lib/supabase';
+import { AppDrawer } from '@/src/components/common/AppDrawer';
+import IncrementDecrementButtons from '@/src/components/common/IncrementDecrementButtons';
+import { useAlert } from '@/src/context/AlertContext';
+import { useCart } from '@/src/context/CartContext';
+import { useOrders } from '@/src/context/OrdersContext';
 import {
   PrimaryButton,
   Row,
   PanelCard,
   SecondaryButton,
-} from "@/src/styledComponents.tsx";
-import IncrementDecrementButtons from "@/src/components/common/IncrementDecrementButtons.tsx";
-import { supabase } from "@/lib/supabase.js";
-import React, { useEffect, useState } from "react";
-import { useOrders } from "@/src/context/OrdersContext.tsx";
-import { AppDrawer } from "@/src/components/common/AppDrawer.tsx";
-import { isEmpty } from "ramda";
-import { AlertType } from "@/src/types/types.ts";
-import { useAlert } from "@/src/context/AlertContext.tsx";
+} from '@/src/styledComponents';
+import { AlertType } from '@/src/types/types';
 
 export interface CartPanelProps {
   open: boolean;
@@ -24,7 +25,7 @@ export interface CartPanelProps {
 
 export default function CartPanelView({ open, onClose }: CartPanelProps) {
   const [isCartEmpty, setIsCartEmpty] = useState(true);
-  const [comment, setComment] = useState("");
+  const [comment, setComment] = useState('');
   const [alert, setAlert] = useState<AlertType>(null);
   const [loading, setLoading] = useState(false);
 
@@ -47,8 +48,8 @@ export default function CartPanelView({ open, onClose }: CartPanelProps) {
     if (!userId) {
       setLoading(false);
       setAlert({
-        message: "Error",
-        severity: "error",
+        message: 'Error',
+        severity: 'error',
       });
       return;
     }
@@ -60,35 +61,35 @@ export default function CartPanelView({ open, onClose }: CartPanelProps) {
       quantity: i.quantity,
     }));
 
-    const { error: err } = await supabase.from("orders").insert([
+    const { error: err } = await supabase.from('orders').insert([
       {
         user_id: userId,
         items: orderItems,
         total: Number(total.toFixed(2)),
         comment: comment || null,
-        status: "pending",
+        status: 'pending',
       },
     ]);
 
     if (err) {
       setAlert({
         message: `Error: ${err.message}`,
-        severity: "error",
+        severity: 'error',
       });
     } else {
       showAlert({
         message:
-          "Pedido enviado con éxito!\n" +
-          "Tu pedido está en estado pendiente.\n" +
-          "Los articulos han sido reservados hasta que el administrador lo apruebe o lo cancele.\n" +
-          "Puedes consultar el estado y los detalles en la tabla de pedidos",
-        severity: "success",
+          'Pedido enviado con éxito!\n' +
+          'Tu pedido está en estado pendiente.\n' +
+          'Los articulos han sido reservados hasta que el administrador lo apruebe o lo cancele.\n' +
+          'Puedes consultar el estado y los detalles en la tabla de pedidos',
+        severity: 'success',
       });
       void refreshOrders();
     }
 
     clearCart();
-    setComment("");
+    setComment('');
     onClose();
   };
 
@@ -112,12 +113,12 @@ export default function CartPanelView({ open, onClose }: CartPanelProps) {
       setAlertState={(v) => setAlert(v)}
       loading={loading}
     >
-      <Stack justifyContent="space-between" sx={{ height: "100%" }}>
+      <Stack justifyContent="space-between" sx={{ height: '100%' }}>
         {!items.length && (
           <Stack
             justifyContent="center"
             alignItems="center"
-            sx={{ height: "100%" }}
+            sx={{ height: '100%' }}
           >
             <Typography color="text.secondary">
               No hay productos en tu preorden.
@@ -126,7 +127,7 @@ export default function CartPanelView({ open, onClose }: CartPanelProps) {
         )}
 
         {items.length > 0 && (
-          <Box sx={{ flex: 1, overflowY: "auto" }}>
+          <Box sx={{ flex: 1, overflowY: 'auto' }}>
             <Stack spacing={1}>
               {items.map((item) => (
                 <PanelCard key={item.id}>
@@ -171,7 +172,7 @@ export default function CartPanelView({ open, onClose }: CartPanelProps) {
               rows={2}
             />
 
-            <Box sx={{ p: 2, borderTop: "1px solid #eee" }}>
+            <Box sx={{ p: 2, borderTop: '1px solid #eee' }}>
               <Row sx={{ mb: 1 }}>
                 <Typography variant="subtitle1">Total:</Typography>
                 <Typography variant="subtitle1">

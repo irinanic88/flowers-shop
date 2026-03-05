@@ -1,25 +1,26 @@
-"use client";
+'use client';
 
-import { Stack, Typography, DialogContent, Dialog, Box } from "@mui/material";
-import ProductCard from "@/src/components/products/ProductCard";
-import { useAuth } from "@/src/context/AuthContext";
-import { useProducts } from "@/src/context/ProductsContext";
-import React, { useMemo, useState } from "react";
-import type { DisponibilityType, ProductType } from "@/src/types/types.ts";
-import { PrimaryButton, SecondaryButton } from "@/src/styledComponents";
-import { isNotEmpty } from "ramda";
-import { ProductsFilters } from "@/src/components/products/ProductsFilters";
-import { useAlert } from "@/src/context/AlertContext";
-import { useDeleteProduct } from "@/src/hooks/api.ts";
+import { Stack, Typography, DialogContent, Dialog, Box } from '@mui/material';
+import { isNotEmpty } from 'ramda';
+import React, { useMemo, useState } from 'react';
+
+import ProductCard from '@/src/components/products/ProductCard';
+import { ProductsFilters } from '@/src/components/products/ProductsFilters';
+import { useAlert } from '@/src/context/AlertContext';
+import { useAuth } from '@/src/context/AuthContext';
+import { useProducts } from '@/src/context/ProductsContext';
+import { useDeleteProduct } from '@/src/hooks/api';
+import { PrimaryButton, SecondaryButton } from '@/src/styledComponents';
+import type { DisponibilityType, ProductType } from '@/src/types/types';
 
 export default function ProductsPage() {
   const [selectedProduct, setSelectedProduct] = useState<ProductType | null>(
     null,
   );
   const [availabilityFilter, setAvailabilityFilter] = useState<
-    DisponibilityType | "all"
-  >("all");
-  const [searchTerm, setSearchTerm] = useState("");
+    DisponibilityType | 'all'
+  >('all');
+  const [searchTerm, setSearchTerm] = useState('');
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
 
   const { products } = useProducts();
@@ -31,9 +32,9 @@ export default function ProductsPage() {
     return products
       .filter((product) => {
         const availabilityOk =
-          availabilityFilter === "all" ||
-          (availabilityFilter === "available" && product.available > 0) ||
-          (availabilityFilter === "outOfStock" && product.available === 0);
+          availabilityFilter === 'all' ||
+          (availabilityFilter === 'available' && product.available > 0) ||
+          (availabilityFilter === 'outOfStock' && product.available === 0);
 
         const userAccessOk = isAdmin || product.available > 0;
 
@@ -61,10 +62,10 @@ export default function ProductsPage() {
 
   return (
     <>
-      <Stack spacing={2} sx={{ width: "100%" }}>
+      <Stack spacing={2} sx={{ width: '100%' }}>
         {isUnknownUser && (
           <Typography
-            sx={{ textAlign: "center", my: 4 }}
+            sx={{ textAlign: 'center', my: 4 }}
             variant="h4"
             color="text.primary"
           >
@@ -76,7 +77,7 @@ export default function ProductsPage() {
           <ProductsFilters
             availabilityFilter={availabilityFilter}
             searchFilter={searchTerm}
-            onAvailabilityChange={(v: DisponibilityType | "all") =>
+            onAvailabilityChange={(v: DisponibilityType | 'all') =>
               setAvailabilityFilter(v)
             }
             onSearchChange={(v: string) => setSearchTerm(v)}
@@ -86,24 +87,24 @@ export default function ProductsPage() {
         {isNotEmpty(filteredProducts) ? (
           <Box
             sx={{
-              width: "100%",
-              display: "flex",
-              justifyContent: "center",
+              width: '100%',
+              display: 'flex',
+              justifyContent: 'center',
             }}
           >
             <Box
               sx={{
-                width: "100%",
+                width: '100%',
                 maxWidth: 1400,
               }}
             >
               <Box
                 sx={{
-                  display: "grid",
+                  display: 'grid',
                   gridTemplateColumns:
-                    "repeat(auto-fill, minmax(300px, 350px))",
+                    'repeat(auto-fill, minmax(300px, 350px))',
                   gap: 2,
-                  justifyContent: "center",
+                  justifyContent: 'center',
                 }}
               >
                 {filteredProducts.map((product) => (
@@ -123,9 +124,9 @@ export default function ProductsPage() {
           <Stack
             alignItems="center"
             justifyContent="center"
-            sx={{ width: "100%", height: 200 }}
+            sx={{ width: '100%', height: 200 }}
           >
-            <Typography color="text.secondary" sx={{ textAlign: "center" }}>
+            <Typography color="text.secondary" sx={{ textAlign: 'center' }}>
               No hay productos disponibles por el momento.
             </Typography>
           </Stack>

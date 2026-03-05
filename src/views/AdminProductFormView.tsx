@@ -1,12 +1,13 @@
-"use client";
+'use client';
 
-import React, { useMemo, useState } from "react";
-import { AppDrawer } from "@/src/components/common/AppDrawer.tsx";
-import { useAlert } from "@/src/context/AlertContext.tsx";
-import CommonForm from "@/src/components/form/CommonForm.tsx";
-import { AdminProductFormConfig } from "@/src/components/form/formConfigs.ts";
-import { AdminProductFormProps, ProductForm } from "@/src/types/propsTypes.ts";
-import { useCreateProduct, useUpdateProduct } from "@/src/hooks/api.ts";
+import React, { useMemo, useState } from 'react';
+
+import { AppDrawer } from '@/src/components/common/AppDrawer';
+import CommonForm from '@/src/components/form/CommonForm';
+import { AdminProductFormConfig } from '@/src/components/form/formConfigs';
+import { useAlert } from '@/src/context/AlertContext';
+import { useCreateProduct, useUpdateProduct } from '@/src/hooks/api';
+import { AdminProductFormProps, ProductForm } from '@/src/types/propsTypes';
 
 export default function AdminProductFormView({
   open,
@@ -55,9 +56,9 @@ export default function AdminProductFormView({
     <AppDrawer
       open={open}
       onClose={onClose}
-      title={isEdit ? "Editar articulo" : "Agregar articulo"}
+      title={isEdit ? 'Editar articulo' : 'Agregar articulo'}
       primaryButton={{
-        title: isEdit ? "Guardar cambios" : "Agregar",
+        title: isEdit ? 'Guardar cambios' : 'Agregar',
         disabled: !isFormValid,
         handleSubmit: isEdit ? handleUpdate : handleCreate,
       }}

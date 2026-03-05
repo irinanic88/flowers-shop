@@ -9,9 +9,8 @@ import {
   Box,
 } from '@mui/material';
 
-import { OrderType } from '@/src/types/types.ts';
-
 import { useAuth } from '@/src/context/AuthContext';
+import { OrderType } from '@/src/types/types';
 
 interface PreordersTableContentProps {
   order: OrderType;
