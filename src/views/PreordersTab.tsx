@@ -21,7 +21,7 @@ import {
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import { useAuth } from "@/src/context/AuthContext";
-import { OrderType, OrderStatusType } from "@/src/types";
+import { OrderType, OrderStatusType } from "@/src/types/types.ts";
 import { useMemo, useState } from "react";
 import { orderStatusesDict, statusColorsDict } from "@/src/constants";
 import { supabase } from "@/lib/supabase";
@@ -70,6 +70,7 @@ export default function PreordersTab() {
 
   const { orders, loading, refreshOrders } = useOrders();
   const { isAdmin } = useAuth();
+  const { updateOrderStatus } = useUpdateOrderStatus();
 
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up("md"));
@@ -92,29 +93,21 @@ export default function PreordersTab() {
   const applyStatus = async () => {
     if (!selectedOrder || !nextStatus) return;
 
-    try {
-      if (equals(nextStatus, "approved")) {
-        const { error } = await supabase.rpc("approve_order", {
-          p_order_id: selectedOrder.id,
-          p_admin_comment: adminComment || null,
-        });
+    const { success, error } = await updateOrderStatus(
+      selectedOrder.id,
+      nextStatus,
+      adminComment,
+    );
 
-        if (error) throw error;
-      } else {
-        await supabase
-          .from("orders")
-          .update({
-            status: "cancelled",
-            admin_comment: adminComment || null,
-          })
-          .eq("id", selectedOrder.id);
-      }
-
-      setDialogOpen(false);
-      refreshOrders();
-    } catch (e) {
-      alert((e as Error).message);
+    if (error) {
+      showAlert(error);
+      return;
     }
+
+    showAlert(success);
+
+    setDialogOpen(false);
+    refreshOrders();
   };
 
   const filteredOrders = useMemo(() => {

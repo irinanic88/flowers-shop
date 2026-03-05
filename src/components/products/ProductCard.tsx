@@ -2,7 +2,6 @@
 
 import React, { useState } from "react";
 import { Typography, Box, Stack, Divider } from "@mui/material";
-import { ProductType } from "@/src/types";
 import ProductInfo from "@/src/components/products/ProductInfo";
 import IncrementDecrementButtons from "@/src/components/common/IncrementDecrementButtons.tsx";
 import { PanelCard } from "@/src/styledComponents";
@@ -13,11 +12,7 @@ import AdminProductFormView from "@/src/views/AdminProductFormView.tsx";
 import ProductImages from "@/src/components/products/ProductImages";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-
-interface ProductCardProps {
-  product: ProductType;
-  onDelete: (p: ProductType) => void;
-}
+import { ProductCardProps } from "@/src/types/propsTypes.ts";
 
 export default function ProductCard({ product, onDelete }: ProductCardProps) {
   const [openUpdate, setOpenUpdate] = useState(false);

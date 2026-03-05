@@ -7,53 +7,50 @@ import CloseIcon from "@mui/icons-material/Close";
 import CheckIcon from "@mui/icons-material/Check";
 import EditIcon from "@mui/icons-material/Edit";
 import React, { useRef, useState } from "react";
-import { AlertType } from "@/src/types";
-import { validatePasswordUpdate } from "@/src/helpers/validators";
-import { supabase } from "@/lib/supabase";
-import ValidationErrorsList from "@/src/components/common/ValidationErrorsList.tsx";
+import { validateField, validationRules } from "@/src/helpers/validators.ts";
+import { useUpdatePassword } from "@/src/hooks/api.ts";
+import { useAlert } from "@/src/context/AlertContext.tsx";
 
-type PasswordUpdateFormProps = {
-  setLoading: (v: boolean) => void;
-  setAlert: (v: AlertType) => void;
-  onSubmit?: () => void;
-};
-
-export default function PasswordUpdateForm({
-  setLoading,
-  setAlert,
-  onSubmit,
-}: PasswordUpdateFormProps) {
+export default function PasswordUpdateForm() {
   const [editingPassword, setEditingPassword] = useState(false);
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
 
   const passwordRef = useRef<PasswordFieldsRef>(null);
+  const { updatePassword } = useUpdatePassword();
+  const { showAlert } = useAlert();
 
   const handleSavePassword = async () => {
-    const validationErrors = validatePasswordUpdate(password, confirm);
+    const form = { password, confirmPassword: confirm };
 
-    if (validationErrors.length > 0) return;
+    const errors = [
+      ...validateField(password, form, [
+        validationRules.required,
+        validationRules.password,
+      ]),
+      ...validateField(confirm, form, [
+        validationRules.required,
+        validationRules.confirmPassword,
+      ]),
+    ];
 
-    setLoading(true);
+    if (errors.length) {
+      showAlert({ message: errors[0], severity: "error" });
+      return;
+    }
 
-    const { error } = await supabase.auth.updateUser({
-      password,
-    });
-
-    setLoading(false);
+    const { success, error } = await updatePassword(password);
 
     if (error) {
-      setAlert({ message: `Error: ${error.message}`, severity: "error" });
-    } else {
-      setEditingPassword(false);
-      setPassword("");
-      setConfirm("");
-      setAlert({
-        message: "Contraseña actualizada correctamente.",
-        severity: "success",
-      });
-      onSubmit?.();
+      showAlert(error);
+      return;
     }
+
+    setEditingPassword(false);
+    setPassword("");
+    setConfirm("");
+
+    showAlert(success);
   };
 
   const handleCancelPassword = () => {
@@ -72,11 +69,12 @@ export default function PasswordUpdateForm({
     >
       <PasswordFields
         ref={passwordRef}
-        password={password}
-        confirmPassword={confirm}
-        showConfirm={editingPassword}
-        onChangePassword={(v: string) => setPassword(v)}
-        onChangeConfirmPassword={(v: string) => setConfirm(v)}
+        password={{ value: password, onChange: (v) => setPassword(v) }}
+        confirm={
+          editingPassword
+            ? { value: confirm, onChange: (v) => setConfirm(v) }
+            : null
+        }
         disabled={!editingPassword}
       />
 
@@ -93,9 +91,6 @@ export default function PasswordUpdateForm({
               <CheckIcon />
             </RoundIconButton>
           </Stack>
-          {validationErrors.length > 0 && (
-            <ValidationErrorsList validationErrors={validationErrors} />
-          )}
         </Stack>
       ) : (
         <RoundIconButton onClick={() => setEditingPassword(true)}>

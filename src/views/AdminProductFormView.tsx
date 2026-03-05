@@ -1,42 +1,12 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { TextField, Stack } from "@mui/material";
-import { PrimaryButton, SecondaryButton } from "@/src/styledComponents.tsx";
-import { supabase } from "@/lib/supabase.js";
-import { AlertType, ProductType } from "@/src/types.ts";
-import ImageUploader from "@/src/components/common/ImageUploader.tsx";
-import { isEmpty, all } from "ramda";
+import React, { useMemo, useState } from "react";
 import { AppDrawer } from "@/src/components/common/AppDrawer.tsx";
 import { useAlert } from "@/src/context/AlertContext.tsx";
-
-interface AdminProductFormProps {
-  open: boolean;
-  onClose: () => void;
-  product?: ProductType | null;
-}
-
-interface ProductForm {
-  title: string;
-  price: number | string;
-  comment: string;
-  pots_count: number | string;
-  images: string[];
-  available: number | string;
-  height: string;
-  width: string;
-}
-
-const emptyForm: ProductForm = {
-  title: "",
-  price: "",
-  comment: "",
-  pots_count: "",
-  images: [],
-  available: "",
-  height: "",
-  width: "",
-};
+import CommonForm from "@/src/components/form/CommonForm.tsx";
+import { AdminProductFormConfig } from "@/src/components/form/formConfigs.ts";
+import { AdminProductFormProps, ProductForm } from "@/src/types/propsTypes.ts";
+import { useCreateProduct, useUpdateProduct } from "@/src/hooks/api.ts";
 
 export default function AdminProductFormView({
   open,
@@ -45,88 +15,40 @@ export default function AdminProductFormView({
 }: AdminProductFormProps) {
   const isEdit = !!product;
 
-  const [form, setForm] = useState<ProductForm>(emptyForm);
-  const [loading, setLoading] = useState(false);
-  const [isReadyToSubmit, setIsReadyToSubmit] = useState(false);
-  const [alertState, setAlertState] = useState<AlertType>(null);
-
+  const [productForm, setProductForm] = useState<ProductForm>({});
+  const [isFormValid, setIsFormValid] = useState(false);
   const { showAlert } = useAlert();
 
-  useEffect(() => {
-    if (product) {
-      setForm({
-        title: product.title,
-        price: product.price,
-        comment: product.comment ?? "",
-        pots_count: product.pots_count ?? "",
-        images: product.images ?? [],
-        available: product.available,
-        height: product.height ?? "",
-        width: product.width ?? "",
-      });
-    } else {
-      setForm(emptyForm);
-    }
-  }, []);
-
-  useEffect(() => {
-    const { title, price, pots_count, available } = form;
-
-    const isFormFilled = all(
-      (v) => !isEmpty(String(v).trim()),
-      [title, price, pots_count, available],
-    );
-
-    setIsReadyToSubmit(isFormFilled);
-  }, [form]);
-
-  const handleChange = (key: keyof ProductForm, value: string) => {
-    setForm((prev) => ({ ...prev, [key]: value }));
-  };
+  const formConfig = useMemo(() => AdminProductFormConfig(product), [product]);
+  const { createProduct } = useCreateProduct();
+  const { updateProduct } = useUpdateProduct();
 
   const handleCreate = async () => {
-    setLoading(true);
+    if (!isFormValid) return;
 
-    const { error } = await supabase
-      .from("products")
-      .insert([form])
-      .select()
-      .single();
+    const { error, success } = await createProduct(productForm);
 
-    if (error)
-      setAlertState({ message: `Error: ${error.message}`, severity: "error" });
-    else {
-      showAlert({
-        message: `Articulo ${form.title} agregado!`,
-        severity: "success",
-      });
-      onClose();
+    if (error) {
+      showAlert(error);
+      return;
     }
 
-    setLoading(false);
+    showAlert(success);
+    onClose();
   };
 
   const handleUpdate = async () => {
-    setLoading(true);
+    if (!isFormValid || !product?.id) return;
 
-    const { error } = await supabase
-      .from("products")
-      .update(form)
-      .eq("id", product!.id)
-      .select()
-      .single();
+    const { error, success } = await updateProduct(productForm, product?.id);
 
-    if (error)
-      setAlertState({ message: `Error: ${error.message}`, severity: "error" });
-    else {
-      showAlert({
-        message: `Articulo ${form.title} actualizado!`,
-        severity: "success",
-      });
-      onClose();
+    if (error) {
+      showAlert(error);
+      return;
     }
 
-    setLoading(false);
+    showAlert(success);
+    onClose();
   };
 
   return (
@@ -134,84 +56,19 @@ export default function AdminProductFormView({
       open={open}
       onClose={onClose}
       title={isEdit ? "Editar articulo" : "Agregar articulo"}
-      actions={
-        <Stack spacing={1}>
-          <PrimaryButton
-            onClick={isEdit ? handleUpdate : handleCreate}
-            disabled={loading || !isReadyToSubmit}
-          >
-            {isEdit ? "Guardar cambios" : "Agregar"}
-          </PrimaryButton>
-        </Stack>
-      }
-      alertState={alertState}
-      setAlertState={(v) => setAlertState(v)}
-      loading={loading}
+      primaryButton={{
+        title: isEdit ? "Guardar cambios" : "Agregar",
+        disabled: !isFormValid,
+        handleSubmit: isEdit ? handleUpdate : handleCreate,
+      }}
     >
-      <Stack spacing={2}>
-        <TextField
-          label="Título"
-          value={form.title}
-          onChange={(e) => handleChange("title", e.target.value)}
-          fullWidth
-          required
-        />
-
-        <TextField
-          label="Precio"
-          type="number"
-          value={form.price}
-          onChange={(e) => handleChange("price", e.target.value)}
-          fullWidth
-          required
-        />
-
-        <TextField
-          label="Cantidad de plantas"
-          type="number"
-          value={form.pots_count}
-          onChange={(e) => handleChange("pots_count", e.target.value)}
-          fullWidth
-          required
-        />
-
-        <TextField
-          label="Disponible"
-          type="number"
-          value={form.available}
-          onChange={(e) => handleChange("available", e.target.value)}
-          fullWidth
-          required
-        />
-
-        <TextField
-          label="Altura"
-          value={form.height}
-          onChange={(e) => handleChange("height", e.target.value)}
-          fullWidth
-        />
-
-        <TextField
-          label="Diámetro maceta"
-          value={form.width}
-          onChange={(e) => handleChange("width", e.target.value)}
-          fullWidth
-        />
-
-        <TextField
-          label="Comentario"
-          value={form.comment}
-          onChange={(e) => handleChange("comment", e.target.value)}
-          fullWidth
-          multiline
-          rows={3}
-        />
-
-        <ImageUploader
-          initialImages={form.images}
-          onChange={(urls) => setForm((prev) => ({ ...prev, images: urls }))}
-        />
-      </Stack>
+      <CommonForm
+        fillForm={(form, isValid) => {
+          setProductForm(form);
+          setIsFormValid(isValid);
+        }}
+        formConfig={formConfig}
+      />
     </AppDrawer>
   );
 }

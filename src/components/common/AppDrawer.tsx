@@ -4,15 +4,14 @@ import { Drawer, Box, IconButton, Typography, Stack } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import React from "react";
 import CustomAlert from "@/src/components/common/CustomAlert.tsx";
-import { AlertType } from "@/src/types.ts";
+import { AlertType } from "@/src/types/types.ts";
 import Loader from "@/src/components/common/Loader.tsx";
 import { PrimaryButton, SecondaryButton } from "@/src/styledComponents.tsx";
 import { useLoading } from "@/src/context/LoadingContext.tsx";
 
 interface AppDrawerProps {
-  actions?: React.ReactNode;
-  alertState: AlertType;
-  setAlertState: (state: AlertType) => void;
+  alertState?: AlertType;
+  setAlertState?: (state: AlertType) => void;
   open: boolean;
   onClose?: () => void;
   primaryButton?: {

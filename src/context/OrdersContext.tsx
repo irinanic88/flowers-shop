@@ -9,7 +9,7 @@ import {
   useCallback,
 } from 'react';
 import { supabase } from '@/lib/supabase';
-import { OrderType } from '@/src/types';
+import { OrderType } from '@/src/types/types.ts';
 import { useAuth } from '@/src/context/AuthContext';
 
 interface OrdersContextType {

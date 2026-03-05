@@ -1,4 +1,4 @@
-import { DisponibilityType, OrderStatusType } from "@/src/types";
+import { DisponibilityType, OrderStatusType } from "@/src/types/types.ts";
 import { ChipProps } from "@mui/material";
 
 export const orderStatusesDict: Record<OrderStatusType, string> = {

@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
-import { UserType } from '@/src/types';
+import { UserType } from '@/src/types/types.ts';
 import { equals, anyPass } from 'ramda';
 
 type AuthContextType = {

@@ -21,10 +21,11 @@ interface PasswordFieldsProps {
     value: string;
   };
   disabled?: boolean;
+  required?: boolean;
 }
 
 const PasswordFields = forwardRef<PasswordFieldsRef, PasswordFieldsProps>(
-  ({ password, confirm, disabled = false }, ref) => {
+  ({ password, confirm, disabled = false, required = true }, ref) => {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
@@ -44,9 +45,10 @@ const PasswordFields = forwardRef<PasswordFieldsRef, PasswordFieldsProps>(
             value={
               !password.value && disabled ? "00000000000000" : password.value
             }
-            onBlur={() => password?.onBlur()}
+            onBlur={() => password?.onBlur?.()}
             onChange={(e) => password?.onChange(e.target.value)}
             fullWidth
+            required={required}
             disabled={disabled}
             InputProps={{
               endAdornment: (
@@ -72,9 +74,10 @@ const PasswordFields = forwardRef<PasswordFieldsRef, PasswordFieldsProps>(
             label="Confirmar Contraseña"
             type={showConfirmPassword ? "text" : "password"}
             value={confirm.value}
-            onBlur={() => password?.onBlur()}
+            onBlur={() => password?.onBlur?.()}
             onChange={(e) => confirm?.onChange(e.target.value)}
             fullWidth
+            required={required}
             disabled={disabled}
             InputProps={{
               endAdornment: (

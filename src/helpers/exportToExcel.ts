@@ -1,5 +1,5 @@
 import * as XLSX from 'xlsx-js-style';
-import { OrderType } from '@/src/types';
+import { OrderType } from '@/src/types/types.ts';
 import { orderStatusesDict } from '@/src/constants';
 
 const headerStyle = {

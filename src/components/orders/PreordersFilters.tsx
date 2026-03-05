@@ -2,7 +2,7 @@ import { FilterSelect } from '@/src/components/common/FilterSelect.tsx';
 import { useAuth } from '@/src/context/AuthContext';
 import { Stack } from '@mui/material';
 import { orderStatusesDict } from '@/src/constants';
-import { OrderStatusType } from '@/src/types';
+import { OrderStatusType } from '@/src/types/types.ts';
 
 type PreordersFiltersProps = {
   statusFilter: OrderStatusType | 'all';

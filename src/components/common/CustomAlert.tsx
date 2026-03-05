@@ -1,7 +1,8 @@
 "use client";
 
-import { Snackbar, Alert } from "@mui/material";
-import { AlertType } from "@/src/types.ts";
+import { Snackbar, Alert, AlertTitle } from "@mui/material";
+import { AlertType } from "@/src/types/types.ts";
+import { toUpperCase } from "uri-js/dist/esnext/util";
 
 interface CustomAlertProps {
   alertState: AlertType;
@@ -12,19 +13,29 @@ export default function CustomAlert({ alertState, onClose }: CustomAlertProps) {
   return (
     <Snackbar
       open
-      autoHideDuration={alertState?.duration}
+      autoHideDuration={alertState?.duration || 5000}
       onClose={onClose}
       sx={{
-        width: "100%",
         alignItems: "flex-start",
         justifyContent: "center",
-        px: 1,
         position: "absolute",
-        top: 0,
+        top: 97,
       }}
     >
-      <Alert onClose={onClose} severity={alertState?.severity} variant="filled">
-        {alertState?.message}
+      <Alert
+        onClose={onClose}
+        severity={alertState.severity}
+        sx={(theme) => ({
+          backgroundColor: theme.palette.background.paper,
+          border: `2px solid ${theme.palette[alertState.severity].main}`,
+          color: theme.palette[alertState.severity].main,
+          alignItems: "flex-start",
+        })}
+      >
+        <AlertTitle sx={{ textTransform: "capitalize" }}>
+          {alertState.severity}
+        </AlertTitle>
+        {alertState.message}
       </Alert>
     </Snackbar>
   );

@@ -9,7 +9,7 @@ import {
   IconButton,
 } from "@mui/material";
 import { availabilityStatusesDict } from "@/src/constants";
-import { DisponibilityType } from "@/src/types";
+import { DisponibilityType } from "@/src/types/types.ts";
 import SearchIcon from "@mui/icons-material/Search";
 import CloseIcon from "@mui/icons-material/Close";
 

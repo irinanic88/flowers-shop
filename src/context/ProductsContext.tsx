@@ -9,7 +9,7 @@ import {
   useCallback,
 } from 'react';
 import { supabase } from '@/lib/supabase';
-import { ProductType } from '@/src/types';
+import { ProductType } from '@/src/types/types.ts';
 
 interface ProductsContextType {
   products: ProductType[];

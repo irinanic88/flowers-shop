@@ -5,12 +5,12 @@ import ProductCard from "@/src/components/products/ProductCard";
 import { useAuth } from "@/src/context/AuthContext";
 import { useProducts } from "@/src/context/ProductsContext";
 import React, { useMemo, useState } from "react";
-import type { DisponibilityType, ProductType } from "@/src/types";
-import { supabase } from "@/lib/supabase";
+import type { DisponibilityType, ProductType } from "@/src/types/types.ts";
 import { PrimaryButton, SecondaryButton } from "@/src/styledComponents";
-import { equals, isNotEmpty } from "ramda";
+import { isNotEmpty } from "ramda";
 import { ProductsFilters } from "@/src/components/products/ProductsFilters";
 import { useAlert } from "@/src/context/AlertContext";
+import { useDeleteProduct } from "@/src/hooks/api.ts";
 
 export default function ProductsPage() {
   const [selectedProduct, setSelectedProduct] = useState<ProductType | null>(
@@ -22,9 +22,10 @@ export default function ProductsPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
 
-  const { products, loading } = useProducts();
+  const { products } = useProducts();
   const { isUnknownUser, isAdmin } = useAuth();
   const { showAlert } = useAlert();
+  const { deleteProduct } = useDeleteProduct();
 
   const filteredProducts = useMemo(() => {
     return products
@@ -47,50 +48,16 @@ export default function ProductsPage() {
   const handleDeleteProduct = async () => {
     if (!selectedProduct) return;
 
-    try {
-      const { error } = await supabase
-        .from("products")
-        .delete()
-        .eq("id", selectedProduct.id);
+    const { error, success } = await deleteProduct(selectedProduct);
 
-      if (error) {
-        showAlert({
-          message: `No se pudo eliminar el articulo: ${error.message}`,
-          severity: "error",
-        });
-        return;
-      }
-
-      if (selectedProduct.images?.length) {
-        const filePaths = selectedProduct.images
-          .map((url) => url.split("product-images/")[1])
-          .filter(Boolean);
-
-        if (filePaths.length) {
-          await supabase.storage.from("product-images").remove(filePaths);
-        }
-      }
-      showAlert({
-        message: `Articulo ${selectedProduct.title} eliminado.`,
-        severity: "success",
-      });
-    } catch (err) {
-      showAlert({
-        message: err instanceof Error ? err.message : "Error desconocido",
-        severity: "error",
-      });
-    } finally {
-      setOpenDeleteDialog(false);
+    if (error) {
+      showAlert(error);
+      return;
     }
-  };
 
-  if (loading) {
-    return (
-      <Stack mt={20} alignItems="center">
-        <Typography color="text.secondary">Cargando articulos…</Typography>
-      </Stack>
-    );
-  }
+    showAlert(success);
+    setOpenDeleteDialog(false);
+  };
 
   return (
     <>

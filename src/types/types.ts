@@ -27,6 +27,12 @@ export type SignInFormType = {
   password: string;
 };
 
+export type SignUpFormType = {
+  name: string;
+  email: string;
+  password: string;
+};
+
 export interface CartItem {
   id: string;
   title: string;
@@ -71,6 +77,7 @@ export type FormField<Form> = {
   type: string;
   visibility: boolean;
   rules: ValidationRule<Form>[];
+  required?: boolean;
 };
 
 export type ValidationRule<Form> = (

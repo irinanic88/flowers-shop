@@ -7,7 +7,7 @@ import React, {
   useState,
   ReactNode,
 } from "react";
-import { AlertType } from "@/src/types";
+import { AlertType } from "@/src/types/types.ts";
 
 type AlertContextType = {
   alert: AlertType;

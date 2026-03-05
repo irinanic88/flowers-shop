@@ -9,7 +9,7 @@ import {
   Box,
 } from '@mui/material';
 
-import { OrderType } from '@/src/types';
+import { OrderType } from '@/src/types/types.ts';
 
 import { useAuth } from '@/src/context/AuthContext';
 

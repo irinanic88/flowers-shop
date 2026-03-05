@@ -1,4 +1,4 @@
-import { AuthFormType, FormField, ValidationRule } from "@/src/types.ts";
+import { AuthFormType, FormField, ValidationRule } from "@/src/types/types.ts";
 import { equals } from "ramda";
 
 export const email: ValidationRule<any> = (value) => {
@@ -73,31 +73,6 @@ export const validationRules = {
   required,
   password,
   confirmPassword,
-};
-
-export const validatePasswordUpdate = (
-  password: string,
-  confirm: string,
-): string[] => {
-  let errors: string[] = [];
-
-  if (!isPasswordValid(password)) {
-    errors.push("Contraseña inválida (≥8 caracteres, letras y números)");
-  }
-
-  if (!isRequired(password)) {
-    errors.push("Completa todos los campos");
-  }
-
-  if (!isRequired(confirm)) {
-    errors.push("Completa todos los campos");
-  }
-
-  if (!equals(password, confirm)) {
-    errors.push("Las contraseñas no coinciden");
-  }
-
-  return errors;
 };
 
 export const validateRegistrationForm = (

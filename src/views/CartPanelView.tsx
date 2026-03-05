@@ -14,7 +14,7 @@ import React, { useEffect, useState } from "react";
 import { useOrders } from "@/src/context/OrdersContext.tsx";
 import { AppDrawer } from "@/src/components/common/AppDrawer.tsx";
 import { isEmpty } from "ramda";
-import { AlertType } from "@/src/types.ts";
+import { AlertType } from "@/src/types/types.ts";
 import { useAlert } from "@/src/context/AlertContext.tsx";
 
 export interface CartPanelProps {

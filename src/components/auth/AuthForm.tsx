@@ -2,15 +2,18 @@
 
 import React, { useEffect, useState } from "react";
 import { Stack } from "@mui/material";
-import { AlertType } from "@/src/types.ts";
 import { equals } from "ramda";
 import { AuthTitlesDict } from "@/src/constants.ts";
 
 import { AppDrawer } from "@/src/components/common/AppDrawer.tsx";
 import RedirectionLink from "@/src/components/common/RedirectionLink.tsx";
-import CommonForm from "@/src/components/common/CommonForm.tsx";
+import CommonForm from "@/src/components/form/CommonForm.tsx";
 import { useResetPassword, useSignIn } from "@/src/hooks/api.ts";
-import { useAuthFormConfig } from "@/src/helpers/formConfigs.ts";
+import {
+  AuthFormConfig,
+  RequestResetPasswordFormConfig,
+} from "@/src/components/form/formConfigs.ts";
+import { useAlert } from "@/src/context/AlertContext.tsx";
 
 type AuthFormProps = {
   open: boolean;
@@ -20,7 +23,6 @@ type AuthFormProps = {
 type AuthMode = "signIn" | "forgotPassword";
 
 export default function AuthForm({ open, onClose }: AuthFormProps) {
-  const [alert, setAlert] = useState<AlertType>(null);
   const [mode, setMode] = useState<AuthMode>("signIn");
   const [authForm, setAuthForm] = useState<Record<string, string>>({});
   const [isFormValid, setIsFormValid] = useState(false);
@@ -30,39 +32,45 @@ export default function AuthForm({ open, onClose }: AuthFormProps) {
   const isForgotPassword = equals(mode, "forgotPassword");
   const title = AuthTitlesDict[mode].title || "";
 
-  const { requestSignIn, signInError } = useSignIn();
-  const { requestResetPassword, resetPasswordError } = useResetPassword();
-  const authFormConfig = useAuthFormConfig(isSignIn);
+  const { signIn } = useSignIn();
+  const { resetPassword } = useResetPassword();
+  const { showAlert } = useAlert();
 
-  useEffect(() => {
-    if (signInError) setAlert(signInError);
-    if (resetPasswordError) setAlert(resetPasswordError);
-  }, [signInError, resetPasswordError]);
+  const startCooldown = (seconds = 60) => {
+    setCooldown(seconds);
+
+    const interval = setInterval(() => {
+      setCooldown((prev) => {
+        if (prev <= 1) {
+          clearInterval(interval);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  };
 
   const handleSubmit = async () => {
     if (!isFormValid || cooldown > 0) return;
 
-    if (isSignIn) {
-      await requestSignIn(authForm);
-      void onClose();
+    const action = isSignIn
+      ? () => signIn(authForm)
+      : () => resetPassword(authForm);
+
+    const { success, error } = await action();
+
+    if (error) {
+      showAlert(error);
+      return;
     }
+
+    showAlert(success);
 
     if (isForgotPassword) {
-      await requestResetPassword(authForm.email);
-
-      setCooldown(60);
-
-      const interval = setInterval(() => {
-        setCooldown((prev) => {
-          if (prev <= 1) {
-            clearInterval(interval);
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-      void onClose();
+      startCooldown();
     }
+
+    onClose();
   };
 
   return (
@@ -70,7 +78,6 @@ export default function AuthForm({ open, onClose }: AuthFormProps) {
       open={open}
       onClose={onClose}
       title={title}
-      alertState={alert}
       primaryButton={{
         disabled: !isFormValid || cooldown > 0,
         handleSubmit,
@@ -79,22 +86,37 @@ export default function AuthForm({ open, onClose }: AuthFormProps) {
             ? `Inténtalo en ${cooldown}s`
             : AuthTitlesDict[mode].submitButton,
       }}
-      setAlertState={(v) => setAlert(v)}
     >
-      <Stack sx={{ height: "100%" }} justifyContent="center" spacing={1}>
-        <CommonForm
-          fillForm={(form, isValid) => {
-            setAuthForm(form);
-            setIsFormValid(isValid);
-          }}
-          formConfig={authFormConfig}
-        />
-
+      <Stack sx={{ height: "100%" }} justifyContent="center">
         {isSignIn && (
-          <RedirectionLink
-            linkText="Olvidaste tu contraseña?"
-            linkTitle="Recuperar"
-            onLinkClick={() => setMode("forgotPassword")}
+          <Stack spacing={2}>
+            <CommonForm
+              fillForm={(form, isValid) => {
+                setAuthForm(form);
+                setIsFormValid(isValid);
+              }}
+              formConfig={AuthFormConfig}
+            />
+
+            <RedirectionLink
+              linkText="Olvidaste tu contraseña?"
+              linkTitle="Recuperar"
+              onLinkClick={() => {
+                setAuthForm({});
+                setIsFormValid(false);
+                setMode("forgotPassword");
+              }}
+            />
+          </Stack>
+        )}
+
+        {isForgotPassword && (
+          <CommonForm
+            fillForm={(form, isValid) => {
+              setAuthForm(form);
+              setIsFormValid(isValid);
+            }}
+            formConfig={RequestResetPasswordFormConfig}
           />
         )}
       </Stack>

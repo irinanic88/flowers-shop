@@ -1,36 +1,30 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { supabase } from "@/lib/supabase";
-import { Stack, TextField } from "@mui/material";
-import { AlertType, AuthFormType } from "@/src/types";
-import { PanelCard, PrimaryButton } from "@/src/styledComponents";
-import { useAlert } from "@/src/context/AlertContext";
-import PasswordFields from "@/src/components/common/PasswordFields.tsx";
-import Loader from "@/src/components/common/Loader.tsx";
-import Logo from "@/src/components/common/Logo.tsx";
+import { AlertType } from "@/src/types/types.ts";
 import { useRouter } from "next/navigation";
-import { validateRegistrationForm } from "@/src/helpers/validators.ts";
-import ValidationErrorsList from "@/src/components/common/ValidationErrorsList.tsx";
-import CustomAlert from "@/src/components/common/CustomAlert.tsx";
+import {
+  useConsumeInvite,
+  useInviteToken,
+  useSignUp,
+} from "@/src/hooks/api.ts";
+import PanelCardFormLayout from "@/src/components/auth/PanelCardFormLayout.tsx";
+import CommonForm from "@/src/components/form/CommonForm.tsx";
+import { SignUpFormConfig } from "@/src/components/form/formConfigs.ts";
 
 export default function SignUpForm() {
-  const [loading, setLoading] = useState(true);
-  const [form, setForm] = useState<AuthFormType>({
-    email: "",
-    password: "",
-    name: "",
-  });
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [validationErrors, setValidationErrors] = useState<string[]>([]);
-  const [inviteId, setInviteId] = useState<string | null>(null);
+  const [signUpForm, setSignUpForm] = useState({});
+  const [isFormValid, setIsFormValid] = useState(false);
   const [alert, setAlert] = useState<AlertType>(null);
+  const [inviteId, setInviteId] = useState<string | null>(null);
 
   const router = useRouter();
-  const { showAlert } = useAlert();
+  const { checkInviteToken } = useInviteToken();
+  const { signUp } = useSignUp();
+  const { consumeInvite } = useConsumeInvite();
 
   useEffect(() => {
-    const checkInviteToken = async () => {
+    const verifyToken = async () => {
       const params = new URLSearchParams(window.location.search);
       const token = params.get("invite");
 
@@ -42,172 +36,75 @@ export default function SignUpForm() {
         return;
       }
 
-      try {
-        const { data, error } = await supabase.functions.invoke(
-          "check-invite",
-          {
-            body: { invite: token },
-          },
-        );
+      const { data, error } = await checkInviteToken(token);
 
-        if (error) throw error;
+      if (error) {
+        setAlert(error);
+        return;
+      }
 
-        const parsed = JSON.parse(data);
+      const parsed = JSON.parse(data);
 
-        if (!parsed?.inviteId) throw new Error("Token inválido o ya usado");
-
-        setInviteId(parsed.inviteId);
-      } catch (err) {
+      if (!parsed?.inviteId) {
         setAlert({
-          message: err instanceof Error ? err.message : "Error desconocido",
+          message: "Token inválido o ya usado",
           severity: "error",
         });
-      } finally {
-        setLoading(false);
+        return;
       }
+
+      setInviteId(parsed.inviteId);
     };
 
-    void checkInviteToken();
+    void verifyToken();
   }, []);
 
-  const handleFieldChange = (field: keyof AuthFormType, value: string) => {
-    setForm((prev) => ({ ...prev, [field]: value }));
-  };
+  const handleSubmit = async () => {
+    if (!inviteId || !isFormValid) return;
 
-  const handleSubmit = () => {
-    const errors = validateRegistrationForm({ ...form, confirmPassword });
+    const { email, password, name } = signUpForm;
 
-    if (errors.length > 0) {
-      setValidationErrors(errors);
+    const { data: signUpData, error: signUpError } = await signUp({
+      email,
+      password,
+      options: { data: { name } },
+    });
+
+    if (signUpError) {
+      setAlert(signUpError);
       return;
     }
 
-    void createUser(form);
-  };
+    const { error: consumeError, success } = await consumeInvite({
+      inviteId,
+      userId: signUpData.user.id,
+    });
 
-  const createUser = async ({ email, password, name }: AuthFormType) => {
-    if (!inviteId) return;
-
-    setLoading(true);
-
-    try {
-      const { error: signUpError, data: signUpData } =
-        await supabase.auth.signUp({
-          email,
-          password,
-          options: { data: { name } },
-        });
-      if (signUpError) throw signUpError;
-
-      const { error: consumeError } = await supabase.functions.invoke(
-        "consume-invite",
-        {
-          body: {
-            inviteId,
-            userId: signUpData.user.id,
-          },
-        },
-      );
-
-      if (consumeError) throw consumeError;
-
-      showAlert({
-        message: "Tu cuenta ha sido creada correctamente!",
-        severity: "success",
-      });
-      router.push("/");
-    } catch (err) {
-      setAlert({
-        message: err instanceof Error ? err.message : "Error desconocido",
-        severity: "error",
-      });
-    } finally {
-      setLoading(false);
+    if (consumeError) {
+      setAlert(consumeError);
+      return;
     }
-  };
 
-  if (loading) {
-    return <Loader />;
-  }
+    setAlert(success);
+    router.push("/");
+  };
 
   return (
-    <Stack
-      sx={{ height: "100vh", position: "relative" }}
-      justifyContent="center"
-      alignItems="center"
+    <PanelCardFormLayout
+      submit={{
+        title: "Registrarse",
+        handler: handleSubmit,
+      }}
+      alert={alert}
+      setAlert={(v) => setAlert(v)}
     >
-      {alert ? (
-        <CustomAlert alertState={alert} onClose={() => setAlert(null)} />
-      ) : (
-        <PanelCard
-          sx={{
-            p: 4,
-            maxWidth: "320px",
-          }}
-        >
-          <Stack alignItems="center" spacing={4}>
-            <Stack alignItems="flex-start" spacing={2} sx={{ width: "100%" }}>
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  void handleSubmit();
-                }}
-                style={{
-                  width: "100%",
-                }}
-              >
-                <Stack
-                  sx={{
-                    borderRadius: 2,
-                    backgroundColor: (theme) => theme.palette.background.paper,
-                  }}
-                  spacing={2}
-                >
-                  <Stack spacing={2}>
-                    <TextField
-                      label="Nombre de usuario"
-                      value={form.name}
-                      onChange={(e) =>
-                        handleFieldChange("name", e.target.value)
-                      }
-                      fullWidth
-                    />
-
-                    <TextField
-                      label="Correo electrónico"
-                      value={form.email}
-                      onChange={(e) =>
-                        handleFieldChange("email", e.target.value)
-                      }
-                      fullWidth
-                    />
-
-                    <PasswordFields
-                      password={form.password}
-                      onChangePassword={(v) => handleFieldChange("password", v)}
-                      showConfirm={true}
-                      confirmPassword={confirmPassword}
-                      onChangeConfirmPassword={setConfirmPassword}
-                    />
-                  </Stack>
-                </Stack>
-              </form>
-
-              {validationErrors.length > 0 && (
-                <ValidationErrorsList validationErrors={validationErrors} />
-              )}
-            </Stack>
-
-            <PrimaryButton type="submit" onClick={handleSubmit}>
-              Iniciar sesion
-            </PrimaryButton>
-          </Stack>
-        </PanelCard>
-      )}
-
-      <Stack sx={{ position: "absolute", top: 20, left: 20 }}>
-        <Logo />
-      </Stack>
-    </Stack>
+      <CommonForm
+        fillForm={(form, isValid) => {
+          setSignUpForm(form);
+          setIsFormValid(isValid);
+        }}
+        formConfig={SignUpFormConfig}
+      />
+    </PanelCardFormLayout>
   );
 }

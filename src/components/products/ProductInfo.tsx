@@ -1,9 +1,9 @@
 "use client";
 import { Typography, Stack, Box } from "@mui/material";
 import GrassIcon from "@mui/icons-material/Grass";
-import { ProductType } from "@/src/types";
+import { ProductType } from "@/src/types/types.ts";
 import HeightIcon from "@mui/icons-material/Height";
-import CircleOutlinedIcon from "@mui/icons-material/CircleOutlined";
+import BlockIcon from "@mui/icons-material/Block";
 import React from "react";
 
 interface ProductInfoProps {
@@ -29,7 +29,7 @@ export default function ProductInfo({
 
         <Stack spacing={1} alignItems="flex-start" sx={{ mt: 0.5 }}>
           <Stack direction="row" spacing={0.5}>
-            <CircleOutlinedIcon fontSize="small" />
+            <BlockIcon fontSize="small" />
             <Typography variant="body2">
               Maceta: {product.width ? `${product.width} cms` : "--"}
             </Typography>

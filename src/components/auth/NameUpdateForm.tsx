@@ -5,18 +5,13 @@ import CheckIcon from "@mui/icons-material/Check";
 import EditIcon from "@mui/icons-material/Edit";
 import React, { useEffect, useState } from "react";
 import { useAuth } from "@/src/context/AuthContext";
-import { supabase } from "@/lib/supabase";
-import { AlertType } from "@/src/types";
 import { useUpdateUserName } from "@/src/hooks/api.ts";
+import { useAlert } from "@/src/context/AlertContext.tsx";
 
-type NameUpdateFormProps = {
-  setLoading: (v: boolean) => void;
-  setAlert: (v: AlertType) => void;
-};
-
-export default function NameUpdateForm({ setAlert }: NameUpdateFormProps) {
+export default function NameUpdateForm() {
   const { name: userName, user, refreshProfile } = useAuth();
-  const { updateUserName, updateError } = useUpdateUserName();
+  const { updateUserName } = useUpdateUserName();
+  const { showAlert } = useAlert();
 
   const [editingName, setEditingName] = useState(false);
   const [name, setName] = useState("");
@@ -25,24 +20,17 @@ export default function NameUpdateForm({ setAlert }: NameUpdateFormProps) {
     if (userName) setName(userName);
   }, [userName]);
 
-  useEffect(() => {
-    if (updateError) setAlert(updateError);
-  }, [updateError]);
-
   const handleSaveName = async () => {
     if (!user) return;
 
-    const success = await updateUserName(userName, user.id);
+    const { success, error } = await updateUserName(name, user.id);
 
-    if (!success) return;
+    if (error) showAlert(error);
 
     await refreshProfile();
 
     setEditingName(false);
-    setAlert({
-      message: "Nombre actualizado correctamente",
-      severity: "success",
-    });
+    showAlert(success);
   };
 
   return (
