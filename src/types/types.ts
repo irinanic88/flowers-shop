@@ -1,4 +1,4 @@
-import { AlertColor } from '@mui/material';
+import { AlertColor } from "@mui/material";
 
 export interface ProductType {
   id: string;
@@ -17,7 +17,7 @@ export interface ProductType {
 export interface UserType {
   id: string;
   name?: string;
-  role?: 'user' | 'admin';
+  role?: "user" | "admin";
   created_at?: string;
   email?: string;
 }
@@ -25,6 +25,10 @@ export interface UserType {
 export type SignInFormType = {
   email: string;
   password: string;
+};
+
+export type ForgotPasswordFormType = {
+  email: string;
 };
 
 export type SignUpFormType = {
@@ -47,10 +51,11 @@ export interface OrderItem {
   title: string;
   price: number;
   quantity: number;
+  pots_count: number;
 }
 
-export type OrderStatusType = 'pending' | 'approved' | 'cancelled';
-export type DisponibilityType = 'available' | 'outOfStock';
+export type OrderStatusType = "pending" | "approved" | "cancelled";
+export type DisponibilityType = "available" | "outOfStock";
 
 export interface OrderType {
   id: number;
@@ -70,15 +75,23 @@ export type AlertType = {
   duration?: number | null;
 } | null;
 
+export type InputFieldType =
+  | "text"
+  | "number"
+  | "password"
+  | "textarea"
+  | "images";
+
 export type FormField<Form> = {
   disabled?: boolean;
   key: keyof Form;
   label?: string;
-  initialValue: string;
-  type: string;
+  initialValue: Form[keyof Form];
+  type: InputFieldType;
   visibility: boolean;
   rules: ValidationRule<Form>[];
   required?: boolean;
+  inputProps?: Record<string, unknown>;
 };
 
 export type ValidationRule<Form> = (
@@ -89,3 +102,17 @@ export type ValidationRule<Form> = (
 export type ValidationSchema<Form> = {
   [K in keyof Form]?: ValidationRule<Form>[];
 };
+
+export type PreordersFiltersType = {
+  statusFilter: OrderStatusType | "all";
+  userFilter: string;
+  dateRange: [Date | null, Date | null];
+};
+
+export type PreordersSetFiltersType = {
+  setStatusFilter: (value: OrderStatusType | "all") => void;
+  setUserFilter: (value: string) => void;
+  setDateRange: (value: [Date | null, Date | null]) => void;
+};
+
+export type AnyFormField = FormField<Record<string, unknown>>;

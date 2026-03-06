@@ -1,0 +1,104 @@
+"use client";
+
+import CheckIcon from "@mui/icons-material/Check";
+import ClearIcon from "@mui/icons-material/Clear";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import {
+  TableRow,
+  TableCell,
+  IconButton,
+  Stack,
+  Typography,
+} from "@mui/material";
+
+import { PreordersTableContent } from "@/src/components/preorders/PreordersTableContent";
+import { orderStatusesDict, statusColorsDict } from "@/src/constants";
+import { StyledChip, RoundIconButton } from "@/src/styledComponents";
+import { PreodersRowProps } from "@/src/types/propsTypes.ts";
+
+export function PreordersRow({
+  order,
+  expanded,
+  toggleExpand,
+  isAdmin,
+  openStatusDialog,
+}: PreodersRowProps) {
+  return (
+    <>
+      <TableRow hover>
+        <TableCell>
+          <IconButton size="small" onClick={() => toggleExpand(order.id)}>
+            {expanded ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+          </IconButton>
+        </TableCell>
+
+        <TableCell>{order.id}</TableCell>
+
+        {isAdmin && <TableCell>{order.profile_name || "—"}</TableCell>}
+
+        <TableCell>
+          <StyledChip
+            label={orderStatusesDict[order.status]}
+            color={statusColorsDict[order.status]}
+            variant="outlined"
+          />
+        </TableCell>
+
+        <TableCell>€ {Number(order.total).toFixed(2)}</TableCell>
+
+        <TableCell>{new Date(order.created_at).toLocaleDateString()}</TableCell>
+
+        <TableCell sx={{ maxWidth: 260 }}>
+          {order.comment || order.admin_comment ? (
+            <Stack spacing={0.5}>
+              {order.comment && (
+                <Typography variant="caption">
+                  <strong>Cliente:</strong> {order.comment}
+                </Typography>
+              )}
+
+              {order.admin_comment && (
+                <Typography variant="caption">
+                  <strong>Admin:</strong> {order.admin_comment}
+                </Typography>
+              )}
+            </Stack>
+          ) : (
+            "—"
+          )}
+        </TableCell>
+
+        {isAdmin && (
+          <TableCell align="center">
+            <RoundIconButton
+              disabled={order.status !== "pending"}
+              onClick={() => openStatusDialog(order, "approved")}
+            >
+              <CheckIcon />
+            </RoundIconButton>
+          </TableCell>
+        )}
+
+        {isAdmin && (
+          <TableCell align="center">
+            <RoundIconButton
+              disabled={order.status !== "pending"}
+              onClick={() => openStatusDialog(order, "cancelled")}
+            >
+              <ClearIcon />
+            </RoundIconButton>
+          </TableCell>
+        )}
+      </TableRow>
+
+      {expanded && (
+        <TableRow>
+          <TableCell colSpan={isAdmin ? 9 : 7}>
+            <PreordersTableContent order={order} />
+          </TableCell>
+        </TableRow>
+      )}
+    </>
+  );
+}

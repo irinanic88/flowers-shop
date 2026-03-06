@@ -11,18 +11,13 @@ import {
 
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/src/context/AuthContext';
+import { OrdersContextType } from '@/src/types/propsTypes';
 import { OrderType } from '@/src/types/types';
-
-interface OrdersContextType {
-  orders: OrderType[];
-  loading: boolean;
-  refreshOrders: () => void;
-}
 
 const OrdersContext = createContext<OrdersContextType>({
   orders: [],
   loading: true,
-  refreshOrders: () => {},
+  refreshOrders: async () => {},
 });
 
 export const useOrders = () => useContext(OrdersContext);
@@ -42,36 +37,33 @@ export const OrdersProvider = ({ children }: { children: ReactNode }) => {
 
     setLoading(true);
 
-    let query = supabase
-      .from('orders_with_profiles')
-      .select('*')
-      .order('created_at', { ascending: false });
+    try {
+      let query = supabase
+        .from('orders_with_profiles')
+        .select('*')
+        .order('created_at', { ascending: false });
 
-    if (!isAdmin) {
-      query = query.eq('user_id', userId);
-    }
+      if (!isAdmin) {
+        query = query.eq('user_id', userId);
+      }
 
-    const { data, error } = await query;
+      const { data, error } = await query;
 
-    if (error) {
-      console.error('Error loading orders:', error);
-      setOrders([]);
-    } else {
+      if (error) {
+        console.error('Error loading orders:', error);
+        setOrders([]);
+        return;
+      }
+
       setOrders((data ?? []) as OrderType[]);
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   }, [userId, isAdmin]);
 
   useEffect(() => {
-    if (!userId) {
-      setOrders([]);
-      setLoading(false);
-      return;
-    }
-
     void loadOrders();
-  }, [userId, isAdmin, loadOrders]);
+  }, [loadOrders]);
 
   useEffect(() => {
     const channel = supabase

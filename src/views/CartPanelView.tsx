@@ -1,79 +1,47 @@
 "use client";
 
-import { Box, Typography, Stack, TextField } from "@mui/material";
-import { isEmpty } from "ramda";
-import React, { useEffect, useState } from "react";
+import { Stack } from "@mui/material";
+import { useState } from "react";
 
-import { supabase } from "@/lib/supabase";
+import { CartItemsList } from "@/src/components/cart/CartItemsList";
+import { CartSummary } from "@/src/components/cart/CartSummary";
 import { AppDrawer } from "@/src/components/common/AppDrawer";
-import IncrementDecrementButtons from "@/src/components/common/IncrementDecrementButtons";
+import { TITLES } from "@/src/constants";
 import { useAlert } from "@/src/context/AlertContext";
 import { useCart } from "@/src/context/CartContext";
 import { useOrders } from "@/src/context/OrdersContext";
-import { Row, PanelCard } from "@/src/styledComponents";
+import { useCreateOrder } from "@/src/hooks/api";
 import { CartPanelProps } from "@/src/types/propsTypes";
 
 export default function CartPanelView({ open, onClose }: CartPanelProps) {
-  const [isCartEmpty, setIsCartEmpty] = useState(true);
   const [comment, setComment] = useState("");
 
   const { items, total, updateItemQuantity, clearCart } = useCart();
-  const { refreshOrders } = useOrders();
+  const { createOrder } = useCreateOrder();
   const { showAlert } = useAlert();
+  const { refreshOrders } = useOrders();
 
-  useEffect(() => {
-    setIsCartEmpty(isEmpty(items));
-  }, [items]);
+  const isCartEmpty = items.length === 0;
 
-  const handleSubmitPreorder = async () => {
-    if (isCartEmpty) return;
-
-    setLoading(true);
-
-    const { data } = await supabase.auth.getUser();
-    const userId = data.user?.id;
-
-    if (!userId) {
-      setLoading(false);
-      setAlert({
-        message: "Error",
-        severity: "error",
-      });
-      return;
-    }
-
+  const handleSubmit = async () => {
     const orderItems = items.map((i) => ({
       product_id: i.id,
       title: i.title,
       price: i.price,
       quantity: i.quantity,
+      pots_count: i.pots_count,
     }));
 
-    const { error: err } = await supabase.from("orders").insert([
-      {
-        user_id: userId,
-        items: orderItems,
-        total: Number(total.toFixed(2)),
-        comment: comment || null,
-        status: "pending",
-      },
-    ]);
+    const { success, error } = await createOrder(orderItems, total, comment);
 
-    if (err) {
-      showAlert({
-        message: `Error: ${err.message}`,
-        severity: "error",
-      });
-    } else {
-      showAlert({
-        message:
-          "Pedido enviado con éxito!\n" +
-          "Tu pedido está en estado pendiente.\n" +
-          "Los articulos han sido reservados hasta que el administrador lo apruebe o lo cancele.\n" +
-          "Puedes consultar el estado y los detalles en la tabla de pedidos",
-        severity: "success",
-      });
-      void refreshOrders();
+    if (error) {
+      showAlert(error);
+      return;
+    }
+
+    if (success) {
+      showAlert(success);
+      await refreshOrders();
     }
 
     clearCart();
@@ -85,98 +53,27 @@ export default function CartPanelView({ open, onClose }: CartPanelProps) {
     <AppDrawer
       open={open}
       onClose={onClose}
-      title="Preorden"
+      title={TITLES.titles.cart}
       primaryButton={{
-        title: "Enviar Pedido",
-        handleSubmit: handleSubmitPreorder,
+        title: TITLES.buttons.cart.submit,
+        handleSubmit,
         disabled: isCartEmpty,
       }}
       secondaryButton={{
-        title: "Vaciar",
+        title: TITLES.buttons.cart.clear,
         handleSubmit: clearCart,
         disabled: isCartEmpty,
       }}
     >
       <Stack justifyContent="space-between" sx={{ height: "100%" }}>
-        {!items.length && (
-          <Stack
-            justifyContent="center"
-            alignItems="center"
-            sx={{ height: "100%" }}
-          >
-            <Typography color="text.secondary">
-              No hay productos en tu preorden.
-            </Typography>
-          </Stack>
-        )}
+        <CartItemsList items={items} updateItemQuantity={updateItemQuantity} />
 
-        {items.length > 0 && (
-          <Box sx={{ flex: 1, overflowY: "auto" }}>
-            <Stack spacing={1}>
-              {items.map((item) => (
-                <PanelCard key={item.id}>
-                  <Stack spacing={3}>
-                    <Row>
-                      <Typography sx={{ fontWeight: 600 }}>
-                        {item.title}
-                      </Typography>
-                      <IncrementDecrementButtons
-                        inStock={item.available}
-                        quantity={item.quantity}
-                        onChange={(q) =>
-                          updateItemQuantity(
-                            {
-                              id: item.id,
-                              title: item.title,
-                              price: item.price,
-                              available: item.available,
-                              pots_count: item.pots_count,
-                            },
-                            q,
-                          )
-                        }
-                      />
-                    </Row>
-
-                    <Row mt={1}>
-                      <Typography variant="body1">
-                        Total : {item.quantity} Cajas x {item.pots_count} Uds ={" "}
-                        {item.quantity * item.pots_count} Uds
-                      </Typography>
-                      <Typography color="primary">
-                        €{" "}
-                        {(item.price * item.quantity * item.pots_count).toFixed(
-                          2,
-                        )}
-                      </Typography>
-                    </Row>
-                  </Stack>
-                </PanelCard>
-              ))}
-            </Stack>
-          </Box>
-        )}
-
-        {items.length > 0 && (
-          <Stack spacing={2} sx={{ mt: 2 }}>
-            <TextField
-              label="Comentario (opcional)"
-              value={comment}
-              onChange={(e) => setComment(e.target.value)}
-              fullWidth
-              multiline
-              rows={2}
-            />
-
-            <Box sx={{ p: 2, borderTop: "1px solid #eee" }}>
-              <Row sx={{ mb: 1 }}>
-                <Typography variant="subtitle1">Total:</Typography>
-                <Typography variant="subtitle1">
-                  € {total.toFixed(2)}
-                </Typography>
-              </Row>
-            </Box>
-          </Stack>
+        {!isCartEmpty && (
+          <CartSummary
+            total={total}
+            comment={comment}
+            setComment={setComment}
+          />
         )}
       </Stack>
     </AppDrawer>

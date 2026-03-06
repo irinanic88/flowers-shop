@@ -1,10 +1,10 @@
-import { Stack } from '@mui/material';
-import React, { useEffect, useMemo, useState } from 'react';
+import { Stack } from "@mui/material";
+import React, { useEffect, useMemo, useState } from "react";
 
-import ValidationErrorsList from '@/src/components/common/ValidationErrorsList';
-import FormFieldRenderer from '@/src/components/form/FormFieldRenderer';
-import { validateField, validateForm } from '@/src/helpers/validators';
-import { FormField } from '@/src/types/types';
+import ValidationErrorsList from "@/src/components/common/ValidationErrorsList";
+import FormFieldRenderer from "@/src/components/form/FormFieldRenderer";
+import { validateField, validateForm } from "@/src/helpers/validators";
+import { FormField } from "@/src/types/types";
 
 const prepareInitialState = (config: FormField[]) =>
   config.reduce<Record<string, unknown>>((acc, field) => {
@@ -12,15 +12,15 @@ const prepareInitialState = (config: FormField[]) =>
     return acc;
   }, {});
 
-export default function CommonForm({
+export default function CommonForm<T>({
   formConfig,
   fillForm,
 }: {
-  fillForm: (form: Record<string, unknown>, isValid: boolean) => void;
-  formConfig: FormField[];
+  fillForm: (form: T, isValid: boolean) => void;
+  formConfig: FormField<T>[];
 }) {
-  const [form, setForm] = useState<Record<string, unknown>>(() =>
-    prepareInitialState(formConfig),
+  const [form, setForm] = useState<T>(
+    () => prepareInitialState(formConfig) as T,
   );
 
   const [validationErrors, setValidationErrors] = useState<
@@ -38,7 +38,7 @@ export default function CommonForm({
     fillForm(form, validateForm(form, formConfig));
   }, [form, formConfig, fillForm]);
 
-  const handleFieldChange = (field: string, value: unknown) => {
+  const handleFieldChange = (field: keyof T, value: unknown) => {
     const nextForm = { ...form, [field]: value };
     setForm(nextForm);
 
@@ -65,12 +65,12 @@ export default function CommonForm({
   const hasErrors = visibleErrors.length > 0;
 
   return (
-    <Stack alignItems="flex-start" spacing={2} sx={{ width: '100%' }}>
+    <Stack alignItems="flex-start" spacing={2} sx={{ width: "100%" }}>
       <Stack
         sx={{
           borderRadius: 2,
           backgroundColor: (theme) => theme.palette.background.paper,
-          width: '100%',
+          width: "100%",
         }}
         spacing={2}
       >

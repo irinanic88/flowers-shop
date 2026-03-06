@@ -1,19 +1,27 @@
 import { supabase } from "@/lib/supabase";
-import { RESET_PASSWORD_URL_dev } from "@/src/constants";
+import { ALERT_MESSAGES_DICT, RESET_PASSWORD_URL_dev } from "@/src/constants";
 import { useLoading } from "@/src/context/LoadingContext";
-import { AlertType, SignInFormType, SignUpFormType } from "@/src/types/types";
+import {
+  AlertType,
+  CartItem,
+  OrderItem,
+  OrderStatusType,
+  SignInFormType,
+  SignUpFormType,
+} from "@/src/types/types";
 import { ProductForm } from "@/src/views/AdminProductFormView";
+import { AlertColor } from "@mui/material";
 
 export const useRequest = () => {
   const { setLoading } = useLoading();
 
-  const request = async <T = unknown>(
-    fn: () => Promise<unknown>,
+  const request = async <T>(
+    fn: () => Promise<{ data: T; error: unknown }>,
     successMessage?: string,
     errorMessage?: string,
   ): Promise<{
-    success: AlertType | null;
-    error: AlertType | null;
+    success: AlertType;
+    error: AlertType;
     data: T | null;
   }> => {
     setLoading(true);
@@ -24,7 +32,7 @@ export const useRequest = () => {
       if (result.error) throw result.error;
 
       const success = successMessage
-        ? { message: successMessage, severity: "success" }
+        ? { message: successMessage, severity: "success" as AlertColor }
         : null;
 
       return {
@@ -33,13 +41,14 @@ export const useRequest = () => {
         data: result.data ?? null,
       };
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : "Error desconocido";
+      const message =
+        err instanceof Error ? err.message : ALERT_MESSAGES_DICT.error.unknown;
 
       return {
         success: null,
         error: {
           message: errorMessage || message,
-          severity: "error",
+          severity: "error" as AlertColor,
         },
         data: null,
       };
@@ -78,7 +87,7 @@ export const useResetPassword = () => {
         supabase.auth.resetPasswordForEmail(email, {
           redirectTo: RESET_PASSWORD_URL_dev,
         }),
-      "Si el correo está registrado, recibirás un email con instrucciones para restablecer tu contraseña.",
+      ALERT_MESSAGES_DICT.success.resetPasswordEmail,
     );
 
   return { resetPassword };
@@ -93,7 +102,7 @@ export const useUpdatePassword = () => {
         supabase.auth.updateUser({
           password,
         }),
-      "Contraseña actualizada",
+      ALERT_MESSAGES_DICT.success.passwordUpdated,
     );
 
   return { updatePassword };
@@ -105,7 +114,7 @@ export const useUpdateUserName = () => {
   const updateUserName = (name: string, userId: string) =>
     request(
       () => supabase.from("profiles").update({ name }).eq("id", userId),
-      "Nombre actualizado",
+      ALERT_MESSAGES_DICT.success.nameUpdated,
     );
 
   return { updateUserName };
@@ -130,7 +139,7 @@ export const useConsumeInvite = () => {
   const consumeInvite = (body: { inviteId: string; userId: string }) =>
     request<{ inviteId: string }>(
       () => supabase.functions.invoke("consume-invite", { body }),
-      "Tu cuenta ha sido creada correctamente!",
+      ALERT_MESSAGES_DICT.success.accountCreated,
     );
 
   return { consumeInvite };
@@ -141,9 +150,8 @@ export const useCreateProduct = () => {
 
   const createProduct = (form: ProductForm) =>
     request(
-      () => supabase.from("produ").insert([form]).select().single(),
-
-      `Articulo ${form.title} agregado!`,
+      () => supabase.from("products").insert([form]).select().single(),
+      ALERT_MESSAGES_DICT.success.productCreated(form.title),
     );
 
   return { createProduct };
@@ -156,13 +164,12 @@ export const useUpdateProduct = () => {
     request(
       () =>
         supabase
-          .from("produ")
+          .from("products")
           .update(form)
           .eq("id", productId)
           .select()
           .single(),
-
-      `Articulo ${form.title} actualizado!`,
+      ALERT_MESSAGES_DICT.success.productUpdated(form.title),
     );
 
   return { updateProduct };
@@ -172,10 +179,12 @@ export const useDeleteProduct = () => {
   const { request } = useRequest();
 
   const deleteProduct = async (selectedProduct: ProductType) => {
-    const successMessage = `Articulo ${selectedProduct.title} eliminado.`;
+    const successMessage = ALERT_MESSAGES_DICT.success.productDeleted(
+      selectedProduct.title,
+    );
 
     const { error } = await request(() =>
-      supabase.from("produ").delete().eq("id", selectedProduct.id),
+      supabase.from("products").delete().eq("id", selectedProduct.id),
     );
 
     if (error) return { success: null, error };
@@ -197,7 +206,7 @@ export const useDeleteProduct = () => {
     return {
       success: {
         message: successMessage,
-        severity: "success",
+        severity: "success" as AlertColor,
       },
       error: null,
     };
@@ -211,7 +220,7 @@ export const useUpdateOrderStatus = () => {
 
   const updateOrderStatus = async (
     orderId: number,
-    nextStatus: "approved" | "cancelled",
+    nextStatus: OrderStatusType,
     adminComment?: string,
   ) => {
     if (nextStatus === "approved") {
@@ -221,7 +230,7 @@ export const useUpdateOrderStatus = () => {
             p_order_id: orderId,
             p_admin_comment: adminComment || null,
           }),
-        "Pedido aprobado",
+        ALERT_MESSAGES_DICT.success.orderApproved,
       );
     }
 
@@ -234,9 +243,48 @@ export const useUpdateOrderStatus = () => {
             admin_comment: adminComment || null,
           })
           .eq("id", orderId),
-      "Pedido cancelado",
+      ALERT_MESSAGES_DICT.success.orderCancelled,
     );
   };
 
   return { updateOrderStatus };
+};
+
+export const useCreateOrder = () => {
+  const { request } = useRequest();
+
+  const createOrder = async (
+    items: OrderItem[],
+    total: number,
+    comment?: string,
+  ) => {
+    const { data } = await supabase.auth.getUser();
+    const userId = data.user?.id;
+
+    if (!userId) {
+      return {
+        success: null,
+        error: {
+          message: ALERT_MESSAGES_DICT.error.notAuthenticated,
+          severity: "error" as AlertColor,
+        },
+      };
+    }
+
+    return request(
+      () =>
+        supabase.from("orders").insert([
+          {
+            user_id: userId,
+            items,
+            total: Number(total.toFixed(2)),
+            comment: comment || null,
+            status: "pending",
+          },
+        ]),
+      ALERT_MESSAGES_DICT.success.cart,
+    );
+  };
+
+  return { createOrder };
 };

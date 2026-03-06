@@ -29,11 +29,20 @@ export default function FormFieldRenderer({
       <TextField
         label={field.label}
         value={value ?? ''}
-        onChange={(e) => onChange(e.target.value)}
-        onBlur={onBlur}
         type="number"
         fullWidth
         required={field.required}
+        onChange={(e) => {
+          const val = Number(e.target.value);
+          if (Number.isNaN(val) || val < 0) return;
+          onChange(val);
+        }}
+        onBlur={onBlur}
+        onWheel={(e) => e.currentTarget.blur()}
+        inputProps={{
+          min: 0,
+          ...field.inputProps,
+        }}
       />
     );
   }

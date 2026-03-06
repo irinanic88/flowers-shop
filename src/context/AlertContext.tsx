@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import React, {
   createContext,
@@ -6,13 +6,13 @@ import React, {
   useContext,
   useState,
   ReactNode,
-} from 'react';
+} from "react";
 
-import { AlertType } from '@/src/types/types';
+import { AlertType } from "@/src/types/types";
 
 type AlertContextType = {
   alert: AlertType;
-  showAlert: (alert: NonNullable<AlertType>) => void;
+  showAlert: (alert: AlertType) => void;
   clearAlert: () => void;
 };
 

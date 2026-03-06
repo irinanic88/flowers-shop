@@ -1,16 +1,20 @@
-'use client';
+"use client";
 
-import { useRouter } from 'next/navigation';
-import React, { useState, useEffect } from 'react';
+import { useRouter } from "next/navigation";
+import React, { useState, useEffect } from "react";
 
-import PanelCardFormLayout from '@/src/components/auth/PanelCardFormLayout';
-import CommonForm from '@/src/components/form/CommonForm';
-import { SignUpFormConfig } from '@/src/components/form/formConfigs';
-import { useConsumeInvite, useInviteToken, useSignUp } from '@/src/hooks/api';
-import { AlertType } from '@/src/types/types';
+import PanelCardFormLayout from "@/src/components/auth/PanelCardFormLayout";
+import CommonForm from "@/src/components/form/CommonForm";
+import { SignUpFormConfig } from "@/src/components/form/formConfigs";
+import { useConsumeInvite, useInviteToken, useSignUp } from "@/src/hooks/api";
+import { AlertType, SignUpFormType } from "@/src/types/types";
 
 export default function SignUpForm() {
-  const [signUpForm, setSignUpForm] = useState({});
+  const [signUpForm, setSignUpForm] = useState<SignUpFormType>({
+    email: "",
+    password: "",
+    name: "",
+  });
   const [isFormValid, setIsFormValid] = useState(false);
   const [alert, setAlert] = useState<AlertType>(null);
   const [inviteId, setInviteId] = useState<string | null>(null);
@@ -23,12 +27,12 @@ export default function SignUpForm() {
   useEffect(() => {
     const verifyToken = async () => {
       const params = new URLSearchParams(window.location.search);
-      const token = params.get('invite');
+      const token = params.get("invite");
 
       if (!token) {
         setAlert({
-          message: 'Token de invitación no proporcionado',
-          severity: 'error',
+          message: "Token de invitación no proporcionado",
+          severity: "error",
         });
         return;
       }
@@ -44,8 +48,8 @@ export default function SignUpForm() {
 
       if (!parsed?.inviteId) {
         setAlert({
-          message: 'Token inválido o ya usado',
-          severity: 'error',
+          message: "Token inválido o ya usado",
+          severity: "error",
         });
         return;
       }
@@ -83,13 +87,13 @@ export default function SignUpForm() {
     }
 
     setAlert(success);
-    router.push('/');
+    router.push("/");
   };
 
   return (
     <PanelCardFormLayout
       submit={{
-        title: 'Registrarse',
+        title: "Registrarse",
         handler: handleSubmit,
       }}
       alert={alert}
