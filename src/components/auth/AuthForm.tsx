@@ -1,31 +1,35 @@
-"use client";
+'use client';
 
-import { Stack } from "@mui/material";
-import { equals } from "ramda";
-import React, { useState } from "react";
+import { Stack } from '@mui/material';
+import { equals } from 'ramda';
+import React, { useState } from 'react';
 
-import { AppDrawer } from "@/src/components/common/AppDrawer";
-import RedirectionLink from "@/src/components/common/RedirectionLink";
-import CommonForm from "@/src/components/form/CommonForm";
+import { AppDrawer } from '@/src/components/common/AppDrawer';
+import RedirectionLink from '@/src/components/common/RedirectionLink';
+import CommonForm from '@/src/components/form/CommonForm';
 import {
   AuthFormConfig,
   RequestResetPasswordFormConfig,
-} from "@/src/components/form/formConfigs";
-import { AuthTitlesDict } from "@/src/constants";
-import { useAlert } from "@/src/context/AlertContext";
-import { useResetPassword, useSignIn } from "@/src/hooks/api";
-import { AuthFormProps, AuthMode } from "@/src/types/propsTypes";
-import { ForgotPasswordFormType, SignInFormType } from "@/src/types/types.ts";
+} from '@/src/components/form/formConfigs';
+import { AuthTitlesDict } from '@/src/constants';
+import { useAlert } from '@/src/context/AlertContext';
+import { useResetPassword, useSignIn } from '@/src/hooks/api';
+import { AuthFormProps, AuthMode } from '@/src/types/propsTypes';
+import {
+  ForgotPasswordFormType,
+  FormField,
+  SignInFormType,
+} from '@/src/types/types';
 
 export default function AuthForm({ open, onClose }: AuthFormProps) {
-  const [mode, setMode] = useState<AuthMode>("signIn");
+  const [mode, setMode] = useState<AuthMode>('signIn');
   const [authForm, setAuthForm] = useState<Record<string, string>>({});
   const [isFormValid, setIsFormValid] = useState(false);
   const [cooldown, setCooldown] = useState(0);
 
-  const isSignIn = equals(mode, "signIn");
-  const isForgotPassword = equals(mode, "forgotPassword");
-  const title = AuthTitlesDict[mode].title || "";
+  const isSignIn = equals(mode, 'signIn');
+  const isForgotPassword = equals(mode, 'forgotPassword');
+  const title = AuthTitlesDict[mode].title || '';
 
   const { signIn } = useSignIn();
   const { resetPassword } = useResetPassword();
@@ -49,8 +53,8 @@ export default function AuthForm({ open, onClose }: AuthFormProps) {
     if (!isFormValid || cooldown > 0) return;
 
     const action = isSignIn
-      ? () => signIn(authForm)
-      : () => resetPassword(authForm);
+      ? () => signIn(authForm as SignInFormType)
+      : () => resetPassword(authForm.email);
 
     const { success, error } = await action();
 
@@ -59,7 +63,7 @@ export default function AuthForm({ open, onClose }: AuthFormProps) {
       return;
     }
 
-    showAlert(success);
+    if (success) showAlert(success);
 
     if (isForgotPassword) {
       startCooldown();
@@ -82,7 +86,7 @@ export default function AuthForm({ open, onClose }: AuthFormProps) {
             : AuthTitlesDict[mode].submitButton,
       }}
     >
-      <Stack sx={{ height: "100%" }} justifyContent="center">
+      <Stack sx={{ height: '100%' }} justifyContent="center">
         {isSignIn && (
           <Stack spacing={2}>
             <CommonForm<SignInFormType>
@@ -90,7 +94,7 @@ export default function AuthForm({ open, onClose }: AuthFormProps) {
                 setAuthForm(form);
                 setIsFormValid(isValid);
               }}
-              formConfig={AuthFormConfig}
+              formConfig={AuthFormConfig as FormField<SignInFormType>[]}
             />
 
             <RedirectionLink
@@ -99,7 +103,7 @@ export default function AuthForm({ open, onClose }: AuthFormProps) {
               onLinkClick={() => {
                 setAuthForm({});
                 setIsFormValid(false);
-                setMode("forgotPassword");
+                setMode('forgotPassword');
               }}
             />
           </Stack>
@@ -111,7 +115,9 @@ export default function AuthForm({ open, onClose }: AuthFormProps) {
               setAuthForm(form);
               setIsFormValid(isValid);
             }}
-            formConfig={RequestResetPasswordFormConfig}
+            formConfig={
+              RequestResetPasswordFormConfig as FormField<ForgotPasswordFormType>[]
+            }
           />
         )}
       </Stack>

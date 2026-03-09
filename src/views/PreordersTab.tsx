@@ -1,17 +1,16 @@
-"use client";
+'use client';
 
-import React from "react";
+import React from 'react';
 
-import Loader from "@/src/components/common/Loader";
-import { PreordersStatusDialog } from "@/src/components/preorders/PreordersStatusDialog";
-import { PreordersTable } from "@/src/components/preorders/PreordersTable";
-import { PreordersToolbar } from "@/src/components/preorders/PreordersToolbar";
-import { useAlert } from "@/src/context/AlertContext";
-import { useAuth } from "@/src/context/AuthContext";
-import { useOrders } from "@/src/context/OrdersContext";
-import { useUpdateOrderStatus } from "@/src/hooks/api";
-import { usePreordersStatusDialog } from "@/src/hooks/usePreordersStatusDialog";
-import { usePreordersTable } from "@/src/hooks/usePreordersTable";
+import { PreordersStatusDialog } from '@/src/components/preorders/PreordersStatusDialog';
+import { PreordersTable } from '@/src/components/preorders/PreordersTable';
+import { PreordersToolbar } from '@/src/components/preorders/PreordersToolbar';
+import { useAlert } from '@/src/context/AlertContext';
+import { useAuth } from '@/src/context/AuthContext';
+import { useOrders } from '@/src/context/OrdersContext';
+import { useUpdateOrderStatus } from '@/src/hooks/api';
+import { usePreordersStatusDialog } from '@/src/hooks/usePreordersStatusDialog';
+import { usePreordersTable } from '@/src/hooks/usePreordersTable';
 
 export default function PreordersTab() {
   const {
@@ -57,7 +56,8 @@ export default function PreordersTab() {
 
     if (error) return showAlert(error);
 
-    showAlert(success);
+    if (success) showAlert(success);
+
     closeDialog();
     void refreshOrders();
   };
@@ -94,7 +94,7 @@ export default function PreordersTab() {
         comment={adminComment}
         onSave={applyStatus}
         onChangeComment={setAdminComment}
-        submitButton={nextStatus === "approved" ? "Aprobar" : "Cancelar"}
+        submitButton={nextStatus === 'approved' ? 'Aprobar' : 'Cancelar'}
       />
     </>
   );

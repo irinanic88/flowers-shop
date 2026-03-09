@@ -1,62 +1,14 @@
-import { equals } from 'ramda';
+import { FormField, ValidationRule } from '@/src/types/types';
 
-import { AuthFormType, FormField, ValidationRule } from '@/src/types/types';
-
-export const email: ValidationRule<string | null> = (value) => {
-  if (typeof value !== 'string') {
-    return 'Correo inválido';
-  }
-
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-    return 'Correo inválido';
-  }
-
-  return null;
-};
-
-export const password: ValidationRule<string | null> = (value) => {
-  if (typeof value !== 'string') {
-    return 'Contraseña inválida (≥8 caracteres, letras y números)';
-  }
-
-  if (value.length < 8 || !/[a-zA-Z]/.test(value) || !/\d/.test(value)) {
-    return 'Contraseña inválida (≥8 caracteres, letras y números)';
-  }
-
-  return null;
-};
-
-export const confirmPassword: ValidationRule<FormValues> = (value, form) => {
-  if (value !== form.password) {
-    return 'Las contraseñas no coinciden';
-  }
-  return null;
-};
-
-export const required: ValidationRule<string | null> = (value) => {
-  if (
-    value === null ||
-    value === undefined ||
-    value === '' ||
-    (typeof value === 'string' && value.trim() === '')
-  ) {
-    return 'Completa todos los campos';
-  }
-
-  return null;
-};
-
-export const validateField = <Form extends Record<string, unknown>>(
+export function validateField<Form>(
   value: unknown,
   form: Form,
-  rules?: ValidationRule<Form>[],
-): string[] => {
-  if (!rules?.length) return [];
-
+  rules: ValidationRule<Form>[],
+): string[] {
   return rules
     .map((rule) => rule(value, form))
-    .filter((e): e is string => Boolean(e));
-};
+    .filter((msg): msg is string => Boolean(msg));
+}
 
 export const validateForm = <Form extends Record<string, unknown>>(
   form: Form,
@@ -70,34 +22,31 @@ export const validateForm = <Form extends Record<string, unknown>>(
 };
 
 export const validationRules = {
-  email,
-  required,
-  password,
-  confirmPassword,
-};
-
-export const validateRegistrationForm = (
-  form: AuthFormType & {
-    confirmPassword: string;
+  required: (value: unknown) => {
+    if (!value) return 'Required';
+    return null;
   },
-): string[] => {
-  const errors: string[] = [];
 
-  if (!isEmailValid(form.email)) {
-    errors.push('Correo inválido');
-  }
+  email: (value: unknown) => {
+    if (typeof value !== 'string') return 'Invalid email';
+    return /\S+@\S+\.\S+/.test(value) ? null : 'Invalid email';
+  },
 
-  if (!isPasswordValid(form.password)) {
-    errors.push('Contraseña inválida (≥8 caracteres, letras y números)');
-  }
+  password: (value: unknown) => {
+    if (typeof value !== 'string') return 'Invalid password';
+    return value.length >= 8 ? null : 'Min 8 characters';
+  },
 
-  if (!isRequired(form.name)) {
-    errors.push('El nombre es obligatorio');
-  }
+  confirmPassword: (value: unknown, form: unknown) => {
+    if (
+      typeof form === 'object' &&
+      form !== null &&
+      'password' in form &&
+      value !== (form as { password?: unknown }).password
+    ) {
+      return 'Passwords do not match';
+    }
 
-  if (!equals(form.password, form.confirmPassword)) {
-    errors.push('Las contraseñas no coinciden');
-  }
-
-  return errors;
+    return null;
+  },
 };

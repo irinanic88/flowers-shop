@@ -7,16 +7,21 @@ import { supabase } from '@/lib/supabase';
 import PanelCardFormLayout from '@/src/components/auth/PanelCardFormLayout';
 import CommonForm from '@/src/components/form/CommonForm';
 import { ResetPasswordFormConfig } from '@/src/components/form/formConfigs';
+import { useAlert } from '@/src/context/AlertContext';
 import { useUpdatePassword } from '@/src/hooks/api';
-import { AlertType } from '@/src/types/types';
+import { AlertType, FormField, PasswordFormType } from '@/src/types/types';
 
 export default function Page() {
-  const [passwordForm, setPasswordForm] = useState({});
+  const [passwordForm, setPasswordForm] = useState<PasswordFormType>({
+    password: '',
+    confirmPassword: '',
+  });
   const [isFormValid, setIsFormValid] = useState(false);
   const [alert, setAlert] = useState<AlertType>(null);
 
   const router = useRouter();
   const { updatePassword } = useUpdatePassword();
+  const { showAlert } = useAlert();
 
   useEffect(() => {
     const hash = window.location.hash;
@@ -25,21 +30,24 @@ export default function Page() {
     const type = params.get('type');
 
     if (access_token && type === 'recovery') {
-      supabase.auth.setSession({ access_token });
+      supabase.auth.setSession({
+        access_token,
+        refresh_token: access_token,
+      });
     }
   }, []);
 
   const handleSubmit = async () => {
     if (!isFormValid) return;
 
-    const { success, error } = updatePassword(passwordForm.password);
+    const { success, error } = await updatePassword(passwordForm.password);
 
     if (error) {
       setAlert(error);
       return;
     }
 
-    showAlert(success);
+    if (success) showAlert(success);
     router.push('/');
   };
 
@@ -52,12 +60,12 @@ export default function Page() {
         handler: handleSubmit,
       }}
     >
-      <CommonForm
+      <CommonForm<PasswordFormType>
         fillForm={(form, isValid) => {
           setPasswordForm(form);
           setIsFormValid(isValid);
         }}
-        formConfig={ResetPasswordFormConfig}
+        formConfig={ResetPasswordFormConfig as FormField<PasswordFormType>[]}
       />
     </PanelCardFormLayout>
   );

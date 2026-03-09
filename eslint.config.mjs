@@ -34,18 +34,11 @@ export default defineConfig([
         typescript: true,
       },
     },
-
+  
     rules: {
-      indent: ["error", 2, { SwitchCase: 1 }],
-      "object-curly-spacing": ["error", "always"],
-      "array-bracket-spacing": ["error", "never"],
-      "block-spacing": ["error", "always"],
-      "no-multiple-empty-lines": ["error", { max: 1, maxEOF: 0 }],
-      semi: ["error", "always"],
-
       "react-hooks/exhaustive-deps": "off",
       "react-hooks/set-state-in-effect": "off",
-
+    
       "prettier/prettier": [
         "error",
         {
@@ -56,7 +49,7 @@ export default defineConfig([
           endOfLine: "auto",
         },
       ],
-
+    
       "import/extensions": [
         "error",
         "ignorePackages",
@@ -67,9 +60,9 @@ export default defineConfig([
           jsx: "never",
         },
       ],
-
+    
       "import/no-unresolved": "error",
-
+    
       "import/order": [
         "error",
         {
@@ -88,9 +81,9 @@ export default defineConfig([
           },
         },
       ],
-
+    
       "unused-imports/no-unused-imports": "error",
-
+    
       "unused-imports/no-unused-vars": [
         "warn",
         {
@@ -100,7 +93,7 @@ export default defineConfig([
           argsIgnorePattern: "^_",
         },
       ],
-    },
+    }
   },
 
   // Supabase Edge Functions (Deno)

@@ -1,14 +1,15 @@
+import { ReactNode } from 'react';
+
 import {
   AlertType,
+  AnyFormField,
   CartItem,
-  FormField,
   OrderStatusType,
   OrderType,
   PreordersFiltersType,
   PreordersSetFiltersType,
   ProductType,
-} from "@/src/types/types";
-import { ReactNode } from "react";
+} from '@/src/types/types';
 
 export interface AdminProductFormProps {
   open: boolean;
@@ -16,7 +17,7 @@ export interface AdminProductFormProps {
   product?: ProductType | null;
 }
 
-export interface ProductForm {
+export type ProductForm = {
   title: string;
   price: number | string;
   comment: string;
@@ -25,10 +26,10 @@ export interface ProductForm {
   available: number | string;
   height: string;
   width: string;
-}
+} & Record<string, unknown>;
 
 export type FieldProps = {
-  field: FormField;
+  field: AnyFormField;
   value: unknown;
   onChange: (value: unknown) => void;
   onBlur: () => void;
@@ -42,7 +43,7 @@ export interface ProductCardProps {
 export type CartContextType = {
   items: CartItem[];
   updateItemQuantity: (
-    product: Omit<CartItem, "quantity">,
+    product: Omit<CartItem, 'quantity'>,
     quantity: number,
   ) => void;
   removeFromCart: (id: string) => void;
@@ -66,7 +67,7 @@ export type AuthFormProps = {
   onClose: () => void;
 };
 
-export type AuthMode = "signIn" | "forgotPassword";
+export type AuthMode = 'signIn' | 'forgotPassword';
 
 export interface CartItemCardProps {
   item: CartItem;
@@ -88,16 +89,16 @@ export type PanelCardFormLayoutProps = {
 export type PreodersRowProps = {
   order: OrderType;
   expanded: boolean;
-  toggleExpand: (v: boolean) => void;
+  toggleExpand: (orderId: number) => void;
   isAdmin: boolean;
-  openStatusDialog: (v: boolean) => void;
+  openStatusDialog: (order: OrderType, status: OrderStatusType) => void;
 };
 
 export type PreodersTableProps = {
   expandedOrderId: number | null;
   sortBy: string;
-  sortDir: string;
-  toggleSort: (field: "date" | "user" | "status") => void;
+  sortDir?: 'asc' | 'desc';
+  toggleSort: (field: 'date' | 'user' | 'status') => void;
   page: number;
   rowsPerPage: number;
   total: number;
@@ -115,4 +116,21 @@ export type PreordersToolbarProps = {
   setFilters: PreordersSetFiltersType;
   users: string[];
   isAdmin: boolean;
+};
+
+export type CartItemSummaryProps = {
+  total: number;
+  comment: string;
+  setComment: (v: string) => void;
+};
+
+export interface CustomAlertProps {
+  alertState: AlertType;
+  onClose: () => void;
+}
+
+export type AlertContextType = {
+  alert: AlertType;
+  showAlert: (alert: NonNullable<AlertType>) => void;
+  clearAlert: () => void;
 };

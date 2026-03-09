@@ -1,21 +1,21 @@
-"use client";
+'use client';
 
-import CheckIcon from "@mui/icons-material/Check";
-import ClearIcon from "@mui/icons-material/Clear";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import CheckIcon from '@mui/icons-material/Check';
+import ClearIcon from '@mui/icons-material/Clear';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import {
   TableRow,
   TableCell,
   IconButton,
   Stack,
   Typography,
-} from "@mui/material";
+} from '@mui/material';
 
-import { PreordersTableContent } from "@/src/components/preorders/PreordersTableContent";
-import { orderStatusesDict, statusColorsDict } from "@/src/constants";
-import { StyledChip, RoundIconButton } from "@/src/styledComponents";
-import { PreodersRowProps } from "@/src/types/propsTypes.ts";
+import { PreordersTableContent } from '@/src/components/preorders/PreordersTableContent';
+import { orderStatusesDict, statusColorsDict } from '@/src/constants';
+import { StyledChip, RoundIconButton } from '@/src/styledComponents';
+import { PreodersRowProps } from '@/src/types/propsTypes';
 
 export function PreordersRow({
   order,
@@ -35,7 +35,7 @@ export function PreordersRow({
 
         <TableCell>{order.id}</TableCell>
 
-        {isAdmin && <TableCell>{order.profile_name || "—"}</TableCell>}
+        {isAdmin && <TableCell>{order.profile_name || '—'}</TableCell>}
 
         <TableCell>
           <StyledChip
@@ -65,15 +65,15 @@ export function PreordersRow({
               )}
             </Stack>
           ) : (
-            "—"
+            '—'
           )}
         </TableCell>
 
         {isAdmin && (
           <TableCell align="center">
             <RoundIconButton
-              disabled={order.status !== "pending"}
-              onClick={() => openStatusDialog(order, "approved")}
+              disabled={order.status !== 'pending'}
+              onClick={() => openStatusDialog(order, 'approved')}
             >
               <CheckIcon />
             </RoundIconButton>
@@ -83,8 +83,8 @@ export function PreordersRow({
         {isAdmin && (
           <TableCell align="center">
             <RoundIconButton
-              disabled={order.status !== "pending"}
-              onClick={() => openStatusDialog(order, "cancelled")}
+              disabled={order.status !== 'pending'}
+              onClick={() => openStatusDialog(order, 'cancelled')}
             >
               <ClearIcon />
             </RoundIconButton>

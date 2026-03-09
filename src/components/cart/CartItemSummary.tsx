@@ -2,8 +2,13 @@ import { Stack, Typography, TextField, Box } from '@mui/material';
 import React from 'react';
 
 import { Row } from '@/src/styledComponents';
+import { CartItemSummaryProps } from '@/src/types/propsTypes';
 
-export function CartSummary({ total, comment, setComment }) {
+export function CartItemSummary({
+  total,
+  comment,
+  setComment,
+}: CartItemSummaryProps) {
   return (
     <Stack spacing={2} sx={{ mt: 2 }}>
       <TextField

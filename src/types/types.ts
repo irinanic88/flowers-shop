@@ -1,4 +1,4 @@
-import { AlertColor } from "@mui/material";
+import { AlertColor } from '@mui/material';
 
 export interface ProductType {
   id: string;
@@ -17,7 +17,7 @@ export interface ProductType {
 export interface UserType {
   id: string;
   name?: string;
-  role?: "user" | "admin";
+  role?: 'user' | 'admin';
   created_at?: string;
   email?: string;
 }
@@ -29,6 +29,11 @@ export type SignInFormType = {
 
 export type ForgotPasswordFormType = {
   email: string;
+};
+
+export type PasswordFormType = {
+  password: string;
+  confirmPassword: string;
 };
 
 export type SignUpFormType = {
@@ -54,8 +59,8 @@ export interface OrderItem {
   pots_count: number;
 }
 
-export type OrderStatusType = "pending" | "approved" | "cancelled";
-export type DisponibilityType = "available" | "outOfStock";
+export type OrderStatusType = 'pending' | 'approved' | 'cancelled';
+export type DisponibilityType = 'available' | 'outOfStock';
 
 export interface OrderType {
   id: number;
@@ -76,11 +81,12 @@ export type AlertType = {
 } | null;
 
 export type InputFieldType =
-  | "text"
-  | "number"
-  | "password"
-  | "textarea"
-  | "images";
+  | 'text'
+  | 'number'
+  | 'password'
+  | 'textarea'
+  | 'images'
+  | 'confirm';
 
 export type FormField<Form> = {
   disabled?: boolean;
@@ -89,12 +95,12 @@ export type FormField<Form> = {
   initialValue: Form[keyof Form];
   type: InputFieldType;
   visibility: boolean;
-  rules: ValidationRule<Form>[];
+  rules: ValidationRule<unknown>[];
   required?: boolean;
   inputProps?: Record<string, unknown>;
 };
 
-export type ValidationRule<Form> = (
+export type ValidationRule<Form = unknown> = (
   value: unknown,
   form: Form,
 ) => string | null;
@@ -104,15 +110,25 @@ export type ValidationSchema<Form> = {
 };
 
 export type PreordersFiltersType = {
-  statusFilter: OrderStatusType | "all";
+  statusFilter: OrderStatusType | 'all';
   userFilter: string;
   dateRange: [Date | null, Date | null];
 };
 
 export type PreordersSetFiltersType = {
-  setStatusFilter: (value: OrderStatusType | "all") => void;
+  setStatusFilter: (value: OrderStatusType | 'all') => void;
   setUserFilter: (value: string) => void;
   setDateRange: (value: [Date | null, Date | null]) => void;
 };
 
 export type AnyFormField = FormField<Record<string, unknown>>;
+
+export type RequestResult<T> = {
+  success: AlertType;
+  error: AlertType;
+  data: T | null;
+};
+
+export type FormWithPassword = {
+  password?: unknown;
+};

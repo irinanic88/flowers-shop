@@ -1,18 +1,20 @@
-import { Stack } from "@mui/material";
-import React, { useEffect, useMemo, useState } from "react";
+import { Stack } from '@mui/material';
+import React, { useEffect, useMemo, useState } from 'react';
 
-import ValidationErrorsList from "@/src/components/common/ValidationErrorsList";
-import FormFieldRenderer from "@/src/components/form/FormFieldRenderer";
-import { validateField, validateForm } from "@/src/helpers/validators";
-import { FormField } from "@/src/types/types";
+import ValidationErrorsList from '@/src/components/common/ValidationErrorsList';
+import FormFieldRenderer from '@/src/components/form/FormFieldRenderer';
+import { validateField, validateForm } from '@/src/helpers/validators';
+import { AnyFormField, FormField } from '@/src/types/types';
 
-const prepareInitialState = (config: FormField[]) =>
+const prepareInitialState = <T extends Record<string, unknown>>(
+  config: FormField<T>[],
+) =>
   config.reduce<Record<string, unknown>>((acc, field) => {
-    acc[field.key] = field.initialValue;
+    (acc as Record<string, unknown>)[field.key as string] = field.initialValue;
     return acc;
   }, {});
 
-export default function CommonForm<T>({
+export default function CommonForm<T extends Record<string, unknown>>({
   formConfig,
   fillForm,
 }: {
@@ -29,7 +31,7 @@ export default function CommonForm<T>({
 
   const [touched, setTouched] = useState<Record<string, boolean>>({});
 
-  const configMap = useMemo(
+  const configMap: Record<string, FormField<T>> = useMemo(
     () => Object.fromEntries(formConfig.map((f) => [f.key, f])),
     [formConfig],
   );
@@ -42,7 +44,7 @@ export default function CommonForm<T>({
     const nextForm = { ...form, [field]: value };
     setForm(nextForm);
 
-    const fieldConfig = configMap[field];
+    const fieldConfig = configMap[field as string];
     const errors = validateField(value, nextForm, fieldConfig?.rules);
 
     setValidationErrors((prev) => ({
@@ -65,12 +67,12 @@ export default function CommonForm<T>({
   const hasErrors = visibleErrors.length > 0;
 
   return (
-    <Stack alignItems="flex-start" spacing={2} sx={{ width: "100%" }}>
+    <Stack alignItems="flex-start" spacing={2} sx={{ width: '100%' }}>
       <Stack
         sx={{
           borderRadius: 2,
           backgroundColor: (theme) => theme.palette.background.paper,
-          width: "100%",
+          width: '100%',
         }}
         spacing={2}
       >
@@ -79,17 +81,21 @@ export default function CommonForm<T>({
             .filter(({ visibility }) => visibility)
             .map((field) => (
               <FormFieldRenderer
-                key={field.key}
-                field={field}
+                key={String(field.key)}
+                field={field as unknown as AnyFormField}
                 value={form[field.key]}
                 onChange={(value) => handleFieldChange(field.key, value)}
-                onBlur={() => handleFieldBlur(field.key)}
+                onBlur={() => handleFieldBlur(String(field.key))}
               />
             ))}
         </Stack>
       </Stack>
 
-      {hasErrors && <ValidationErrorsList formErrors={visibleErrors} />}
+      {hasErrors && (
+        <ValidationErrorsList
+          formErrors={visibleErrors as unknown as Record<string, string[]>}
+        />
+      )}
     </Stack>
   );
 }

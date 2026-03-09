@@ -31,7 +31,7 @@ export default function NameUpdateForm() {
     await refreshProfile();
 
     setEditingName(false);
-    showAlert(success);
+    if (success) showAlert(success);
   };
 
   return (

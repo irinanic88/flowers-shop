@@ -1,70 +1,26 @@
-import { supabase } from "@/lib/supabase";
-import { ALERT_MESSAGES_DICT, RESET_PASSWORD_URL_dev } from "@/src/constants";
-import { useLoading } from "@/src/context/LoadingContext";
+import { AlertColor } from '@mui/material';
+import { Session, User } from '@supabase/auth-js';
+
+import { supabase } from '@/lib/supabase';
+import { ALERT_MESSAGES_DICT, RESET_PASSWORD_URL_dev } from '@/src/constants';
+import { useRequest } from '@/src/hooks/useRequest';
+import { ProductForm } from '@/src/types/propsTypes';
 import {
-  AlertType,
-  CartItem,
   OrderItem,
   OrderStatusType,
   SignInFormType,
   SignUpFormType,
-} from "@/src/types/types";
-import { ProductForm } from "@/src/views/AdminProductFormView";
-import { AlertColor } from "@mui/material";
-
-export const useRequest = () => {
-  const { setLoading } = useLoading();
-
-  const request = async <T>(
-    fn: () => Promise<{ data: T; error: unknown }>,
-    successMessage?: string,
-    errorMessage?: string,
-  ): Promise<{
-    success: AlertType;
-    error: AlertType;
-    data: T | null;
-  }> => {
-    setLoading(true);
-
-    try {
-      const result = await fn();
-
-      if (result.error) throw result.error;
-
-      const success = successMessage
-        ? { message: successMessage, severity: "success" as AlertColor }
-        : null;
-
-      return {
-        success,
-        error: null,
-        data: result.data ?? null,
-      };
-    } catch (err: unknown) {
-      const message =
-        err instanceof Error ? err.message : ALERT_MESSAGES_DICT.error.unknown;
-
-      return {
-        success: null,
-        error: {
-          message: errorMessage || message,
-          severity: "error" as AlertColor,
-        },
-        data: null,
-      };
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  return { request };
-};
+  ProductType,
+} from '@/src/types/types';
 
 export const useSignIn = () => {
   const { request } = useRequest();
 
   const signIn = (body: SignInFormType) =>
-    request(() => supabase.auth.signInWithPassword(body));
+    request<{
+      user: User | null;
+      session: Session | null;
+    }>(async () => supabase.auth.signInWithPassword(body));
 
   return { signIn };
 };
@@ -72,8 +28,10 @@ export const useSignIn = () => {
 export const useSignUp = () => {
   const { request } = useRequest();
 
-  const signUp = (body: SignUpFormType) =>
-    request(() => supabase.auth.signUp(body));
+  const signUp = ({ email, password, name }: SignUpFormType) =>
+    request(() =>
+      supabase.auth.signUp({ email, password, options: { data: { name } } }),
+    );
 
   return { signUp };
 };
@@ -83,7 +41,7 @@ export const useResetPassword = () => {
 
   const resetPassword = (email: string) =>
     request(
-      () =>
+      async () =>
         supabase.auth.resetPasswordForEmail(email, {
           redirectTo: RESET_PASSWORD_URL_dev,
         }),
@@ -97,8 +55,8 @@ export const useUpdatePassword = () => {
   const { request } = useRequest();
 
   const updatePassword = (password: string) =>
-    request(
-      () =>
+    request<{ user: User | null }>(
+      async () =>
         supabase.auth.updateUser({
           password,
         }),
@@ -113,7 +71,7 @@ export const useUpdateUserName = () => {
 
   const updateUserName = (name: string, userId: string) =>
     request(
-      () => supabase.from("profiles").update({ name }).eq("id", userId),
+      async () => supabase.from('profiles').update({ name }).eq('id', userId),
       ALERT_MESSAGES_DICT.success.nameUpdated,
     );
 
@@ -124,11 +82,16 @@ export const useInviteToken = () => {
   const { request } = useRequest();
 
   const checkInviteToken = (token: string) =>
-    request<{ inviteId: string }>(() =>
-      supabase.functions.invoke("check-invite", {
+    request<{ inviteId: string }>(async () => {
+      const res = await supabase.functions.invoke('check-invite', {
         body: { invite: token },
-      }),
-    );
+      });
+
+      return {
+        data: res.data,
+        error: res.error,
+      };
+    });
 
   return { checkInviteToken };
 };
@@ -137,10 +100,14 @@ export const useConsumeInvite = () => {
   const { request } = useRequest();
 
   const consumeInvite = (body: { inviteId: string; userId: string }) =>
-    request<{ inviteId: string }>(
-      () => supabase.functions.invoke("consume-invite", { body }),
-      ALERT_MESSAGES_DICT.success.accountCreated,
-    );
+    request<{ inviteId: string }>(async () => {
+      const res = await supabase.functions.invoke('consume-invite', { body });
+
+      return {
+        data: res.data as { inviteId: string },
+        error: res.error,
+      };
+    });
 
   return { consumeInvite };
 };
@@ -150,7 +117,7 @@ export const useCreateProduct = () => {
 
   const createProduct = (form: ProductForm) =>
     request(
-      () => supabase.from("products").insert([form]).select().single(),
+      async () => supabase.from('products').insert([form]).select().single(),
       ALERT_MESSAGES_DICT.success.productCreated(form.title),
     );
 
@@ -162,11 +129,11 @@ export const useUpdateProduct = () => {
 
   const updateProduct = (form: ProductForm, productId: string) =>
     request(
-      () =>
+      async () =>
         supabase
-          .from("products")
+          .from('products')
           .update(form)
-          .eq("id", productId)
+          .eq('id', productId)
           .select()
           .single(),
       ALERT_MESSAGES_DICT.success.productUpdated(form.title),
@@ -183,20 +150,20 @@ export const useDeleteProduct = () => {
       selectedProduct.title,
     );
 
-    const { error } = await request(() =>
-      supabase.from("products").delete().eq("id", selectedProduct.id),
+    const { error } = await request(async () =>
+      supabase.from('products').delete().eq('id', selectedProduct.id),
     );
 
     if (error) return { success: null, error };
 
     if (selectedProduct.images?.length) {
       const filePaths = selectedProduct.images
-        .map((url) => url.split("product-images/")[1])
+        .map((url: string) => url.split('product-images/')[1])
         .filter(Boolean);
 
       if (filePaths.length) {
-        const result = await request(() =>
-          supabase.storage.from("product-images").remove(filePaths),
+        const result = await request(async () =>
+          supabase.storage.from('product-images').remove(filePaths),
         );
 
         if (result.error) return result;
@@ -206,7 +173,7 @@ export const useDeleteProduct = () => {
     return {
       success: {
         message: successMessage,
-        severity: "success" as AlertColor,
+        severity: 'success' as AlertColor,
       },
       error: null,
     };
@@ -223,10 +190,10 @@ export const useUpdateOrderStatus = () => {
     nextStatus: OrderStatusType,
     adminComment?: string,
   ) => {
-    if (nextStatus === "approved") {
+    if (nextStatus === 'approved') {
       return request(
-        () =>
-          supabase.rpc("approve_order", {
+        async () =>
+          supabase.rpc('approve_order', {
             p_order_id: orderId,
             p_admin_comment: adminComment || null,
           }),
@@ -235,14 +202,14 @@ export const useUpdateOrderStatus = () => {
     }
 
     return request(
-      () =>
+      async () =>
         supabase
-          .from("orders")
+          .from('orders')
           .update({
-            status: "cancelled",
+            status: 'cancelled',
             admin_comment: adminComment || null,
           })
-          .eq("id", orderId),
+          .eq('id', orderId),
       ALERT_MESSAGES_DICT.success.orderCancelled,
     );
   };
@@ -266,20 +233,20 @@ export const useCreateOrder = () => {
         success: null,
         error: {
           message: ALERT_MESSAGES_DICT.error.notAuthenticated,
-          severity: "error" as AlertColor,
+          severity: 'error' as AlertColor,
         },
       };
     }
 
     return request(
-      () =>
-        supabase.from("orders").insert([
+      async () =>
+        supabase.from('orders').insert([
           {
             user_id: userId,
             items,
             total: Number(total.toFixed(2)),
             comment: comment || null,
-            status: "pending",
+            status: 'pending',
           },
         ]),
       ALERT_MESSAGES_DICT.success.cart,

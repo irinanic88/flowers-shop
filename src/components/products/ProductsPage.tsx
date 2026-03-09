@@ -56,7 +56,7 @@ export default function ProductsPage() {
       return;
     }
 
-    showAlert(success);
+    if (success) showAlert(success);
     setOpenDeleteDialog(false);
   };
 

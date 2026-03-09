@@ -1,19 +1,19 @@
-"use client";
+'use client';
 
-import { useRouter } from "next/navigation";
-import React, { useState, useEffect } from "react";
+import { useRouter } from 'next/navigation';
+import React, { useState, useEffect } from 'react';
 
-import PanelCardFormLayout from "@/src/components/auth/PanelCardFormLayout";
-import CommonForm from "@/src/components/form/CommonForm";
-import { SignUpFormConfig } from "@/src/components/form/formConfigs";
-import { useConsumeInvite, useInviteToken, useSignUp } from "@/src/hooks/api";
-import { AlertType, SignUpFormType } from "@/src/types/types";
+import PanelCardFormLayout from '@/src/components/auth/PanelCardFormLayout';
+import CommonForm from '@/src/components/form/CommonForm';
+import { SignUpFormConfig } from '@/src/components/form/formConfigs';
+import { useConsumeInvite, useInviteToken, useSignUp } from '@/src/hooks/api';
+import { AlertType, FormField, SignUpFormType } from '@/src/types/types';
 
 export default function SignUpForm() {
   const [signUpForm, setSignUpForm] = useState<SignUpFormType>({
-    email: "",
-    password: "",
-    name: "",
+    email: '',
+    password: '',
+    name: '',
   });
   const [isFormValid, setIsFormValid] = useState(false);
   const [alert, setAlert] = useState<AlertType>(null);
@@ -27,12 +27,12 @@ export default function SignUpForm() {
   useEffect(() => {
     const verifyToken = async () => {
       const params = new URLSearchParams(window.location.search);
-      const token = params.get("invite");
+      const token = params.get('invite');
 
       if (!token) {
         setAlert({
-          message: "Token de invitación no proporcionado",
-          severity: "error",
+          message: 'Token de invitación no proporcionado',
+          severity: 'error',
         });
         return;
       }
@@ -43,18 +43,17 @@ export default function SignUpForm() {
         setAlert(error);
         return;
       }
+      const id = data ? JSON.parse(data).inviteId : null;
 
-      const parsed = JSON.parse(data);
-
-      if (!parsed?.inviteId) {
+      if (!id) {
         setAlert({
-          message: "Token inválido o ya usado",
-          severity: "error",
+          message: 'Token inválido o ya usado',
+          severity: 'error',
         });
         return;
       }
 
-      setInviteId(parsed.inviteId);
+      setInviteId(id);
     };
 
     void verifyToken();
@@ -68,7 +67,7 @@ export default function SignUpForm() {
     const { data: signUpData, error: signUpError } = await signUp({
       email,
       password,
-      options: { data: { name } },
+      name,
     });
 
     if (signUpError) {
@@ -76,9 +75,13 @@ export default function SignUpForm() {
       return;
     }
 
+    if (!signUpData?.user) return;
+
+    const userId = signUpData.user.id;
+
     const { error: consumeError, success } = await consumeInvite({
       inviteId,
-      userId: signUpData.user.id,
+      userId,
     });
 
     if (consumeError) {
@@ -87,24 +90,24 @@ export default function SignUpForm() {
     }
 
     setAlert(success);
-    router.push("/");
+    router.push('/');
   };
 
   return (
     <PanelCardFormLayout
       submit={{
-        title: "Registrarse",
+        title: 'Registrarse',
         handler: handleSubmit,
       }}
       alert={alert}
       setAlert={(v) => setAlert(v)}
     >
-      <CommonForm
+      <CommonForm<SignUpFormType>
         fillForm={(form, isValid) => {
-          setSignUpForm(form);
+          setSignUpForm(form as SignUpFormType);
           setIsFormValid(isValid);
         }}
-        formConfig={SignUpFormConfig}
+        formConfig={SignUpFormConfig as FormField<SignUpFormType>[]}
       />
     </PanelCardFormLayout>
   );

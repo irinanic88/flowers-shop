@@ -74,7 +74,7 @@ const PasswordFields = forwardRef<PasswordFieldsRef, PasswordFieldsProps>(
             label="Confirmar Contraseña"
             type={showConfirmPassword ? 'text' : 'password'}
             value={confirm.value}
-            onBlur={() => password?.onBlur?.()}
+            onBlur={() => confirm?.onBlur?.()}
             onChange={(e) => confirm?.onChange(e.target.value)}
             fullWidth
             required={required}

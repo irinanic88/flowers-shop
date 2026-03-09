@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 
 import { AlertProvider } from '@/src/context/AlertContext';
 import { AuthProvider } from '@/src/context/AuthContext';

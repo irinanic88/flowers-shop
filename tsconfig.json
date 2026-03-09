@@ -9,7 +9,7 @@
     "strictNullChecks": true,
     "noEmit": true,
     "esModuleInterop": true,
-    "module": "esnext",
+    "module": "ESNext",
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
@@ -20,6 +20,7 @@
         "name": "next"
       }
     ],
+    "baseUrl": ".",
     "paths": {
       "@/*": ["./*"]
     }

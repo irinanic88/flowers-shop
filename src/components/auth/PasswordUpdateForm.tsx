@@ -51,7 +51,7 @@ export default function PasswordUpdateForm() {
     setPassword('');
     setConfirm('');
 
-    showAlert(success);
+    if (success) showAlert(success);
   };
 
   const handleCancelPassword = () => {
@@ -74,7 +74,7 @@ export default function PasswordUpdateForm() {
         confirm={
           editingPassword
             ? { value: confirm, onChange: (v) => setConfirm(v) }
-            : null
+            : undefined
         }
         disabled={!editingPassword}
       />

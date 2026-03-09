@@ -1,19 +1,20 @@
-"use client";
+'use client';
 
-import CloseIcon from "@mui/icons-material/Close";
-import DownloadIcon from "@mui/icons-material/Download";
-import TuneIcon from "@mui/icons-material/Tune";
-import { Stack, Button } from "@mui/material";
-import { any, isNotNil } from "ramda";
+import CloseIcon from '@mui/icons-material/Close';
+import DownloadIcon from '@mui/icons-material/Download';
+import TuneIcon from '@mui/icons-material/Tune';
+import { Stack, Button } from '@mui/material';
+import { any, isNotNil } from 'ramda';
 
-import { DateRangePicker } from "@/src/components/common/DateRangePicker";
-import { PreordersFilters } from "@/src/components/preorders/PreordersFilters";
-import { exportOrdersToExcel } from "@/src/helpers/exportToExcel";
+import { DateRangePicker } from '@/src/components/common/DateRangePicker';
+import { PreordersFilters } from '@/src/components/preorders/PreordersFilters';
+import { exportOrdersToExcel } from '@/src/helpers/exportToExcel';
 import {
   SecondaryRoundIconButton,
   PrimaryButton,
-} from "@/src/styledComponents";
-import { PreordersToolbarProps } from "@/src/types/propsTypes.ts";
+} from '@/src/styledComponents';
+import { PreordersToolbarProps } from '@/src/types/propsTypes';
+import { OrderStatusType } from '@/src/types/types';
 
 export function PreordersToolbar({
   isAdmin,
@@ -46,7 +47,7 @@ export function PreordersToolbar({
 
       <PreordersFilters
         statusFilter={statusFilter}
-        onStatusChange={(v) => setStatusFilter(v)}
+        onStatusChange={(v) => setStatusFilter(v as OrderStatusType | 'all')}
         userFilter={userFilter}
         onUserChange={(v) => setUserFilter(v)}
         users={users}

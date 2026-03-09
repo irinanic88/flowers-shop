@@ -2,18 +2,15 @@
 
 import { Snackbar, Alert, AlertTitle } from '@mui/material';
 
-import { AlertType } from '@/src/types/types';
-
-interface CustomAlertProps {
-  alertState: AlertType;
-  onClose: () => void;
-}
+import { CustomAlertProps } from '@/src/types/propsTypes';
 
 export default function CustomAlert({ alertState, onClose }: CustomAlertProps) {
+  if (!alertState) return null;
+
   return (
     <Snackbar
       open
-      autoHideDuration={alertState?.duration || 5000}
+      autoHideDuration={alertState.duration || 5000}
       onClose={onClose}
       sx={{
         alignItems: 'flex-start',

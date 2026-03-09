@@ -1,13 +1,14 @@
-"use client";
+'use client';
 
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState } from 'react';
 
-import { AppDrawer } from "@/src/components/common/AppDrawer";
-import CommonForm from "@/src/components/form/CommonForm";
-import { AdminProductFormConfig } from "@/src/components/form/formConfigs";
-import { useAlert } from "@/src/context/AlertContext";
-import { useCreateProduct, useUpdateProduct } from "@/src/hooks/api";
-import { AdminProductFormProps, ProductForm } from "@/src/types/propsTypes";
+import { AppDrawer } from '@/src/components/common/AppDrawer';
+import CommonForm from '@/src/components/form/CommonForm';
+import { AdminProductFormConfig } from '@/src/components/form/formConfigs';
+import { useAlert } from '@/src/context/AlertContext';
+import { useCreateProduct, useUpdateProduct } from '@/src/hooks/api';
+import { AdminProductFormProps, ProductForm } from '@/src/types/propsTypes';
+import { FormField } from '@/src/types/types';
 
 export default function AdminProductFormView({
   open,
@@ -17,14 +18,14 @@ export default function AdminProductFormView({
   const isEdit = !!product;
 
   const [productForm, setProductForm] = useState<ProductForm>({
-    title: "",
-    price: "",
-    comment: "",
-    pots_count: "",
+    title: '',
+    price: '',
+    comment: '',
+    pots_count: '',
     images: [],
-    available: "",
-    height: "",
-    width: "",
+    available: '',
+    height: '',
+    width: '',
   });
   const [isFormValid, setIsFormValid] = useState(false);
   const { showAlert } = useAlert();
@@ -43,7 +44,9 @@ export default function AdminProductFormView({
       return;
     }
 
-    showAlert(success);
+    if (success) {
+      showAlert(success);
+    }
     onClose();
   };
 
@@ -57,7 +60,9 @@ export default function AdminProductFormView({
       return;
     }
 
-    showAlert(success);
+    if (success) {
+      showAlert(success);
+    }
     onClose();
   };
 
@@ -65,9 +70,9 @@ export default function AdminProductFormView({
     <AppDrawer
       open={open}
       onClose={onClose}
-      title={isEdit ? "Editar articulo" : "Agregar articulo"}
+      title={isEdit ? 'Editar articulo' : 'Agregar articulo'}
       primaryButton={{
-        title: isEdit ? "Guardar cambios" : "Agregar",
+        title: isEdit ? 'Guardar cambios' : 'Agregar',
         disabled: !isFormValid,
         handleSubmit: isEdit ? handleUpdate : handleCreate,
       }}
@@ -77,7 +82,7 @@ export default function AdminProductFormView({
           setProductForm(form);
           setIsFormValid(isValid);
         }}
-        formConfig={formConfig}
+        formConfig={formConfig as FormField<ProductForm>[]}
       />
     </AppDrawer>
   );

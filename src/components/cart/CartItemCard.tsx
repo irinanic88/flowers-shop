@@ -1,9 +1,9 @@
-import { Stack, Typography } from "@mui/material";
-import React from "react";
+import { Stack, Typography } from '@mui/material';
+import React from 'react';
 
-import IncrementDecrementButtons from "@/src/components/common/IncrementDecrementButtons";
-import { PanelCard, Row } from "@/src/styledComponents";
-import { CartItemCardProps } from "@/src/types/propsTypes.ts";
+import IncrementDecrementButtons from '@/src/components/common/IncrementDecrementButtons';
+import { PanelCard, Row } from '@/src/styledComponents';
+import { CartItemCardProps } from '@/src/types/propsTypes';
 
 export function CartItemCard({ item, updateItemQuantity }: CartItemCardProps) {
   return (
@@ -23,6 +23,7 @@ export function CartItemCard({ item, updateItemQuantity }: CartItemCardProps) {
                   price: item.price,
                   available: item.available,
                   pots_count: item.pots_count,
+                  quantity: item.quantity,
                 },
                 q,
               )
@@ -32,7 +33,7 @@ export function CartItemCard({ item, updateItemQuantity }: CartItemCardProps) {
 
         <Row mt={1}>
           <Typography variant="body1">
-            Total : {item.quantity} Cajas x {item.pots_count} Uds ={" "}
+            Total : {item.quantity} Cajas x {item.pots_count} Uds ={' '}
             {item.quantity * item.pots_count} Uds
           </Typography>
 

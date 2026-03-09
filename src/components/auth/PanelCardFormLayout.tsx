@@ -1,15 +1,14 @@
-"use client";
+'use client';
 
-import { Stack } from "@mui/material";
-import React from "react";
+import { Stack } from '@mui/material';
+import React from 'react';
 
-import CustomAlert from "@/src/components/common/CustomAlert";
-import Loader from "@/src/components/common/Loader";
-import Logo from "@/src/components/common/Logo";
-import { useLoading } from "@/src/context/LoadingContext";
-import { PanelCard, PrimaryButton } from "@/src/styledComponents";
-import { AlertType } from "@/src/types/types";
-import { PanelCardFormLayoutProps } from "@/src/types/propsTypes.ts";
+import CustomAlert from '@/src/components/common/CustomAlert';
+import Loader from '@/src/components/common/Loader';
+import Logo from '@/src/components/common/Logo';
+import { useLoading } from '@/src/context/LoadingContext';
+import { PanelCard, PrimaryButton } from '@/src/styledComponents';
+import { PanelCardFormLayoutProps } from '@/src/types/propsTypes';
 
 export default function PanelCardFormLayout({
   alert,
@@ -20,7 +19,7 @@ export default function PanelCardFormLayout({
   const { loading } = useLoading();
   return (
     <Stack
-      sx={{ height: "100vh", position: "relative" }}
+      sx={{ height: '100vh', position: 'relative' }}
       justifyContent="center"
       alignItems="center"
     >
@@ -30,7 +29,7 @@ export default function PanelCardFormLayout({
         <PanelCard
           sx={{
             p: 4,
-            maxWidth: "320px",
+            maxWidth: '320px',
           }}
         >
           <Stack alignItems="center" spacing={4}>
@@ -42,7 +41,7 @@ export default function PanelCardFormLayout({
         </PanelCard>
       )}
 
-      <Stack sx={{ position: "absolute", top: 20, left: 20 }}>
+      <Stack sx={{ position: 'absolute', top: 20, left: 20 }}>
         <Logo />
       </Stack>
       {alert && (

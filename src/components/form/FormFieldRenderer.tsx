@@ -15,7 +15,7 @@ export default function FormFieldRenderer({
     return (
       <TextField
         label={field.label}
-        value={value ?? ''}
+        value={(value as string) ?? ''}
         onChange={(e) => onChange(e.target.value)}
         onBlur={onBlur}
         fullWidth
@@ -28,7 +28,7 @@ export default function FormFieldRenderer({
     return (
       <TextField
         label={field.label}
-        value={value ?? ''}
+        value={(value as string) ?? ''}
         type="number"
         fullWidth
         required={field.required}
@@ -51,7 +51,7 @@ export default function FormFieldRenderer({
     return (
       <TextField
         label={field.label}
-        value={value ?? ''}
+        value={(value as string) ?? ''}
         onChange={(e) => onChange(e.target.value)}
         onBlur={onBlur}
         fullWidth
@@ -66,8 +66,8 @@ export default function FormFieldRenderer({
     return (
       <PasswordFields
         password={{
-          value,
-          onChange,
+          value: value as string,
+          onChange: onChange as (v: string) => void,
           onBlur,
         }}
         disabled={field.disabled}
@@ -80,8 +80,8 @@ export default function FormFieldRenderer({
     return (
       <PasswordFields
         confirm={{
-          value,
-          onChange,
+          value: value as string,
+          onChange: onChange as (v: string) => void,
           onBlur,
         }}
         disabled={field.disabled}
@@ -93,7 +93,7 @@ export default function FormFieldRenderer({
   if (field.type === 'images') {
     return (
       <ImageUploader
-        initialImages={field.initialValue || []}
+        initialImages={(field.initialValue as string[]) || []}
         onChange={(urls) => onChange(urls)}
       />
     );

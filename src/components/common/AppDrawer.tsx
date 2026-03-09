@@ -86,7 +86,7 @@ export function AppDrawer({
         {alertState && (
           <CustomAlert
             alertState={alertState}
-            onClose={() => setAlertState(null)}
+            onClose={() => setAlertState?.(null)}
           />
         )}
 
