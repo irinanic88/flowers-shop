@@ -1,10 +1,11 @@
-import { Box, Stack } from '@mui/material';
-import { PrimaryButton } from '@/src/styledComponents';
-import { useState } from 'react';
-import AdminProductForm from '@/src/components/AdminProductForm';
-import ProductsPage from '@/src/components/products/ProductsPage';
 import AddIcon from '@mui/icons-material/Add';
+import { Box, Stack } from '@mui/material';
+import { useState } from 'react';
+
+import ProductsPage from '@/src/components/products/ProductsPage';
 import { useAuth } from '@/src/context/AuthContext';
+import { PrimaryButton } from '@/src/styledComponents';
+import AdminProductFormView from '@/src/views/AdminProductFormView';
 
 export default function ProductsTab() {
   const [showForm, setShowForm] = useState(false);
@@ -26,7 +27,10 @@ export default function ProductsTab() {
         <ProductsPage />
       </Stack>
       {showForm && (
-        <AdminProductForm open={showForm} onClose={() => setShowForm(false)} />
+        <AdminProductFormView
+          open={showForm}
+          onClose={() => setShowForm(false)}
+        />
       )}
     </Box>
   );

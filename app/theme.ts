@@ -50,15 +50,15 @@ export const theme = createTheme({
 
     h6: {
       fontWeight: 600,
-      fontSize: '1rem',
+      fontSize: '1rem', // 16px
     },
 
     body1: {
-      fontSize: '0.95rem',
+      fontSize: '0.875rem', // 14px
     },
 
     body2: {
-      fontSize: '0.875rem',
+      fontSize: '0.8125rem', // 13px
       color: '#6B7280',
     },
 

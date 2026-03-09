@@ -1,462 +1,100 @@
-"use client";
+'use client';
 
-import Loader from "@/src/components/Loader";
-import React, { useEffect } from "react";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  TableSortLabel,
-  Stack,
-  TablePagination,
-  IconButton,
-  Typography,
-  Button,
-  useMediaQuery,
-} from "@mui/material";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-import { useAuth } from "@/src/context/AuthContext";
-import { OrderType, OrderStatusType } from "@/src/types";
-import { useMemo, useState } from "react";
-import { orderStatusesDict, statusColorsDict } from "@/src/constants";
-import { supabase } from "@/lib/supabase";
-import { useOrders } from "@/src/context/OrdersContext";
-import {
-  PrimaryButton,
-  RoundIconButton,
-  SecondaryRoundIconButton,
-  StyledChip,
-} from "@/src/styledComponents";
-import DownloadIcon from "@mui/icons-material/Download";
-import CheckIcon from "@mui/icons-material/Check";
-import ClearIcon from "@mui/icons-material/Clear";
-import { equals } from "ramda";
-import { PreordersStatusDialog } from "@/src/components/orders/PreordersStatusDialog";
-import { PreordersFilters } from "@/src/components/orders/PreordersFilters";
-import { PreordersTableContent } from "@/src/components/orders/PreordersTableContent";
-import { exportOrdersToExcel } from "@/src/helpers/exportToExcel";
-import { DateRangePicker } from "@/src/components/DateRangePicker";
-import { endOfDay, startOfDay } from "date-fns";
-import TuneIcon from "@mui/icons-material/Tune";
-import CloseIcon from "@mui/icons-material/Close";
-import { any, isNotNil } from "ramda";
-import { useTheme } from "@mui/material/styles";
+import React from 'react';
+
+import { PreordersStatusDialog } from '@/src/components/preorders/PreordersStatusDialog';
+import { PreordersTable } from '@/src/components/preorders/PreordersTable';
+import { PreordersToolbar } from '@/src/components/preorders/PreordersToolbar';
+import { useAlert } from '@/src/context/AlertContext';
+import { useAuth } from '@/src/context/AuthContext';
+import { useOrders } from '@/src/context/OrdersContext';
+import { useUpdateOrderStatus } from '@/src/hooks/api';
+import { usePreordersStatusDialog } from '@/src/hooks/usePreordersStatusDialog';
+import { usePreordersTable } from '@/src/hooks/usePreordersTable';
 
 export default function PreordersTab() {
-  const [statusFilter, setStatusFilter] = useState<OrderStatusType | "all">(
-    "all",
-  );
-  const [userFilter, setUserFilter] = useState<string>("all");
-  const [sortBy, setSortBy] = useState<"date" | "status" | "user">("date");
-  const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [expandedOrderId, setExpandedOrderId] = useState<number | null>(null);
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [adminComment, setAdminComment] = useState("");
-  const [selectedOrder, setSelectedOrder] = useState<OrderType | null>(null);
-  const [nextStatus, setNextStatus] = useState<OrderStatusType | null>(null);
-  const [dateRange, setDateRange] = useState<[Date | null, Date | null]>([
-    null,
-    null,
-  ]);
-  const [showFilters, setShowFilters] = useState(false);
-  const [dateFrom, dateTo] = dateRange;
+  const {
+    users,
+    paginated,
+    sortedOrders,
+    page,
+    rowsPerPage,
+    setPage,
+    setRowsPerPage,
+    sortBy,
+    sortDir,
+    toggleSort,
+    filters,
+    setFilters,
+    expandedOrderId,
+    toggleExpand,
+  } = usePreordersTable();
 
-  const { orders, loading, refreshOrders } = useOrders();
   const { isAdmin } = useAuth();
+  const { showAlert } = useAlert();
+  const { updateOrderStatus } = useUpdateOrderStatus();
+  const { refreshOrders } = useOrders();
 
-  const theme = useTheme();
-  const isDesktop = useMediaQuery(theme.breakpoints.up("md"));
-
-  useEffect(() => {
-    setPage(0);
-  }, [statusFilter, userFilter, dateFrom, dateTo]);
-
-  const toggleExpand = (orderId: number) => {
-    setExpandedOrderId((prev) => (prev === orderId ? null : orderId));
-  };
-
-  const openStatusDialog = (order: OrderType, status: OrderStatusType) => {
-    setSelectedOrder(order);
-    setNextStatus(status);
-    setAdminComment("");
-    setDialogOpen(true);
-  };
+  const {
+    dialogOpen,
+    selectedOrder,
+    nextStatus,
+    adminComment,
+    openDialog,
+    closeDialog,
+    setAdminComment,
+  } = usePreordersStatusDialog();
 
   const applyStatus = async () => {
     if (!selectedOrder || !nextStatus) return;
 
-    try {
-      if (equals(nextStatus, "approved")) {
-        const { error } = await supabase.rpc("approve_order", {
-          p_order_id: selectedOrder.id,
-          p_admin_comment: adminComment || null,
-        });
-
-        if (error) throw error;
-      } else {
-        await supabase
-          .from("orders")
-          .update({
-            status: "cancelled",
-            admin_comment: adminComment || null,
-          })
-          .eq("id", selectedOrder.id);
-      }
-
-      setDialogOpen(false);
-      refreshOrders();
-    } catch (e) {
-      alert((e as Error).message);
-    }
-  };
-
-  const filteredOrders = useMemo(() => {
-    return orders.filter((order) => {
-      const statusOk =
-        equals(statusFilter, "all") || equals(order.status, statusFilter);
-
-      const userOk =
-        !isAdmin ||
-        equals(userFilter, "all") ||
-        equals(order.profile_name, userFilter);
-
-      const orderDate = new Date(order.created_at);
-
-      const dateFromOk = !dateFrom || orderDate >= startOfDay(dateFrom);
-
-      const dateToOk = !dateTo || orderDate <= endOfDay(dateTo);
-
-      return statusOk && userOk && dateToOk && dateFromOk;
-    });
-  }, [orders, statusFilter, userFilter, isAdmin, dateTo, dateFrom]);
-
-  const users = useMemo(
-    () =>
-      Array.from(
-        new Set(
-          orders
-            .map((o) => o.profile_name)
-            .filter((u): u is string => Boolean(u)),
-        ),
-      ).sort((a, b) => a.localeCompare(b)),
-    [orders],
-  );
-
-  const sortedOrders = useMemo(() => {
-    const sorted = [...filteredOrders];
-
-    sorted.sort((a, b) => {
-      switch (sortBy) {
-        case "date":
-          return equals(sortDir, "asc")
-            ? new Date(a.created_at).getTime() -
-                new Date(b.created_at).getTime()
-            : new Date(b.created_at).getTime() -
-                new Date(a.created_at).getTime();
-        case "status":
-          return equals(sortDir, "asc")
-            ? a.status.localeCompare(b.status)
-            : b.status.localeCompare(a.status);
-        case "user":
-          return equals(sortDir, "asc")
-            ? (a.profile_name || "").localeCompare(b.profile_name || "")
-            : (b.profile_name || "").localeCompare(a.profile_name || "");
-        default:
-          return 0;
-      }
-    });
-
-    return sorted;
-  }, [filteredOrders, sortBy, sortDir]);
-
-  const paginated = useMemo(() => {
-    const start = page * rowsPerPage;
-    return sortedOrders.slice(start, start + rowsPerPage);
-  }, [sortedOrders, page, rowsPerPage]);
-
-  const toggleSort = (field: typeof sortBy) => {
-    if (sortBy === field) {
-      setSortDir((prev) => (prev === "asc" ? "desc" : "asc"));
-    } else {
-      setSortBy(field);
-      setSortDir("asc");
-    }
-  };
-
-  if (loading) return <Loader />;
-
-  if (!orders.length)
-    return (
-      <Stack mt={20} alignItems="center" justifyContent="center">
-        <Typography color="text.secondary">No hay pedidos aún.</Typography>
-      </Stack>
+    const { success, error } = await updateOrderStatus(
+      selectedOrder.id,
+      nextStatus,
+      adminComment,
     );
 
-  const isAnyDatePicked = any(isNotNil, dateRange);
+    if (error) return showAlert(error);
+
+    if (success) showAlert(success);
+
+    closeDialog();
+    void refreshOrders();
+  };
 
   return (
     <>
-      <Stack direction="row" justifyContent="space-between" mb={1}>
-        <SecondaryRoundIconButton onClick={() => setShowFilters(!showFilters)}>
-          <TuneIcon fontSize="small" />
-        </SecondaryRoundIconButton>
-        {isAdmin && isDesktop && (
-          <PrimaryButton
-            endIcon={<DownloadIcon />}
-            onClick={() => exportOrdersToExcel(sortedOrders)}
-            sx={{ mb: 2 }}
-          >
-            Descargar Excel
-          </PrimaryButton>
-        )}
-      </Stack>
+      <PreordersToolbar
+        isAdmin={isAdmin}
+        sortedOrders={sortedOrders}
+        filters={filters}
+        setFilters={setFilters}
+        users={users}
+      />
 
-      {showFilters && (
-        <Stack spacing={1} mb={2}>
-          <PreordersFilters
-            statusFilter={statusFilter}
-            onStatusChange={(v) =>
-              setStatusFilter(v as OrderStatusType | "all")
-            }
-            userFilter={userFilter}
-            onUserChange={(v) => setUserFilter(v)}
-            users={users}
-          />
-
-          <Stack direction="row" spacing={1} sx={{ width: "fit-content" }}>
-            <DateRangePicker value={dateRange} onChange={setDateRange} />
-
-            {isAnyDatePicked && (
-              <Button
-                sx={{
-                  padding: 0,
-                  minWidth: 0,
-                  "&:hover, &:active": {
-                    backgroundColor: "transparent",
-                  },
-                }}
-                onClick={() => setDateRange([null, null])}
-              >
-                <CloseIcon
-                  sx={(theme) => ({
-                    width: 20,
-                    height: 20,
-                    color: theme.palette.text.secondary,
-                    "&:hover": {
-                      color: theme.palette.text.primary,
-                    },
-                  })}
-                />
-              </Button>
-            )}
-          </Stack>
-        </Stack>
-      )}
-
-      <TableContainer
-        component={Paper}
-        sx={{
-          overflowX: "auto",
-          borderRadius: "16px",
-          border: "1px solid",
-          borderColor: (theme) => theme.palette.grey[200],
-          backgroundColor: (theme) => theme.palette.background.paper,
-          boxShadow: "none",
-        }}
-      >
-        <Table sx={{ minWidth: 600 }}>
-          <TableHead>
-            <TableRow>
-              <TableCell />
-              <TableCell sx={{ fontWeight: 600 }}>ID</TableCell>
-
-              {isAdmin && (
-                <TableCell>
-                  <TableSortLabel
-                    active={equals(sortBy, "user")}
-                    direction={sortDir}
-                    onClick={() => toggleSort("user")}
-                    sx={{ fontWeight: 600 }}
-                  >
-                    Usuario
-                  </TableSortLabel>
-                </TableCell>
-              )}
-
-              <TableCell align="left">
-                <TableSortLabel
-                  active={equals(sortBy, "status")}
-                  direction={sortDir}
-                  onClick={() => toggleSort("status")}
-                  sx={{ fontWeight: 600 }}
-                >
-                  Estado
-                </TableSortLabel>
-              </TableCell>
-
-              <TableCell sx={{ fontWeight: 600 }}>Total</TableCell>
-
-              <TableCell>
-                <TableSortLabel
-                  active={equals(sortBy, "date")}
-                  direction={sortDir}
-                  onClick={() => toggleSort("date")}
-                  sx={{ fontWeight: 600 }}
-                >
-                  Fecha
-                </TableSortLabel>
-              </TableCell>
-              <TableCell sx={{ fontWeight: 600 }}>Comentarios</TableCell>
-
-              {isAdmin && (
-                <TableCell align="center" sx={{ fontWeight: 600 }}>
-                  Aprobar
-                </TableCell>
-              )}
-              {isAdmin && (
-                <TableCell align="center" sx={{ fontWeight: 600 }}>
-                  Cancelar
-                </TableCell>
-              )}
-            </TableRow>
-          </TableHead>
-
-          <TableBody>
-            {paginated.map((order) => (
-              <React.Fragment key={order.id}>
-                <TableRow sx={{ verticalAlign: "top" }} hover>
-                  <TableCell>
-                    <IconButton
-                      aria-label="expand row"
-                      size="small"
-                      onClick={() => toggleExpand(order.id)}
-                    >
-                      {equals(expandedOrderId, order.id) ? (
-                        <KeyboardArrowUpIcon />
-                      ) : (
-                        <KeyboardArrowDownIcon />
-                      )}
-                    </IconButton>
-                  </TableCell>
-                  <TableCell>{order.id}</TableCell>
-
-                  {isAdmin && (
-                    <TableCell>{order.profile_name || "—"}</TableCell>
-                  )}
-
-                  <TableCell>
-                    <StyledChip
-                      label={orderStatusesDict[order.status]}
-                      color={statusColorsDict[order.status]}
-                      variant="outlined"
-                    />
-                  </TableCell>
-
-                  <TableCell sx={{ minWidth: 100 }}>
-                    € {order.total.toFixed(2)}
-                  </TableCell>
-
-                  <TableCell>
-                    {new Date(order.created_at).toLocaleDateString()}
-                  </TableCell>
-
-                  <TableCell sx={{ maxWidth: 260 }}>
-                    {order.comment || order.admin_comment ? (
-                      <Stack spacing={0.5}>
-                        {order.comment && (
-                          <Typography
-                            variant="caption"
-                            color="text.primary"
-                            sx={{ whiteSpace: "pre-wrap" }}
-                          >
-                            <strong>Cliente:</strong> {order.comment}
-                          </Typography>
-                        )}
-
-                        {order.admin_comment && (
-                          <Typography
-                            variant="caption"
-                            color="text.primary"
-                            sx={{ whiteSpace: "pre-wrap" }}
-                          >
-                            <strong>Admin:</strong> {order.admin_comment}
-                          </Typography>
-                        )}
-                      </Stack>
-                    ) : (
-                      <Typography variant="caption" color="text.primary">
-                        —
-                      </Typography>
-                    )}
-                  </TableCell>
-
-                  {isAdmin && (
-                    <TableCell
-                      onClick={(e) => e.stopPropagation()}
-                      align="center"
-                    >
-                      <RoundIconButton
-                        disabled={order.status !== "pending"}
-                        onClick={() => openStatusDialog(order, "approved")}
-                      >
-                        {" "}
-                        <CheckIcon />
-                      </RoundIconButton>
-                    </TableCell>
-                  )}
-
-                  {isAdmin && (
-                    <TableCell
-                      onClick={(e) => e.stopPropagation()}
-                      align="center"
-                    >
-                      <RoundIconButton
-                        disabled={order.status !== "pending"}
-                        onClick={() => openStatusDialog(order, "cancelled")}
-                      >
-                        {" "}
-                        <ClearIcon />
-                      </RoundIconButton>
-                    </TableCell>
-                  )}
-                </TableRow>
-
-                {equals(expandedOrderId, order.id) && (
-                  <PreordersTableContent order={order} />
-                )}
-              </React.Fragment>
-            ))}
-          </TableBody>
-        </Table>
-
-        <TablePagination
-          component="div"
-          count={sortedOrders.length}
-          page={page}
-          onPageChange={(_, newPage) => setPage(newPage)}
-          rowsPerPage={rowsPerPage}
-          onRowsPerPageChange={(e) => {
-            setRowsPerPage(parseInt(e.target.value, 10));
-            setPage(0);
-          }}
-          rowsPerPageOptions={[5, 10, 20]}
-        />
-      </TableContainer>
+      <PreordersTable
+        orders={paginated}
+        expandedOrderId={expandedOrderId}
+        toggleExpand={toggleExpand}
+        isAdmin={isAdmin}
+        sortBy={sortBy}
+        sortDir={sortDir}
+        toggleSort={toggleSort}
+        openStatusDialog={openDialog}
+        page={page}
+        rowsPerPage={rowsPerPage}
+        total={sortedOrders.length}
+        setPage={setPage}
+        setRowsPerPage={setRowsPerPage}
+      />
 
       <PreordersStatusDialog
         open={dialogOpen}
-        onClose={() => setDialogOpen(false)}
+        onClose={closeDialog}
         comment={adminComment}
         onSave={applyStatus}
-        onChangeComment={(v) => setAdminComment(v)}
-        submitButton={equals(nextStatus, "approved") ? "Aprobar" : "Cancelar"}
+        onChangeComment={setAdminComment}
+        submitButton={nextStatus === 'approved' ? 'Aprobar' : 'Rechazar'}
       />
     </>
   );

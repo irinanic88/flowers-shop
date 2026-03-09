@@ -1,13 +1,52 @@
-export const isEmailValid = (email: string) => {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-};
+import { FormField, ValidationRule } from '@/src/types/types';
 
-export const isPasswordValid = (password: string) => {
-  return (
-    password.length >= 8 && /[a-zA-Z]/.test(password) && /\d/.test(password)
+export function validateField<Form>(
+  value: unknown,
+  form: Form,
+  rules: ValidationRule<Form>[],
+): string[] {
+  return rules
+    .map((rule) => rule(value, form))
+    .filter((msg): msg is string => Boolean(msg));
+}
+
+export const validateForm = <Form extends Record<string, unknown>>(
+  form: Form,
+  config: FormField<Form>[],
+): boolean => {
+  const hasError = config.some((field) =>
+    (field.rules ?? []).some((rule) => rule(form[field.key], form) !== null),
   );
+
+  return !hasError;
 };
 
-export const isRequired = (value: string | number) => {
-  return value !== null && value !== undefined && value !== '';
+export const validationRules = {
+  required: (value: unknown) => {
+    if (!value) return 'Required';
+    return null;
+  },
+
+  email: (value: unknown) => {
+    if (typeof value !== 'string') return 'Invalid email';
+    return /\S+@\S+\.\S+/.test(value) ? null : 'Invalid email';
+  },
+
+  password: (value: unknown) => {
+    if (typeof value !== 'string') return 'Invalid password';
+    return value.length >= 8 ? null : 'Min 8 characters';
+  },
+
+  confirmPassword: (value: unknown, form: unknown) => {
+    if (
+      typeof form === 'object' &&
+      form !== null &&
+      'password' in form &&
+      value !== (form as { password?: unknown }).password
+    ) {
+      return 'Passwords do not match';
+    }
+
+    return null;
+  },
 };

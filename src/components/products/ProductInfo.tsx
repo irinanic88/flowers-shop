@@ -1,10 +1,11 @@
-"use client";
-import { Typography, Stack, Box } from "@mui/material";
-import GrassIcon from "@mui/icons-material/Grass";
-import { ProductType } from "@/src/types";
-import HeightIcon from "@mui/icons-material/Height";
-import CircleOutlinedIcon from "@mui/icons-material/CircleOutlined";
-import React from "react";
+'use client';
+import BlockIcon from '@mui/icons-material/Block';
+import GrassIcon from '@mui/icons-material/Grass';
+import HeightIcon from '@mui/icons-material/Height';
+import { Typography, Stack, Box } from '@mui/material';
+import React from 'react';
+
+import { ProductType } from '@/src/types/types';
 
 interface ProductInfoProps {
   product: ProductType;
@@ -29,15 +30,15 @@ export default function ProductInfo({
 
         <Stack spacing={1} alignItems="flex-start" sx={{ mt: 0.5 }}>
           <Stack direction="row" spacing={0.5}>
-            <CircleOutlinedIcon fontSize="small" />
+            <BlockIcon fontSize="small" />
             <Typography variant="body2">
-              Maceta: {product.width ? `${product.width} cms` : "--"}
+              Maceta: {product.width ? `${product.width} cms` : '--'}
             </Typography>
           </Stack>
           <Stack direction="row" spacing={0.5}>
             <HeightIcon fontSize="small" />
             <Typography variant="body2">
-              Altura: {product.height ? `${product.height} cms` : "--"}
+              Altura: {product.height ? `${product.height} cms` : '--'}
             </Typography>
           </Stack>
           <Stack direction="row" spacing={0.5}>
@@ -45,7 +46,7 @@ export default function ProductInfo({
             <Stack>
               <Typography variant="body2">
                 Uds x caja: {product.pots_count}
-              </Typography>{" "}
+              </Typography>{' '}
             </Stack>
           </Stack>
         </Stack>

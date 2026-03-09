@@ -1,54 +1,72 @@
 'use client';
 
-import React, { useState } from 'react';
-import { Stack } from '@mui/material';
-import PasswordUpdateForm from '@/src/components/auth/PasswordUpdateForm';
-import Loader from '@/src/components/Loader';
-import { AlertType } from '@/src/types';
-import CustomAlert from '@/src/components/CustomAlert';
-import { RoundIconButton } from '@/src/styledComponents';
-import HomeIcon from '@mui/icons-material/Home';
 import { useRouter } from 'next/navigation';
+import React, { useState, useEffect } from 'react';
+
+import { supabase } from '@/lib/supabase';
+import PanelCardFormLayout from '@/src/components/auth/PanelCardFormLayout';
+import CommonForm from '@/src/components/form/CommonForm';
+import { ResetPasswordFormConfig } from '@/src/components/form/formConfigs';
+import { useAlert } from '@/src/context/AlertContext';
+import { useUpdatePassword } from '@/src/hooks/api';
+import { AlertType, FormField, PasswordFormType } from '@/src/types/types';
 
 export default function Page() {
-  const [loading, setLoading] = useState(false);
+  const [passwordForm, setPasswordForm] = useState<PasswordFormType>({
+    password: '',
+    confirmPassword: '',
+  });
+  const [isFormValid, setIsFormValid] = useState(false);
   const [alert, setAlert] = useState<AlertType>(null);
 
   const router = useRouter();
+  const { updatePassword } = useUpdatePassword();
+  const { showAlert } = useAlert();
+
+  useEffect(() => {
+    const hash = window.location.hash;
+    const params = new URLSearchParams(hash.replace('#', '?'));
+    const access_token = params.get('access_token');
+    const type = params.get('type');
+
+    if (access_token && type === 'recovery') {
+      supabase.auth.setSession({
+        access_token,
+        refresh_token: access_token,
+      });
+    }
+  }, []);
+
+  const handleSubmit = async () => {
+    if (!isFormValid) return;
+
+    const { success, error } = await updatePassword(passwordForm.password);
+
+    if (error) {
+      setAlert(error);
+      return;
+    }
+
+    if (success) showAlert(success);
+    router.push('/');
+  };
 
   return (
-    <Stack
-      sx={{ width: '100%', height: '100vh', position: 'relative' }}
-      alignItems="center"
-      justifyContent="center"
+    <PanelCardFormLayout
+      alert={alert}
+      setAlert={(v) => setAlert(v)}
+      submit={{
+        title: 'Actualizar',
+        handler: handleSubmit,
+      }}
     >
-      <Stack sx={{ position: 'absolute', top: 0, right: 0 }}>
-        <Stack px={{ xs: 2, md: 5 }} py={2}>
-          <RoundIconButton onClick={() => router.push('/')}>
-            <HomeIcon />
-          </RoundIconButton>
-          {alert && (
-            <CustomAlert alertState={alert} onClose={() => setAlert(null)} />
-          )}
-        </Stack>
-      </Stack>
-      {loading ? (
-        <Loader />
-      ) : (
-        <Stack>
-          <PasswordUpdateForm
-            setLoading={(v: boolean) => setLoading(v)}
-            setAlert={(v) => setAlert(v)}
-            onSubmit={() =>
-              setAlert({
-                message:
-                  'Tu contraseña ha sido actualizada. Ahora puedes iniciar sesión con tu nueva contraseña',
-                severity: 'success',
-              })
-            }
-          />
-        </Stack>
-      )}
-    </Stack>
+      <CommonForm<PasswordFormType>
+        fillForm={(form, isValid) => {
+          setPasswordForm(form);
+          setIsFormValid(isValid);
+        }}
+        formConfig={ResetPasswordFormConfig as FormField<PasswordFormType>[]}
+      />
+    </PanelCardFormLayout>
   );
 }

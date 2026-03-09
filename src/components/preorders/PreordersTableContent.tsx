@@ -1,0 +1,94 @@
+'use client';
+
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  Box,
+} from '@mui/material';
+import { useMemo } from 'react';
+
+import { useAuth } from '@/src/context/AuthContext';
+import { OrderType } from '@/src/types/types';
+
+interface PreordersTableContentProps {
+  order: OrderType;
+}
+
+export function PreordersTableContent({ order }: PreordersTableContentProps) {
+  const { isAdmin } = useAuth();
+
+  const items = useMemo(() => order.items ?? [], [order.items]);
+
+  return (
+    <TableRow>
+      <TableCell colSpan={isAdmin ? 9 : 6} sx={{ p: 0 }}>
+        <Box sx={{ px: 2, py: 2, bgcolor: 'grey.50' }}>
+          <Table
+            size="small"
+            sx={{
+              width: '100%',
+              tableLayout: 'fixed',
+              '& tbody tr:last-child td': {
+                borderBottom: 'none',
+              },
+            }}
+          >
+            <TableHead>
+              <TableRow>
+                <TableCell sx={{ fontWeight: 600, width: 250 }}>
+                  Título
+                </TableCell>
+
+                <TableCell align="left" sx={{ width: 90, fontWeight: 600 }}>
+                  Precio
+                </TableCell>
+
+                <TableCell align="center" sx={{ fontWeight: 600 }}>
+                  Cantidad/Cajas
+                </TableCell>
+
+                <TableCell align="center" sx={{ fontWeight: 600 }}>
+                  Total unidades
+                </TableCell>
+
+                <TableCell align="right" sx={{ fontWeight: 600 }}>
+                  Total precio
+                </TableCell>
+              </TableRow>
+            </TableHead>
+
+            <TableBody>
+              {items.map((item) => {
+                const price = Number(item.price);
+                const quantity = Number(item.quantity);
+                const units = Number(item.pots_count || 1);
+                const itemsQuantity = units * quantity;
+                const total = price * quantity * units;
+
+                return (
+                  <TableRow
+                    key={item.product_id ?? `${order.id}-${item.title}`}
+                    sx={{ verticalAlign: 'top' }}
+                  >
+                    <TableCell>{item.title}</TableCell>
+
+                    <TableCell align="left">€ {price.toFixed(2)}</TableCell>
+
+                    <TableCell align="center">{quantity}</TableCell>
+
+                    <TableCell align="center">{itemsQuantity}</TableCell>
+
+                    <TableCell align="right">€ {total.toFixed(2)}</TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        </Box>
+      </TableCell>
+    </TableRow>
+  );
+}

@@ -1,0 +1,126 @@
+'use client';
+
+import { Stack } from '@mui/material';
+import { equals } from 'ramda';
+import React, { useState } from 'react';
+
+import { AppDrawer } from '@/src/components/common/AppDrawer';
+import RedirectionLink from '@/src/components/common/RedirectionLink';
+import CommonForm from '@/src/components/form/CommonForm';
+import {
+  AuthFormConfig,
+  RequestResetPasswordFormConfig,
+} from '@/src/components/form/formConfigs';
+import { AuthTitlesDict } from '@/src/constants';
+import { useAlert } from '@/src/context/AlertContext';
+import { useResetPassword, useSignIn } from '@/src/hooks/api';
+import { AuthFormProps, AuthMode } from '@/src/types/propsTypes';
+import {
+  ForgotPasswordFormType,
+  FormField,
+  SignInFormType,
+} from '@/src/types/types';
+
+export default function AuthForm({ open, onClose }: AuthFormProps) {
+  const [mode, setMode] = useState<AuthMode>('signIn');
+  const [authForm, setAuthForm] = useState<Record<string, string>>({});
+  const [isFormValid, setIsFormValid] = useState(false);
+  const [cooldown, setCooldown] = useState(0);
+
+  const isSignIn = equals(mode, 'signIn');
+  const isForgotPassword = equals(mode, 'forgotPassword');
+  const title = AuthTitlesDict[mode].title || '';
+
+  const { signIn } = useSignIn();
+  const { resetPassword } = useResetPassword();
+  const { showAlert } = useAlert();
+
+  const startCooldown = (seconds = 60) => {
+    setCooldown(seconds);
+
+    const interval = setInterval(() => {
+      setCooldown((prev) => {
+        if (prev <= 1) {
+          clearInterval(interval);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  };
+
+  const handleSubmit = async () => {
+    if (!isFormValid || cooldown > 0) return;
+
+    const action = isSignIn
+      ? () => signIn(authForm as SignInFormType)
+      : () => resetPassword(authForm.email);
+
+    const { success, error } = await action();
+
+    if (error) {
+      showAlert(error);
+      return;
+    }
+
+    if (success) showAlert(success);
+
+    if (isForgotPassword) {
+      startCooldown();
+    }
+
+    onClose();
+  };
+
+  return (
+    <AppDrawer
+      open={open}
+      onClose={onClose}
+      title={title}
+      primaryButton={{
+        disabled: !isFormValid || cooldown > 0,
+        handleSubmit,
+        title:
+          cooldown > 0
+            ? `Inténtalo en ${cooldown}s`
+            : AuthTitlesDict[mode].submitButton,
+      }}
+    >
+      <Stack sx={{ height: '100%' }} justifyContent="center">
+        {isSignIn && (
+          <Stack spacing={2}>
+            <CommonForm<SignInFormType>
+              fillForm={(form, isValid) => {
+                setAuthForm(form);
+                setIsFormValid(isValid);
+              }}
+              formConfig={AuthFormConfig as FormField<SignInFormType>[]}
+            />
+
+            <RedirectionLink
+              linkText="Olvidaste tu contraseña?"
+              linkTitle="Recuperar"
+              onLinkClick={() => {
+                setAuthForm({});
+                setIsFormValid(false);
+                setMode('forgotPassword');
+              }}
+            />
+          </Stack>
+        )}
+
+        {isForgotPassword && (
+          <CommonForm<ForgotPasswordFormType>
+            fillForm={(form, isValid) => {
+              setAuthForm(form);
+              setIsFormValid(isValid);
+            }}
+            formConfig={
+              RequestResetPasswordFormConfig as FormField<ForgotPasswordFormType>[]
+            }
+          />
+        )}
+      </Stack>
+    </AppDrawer>
+  );
+}

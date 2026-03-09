@@ -8,8 +8,9 @@ import {
   ReactNode,
   useCallback,
 } from 'react';
+
 import { supabase } from '@/lib/supabase';
-import { ProductType } from '@/src/types';
+import { ProductType } from '@/src/types/types';
 
 interface ProductsContextType {
   products: ProductType[];
@@ -41,10 +42,11 @@ export function ProductsProvider({ children }: { children: ReactNode }) {
       console.error('Error loading products:', error);
       setProducts([]);
     } else {
-      const productsData = data ? data.map(p => ({ ...p, price: p.price.toFixed(2)})) : [];
+      const productsData = data
+        ? data.map((p) => ({ ...p, price: p.price.toFixed(2) }))
+        : [];
       setProducts(productsData);
     }
-
     setLoading(false);
   }, []);
 

@@ -1,59 +1,39 @@
-import { Stack, TextField } from '@mui/material';
-import { RoundIconButton } from '@/src/styledComponents';
-import CloseIcon from '@mui/icons-material/Close';
 import CheckIcon from '@mui/icons-material/Check';
+import CloseIcon from '@mui/icons-material/Close';
 import EditIcon from '@mui/icons-material/Edit';
+import { Stack, TextField } from '@mui/material';
 import React, { useEffect, useState } from 'react';
+
+import { useAlert } from '@/src/context/AlertContext';
 import { useAuth } from '@/src/context/AuthContext';
-import { supabase } from '@/lib/supabase';
-import { AlertType } from '@/src/types';
+import { useUpdateUserName } from '@/src/hooks/api';
+import { RoundIconButton } from '@/src/styledComponents';
 
-type NameUpdateFormProps = {
-  setLoading: (v: boolean) => void;
-  setAlert: (v: AlertType) => void;
-};
-
-export default function NameUpdateForm({
-  setLoading,
-  setAlert,
-}: NameUpdateFormProps) {
+export default function NameUpdateForm() {
   const { name: userName, user, refreshProfile } = useAuth();
+  const { updateUserName } = useUpdateUserName();
+  const { showAlert } = useAlert();
 
   const [editingName, setEditingName] = useState(false);
   const [name, setName] = useState('');
 
   useEffect(() => {
-    if (userName) {
-      setName(userName);
-    }
+    if (userName) setName(userName);
   }, [userName]);
+
   const handleSaveName = async () => {
     if (!user) return;
 
-    setLoading(true);
+    const { success, error } = await updateUserName(name, user.id);
 
-    const { error } = await supabase
-      .from('profiles')
-      .update({ name })
-      .eq('id', user.id);
+    if (error) showAlert(error);
 
-    setLoading(false);
+    await refreshProfile();
 
-    if (error) {
-      setAlert({
-        message: `Error: ${error.message}`,
-        severity: 'error',
-      });
-    } else {
-      await refreshProfile();
-
-      setEditingName(false);
-      setAlert({
-        message: 'Nombre actualizado correctamente',
-        severity: 'success',
-      });
-    }
+    setEditingName(false);
+    if (success) showAlert(success);
   };
+
   return (
     <Stack spacing={1} pt={1}>
       <Stack

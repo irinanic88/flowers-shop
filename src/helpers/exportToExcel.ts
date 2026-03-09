@@ -1,6 +1,7 @@
 import * as XLSX from 'xlsx-js-style';
-import { OrderType } from '@/src/types';
+
 import { orderStatusesDict } from '@/src/constants';
+import { OrderType } from '@/src/types/types';
 
 const headerStyle = {
   font: { bold: true },

@@ -7,13 +7,9 @@ import React, {
   useState,
   ReactNode,
 } from 'react';
-import { AlertType } from '@/src/types';
 
-type AlertContextType = {
-  alert: AlertType;
-  showAlert: (alert: NonNullable<AlertType>) => void;
-  clearAlert: () => void;
-};
+import { AlertContextType } from '@/src/types/propsTypes';
+import { AlertType } from '@/src/types/types';
 
 const AlertContext = createContext<AlertContextType>({
   alert: null,

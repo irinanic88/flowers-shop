@@ -1,23 +1,22 @@
-"use client";
+'use client';
 
-import React, { useState } from "react";
-import { Typography, Box, Stack, Divider } from "@mui/material";
-import { ProductType } from "@/src/types";
-import ProductInfo from "@/src/components/products/ProductInfo";
-import IncrementDecrementButtons from "@/src/components/products/IncrementDecrementButtons";
-import { PanelCard } from "@/src/styledComponents";
-import { useCart } from "@/src/context/CartContext";
-import { CardEditButton, CardDeleteButton } from "@/src/styledComponents";
-import { useAuth } from "@/src/context/AuthContext";
-import AdminProductForm from "@/src/components/AdminProductForm";
-import ProductImages from "@/src/components/products/ProductImages";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
+import { Typography, Box, Stack, Divider } from '@mui/material';
+import React, { useState } from 'react';
 
-interface ProductCardProps {
-  product: ProductType;
-  onDelete: (p: ProductType) => void;
-}
+import IncrementDecrementButtons from '@/src/components/common/IncrementDecrementButtons';
+import ProductImages from '@/src/components/products/ProductImages';
+import ProductInfo from '@/src/components/products/ProductInfo';
+import { useAuth } from '@/src/context/AuthContext';
+import { useCart } from '@/src/context/CartContext';
+import {
+  PanelCard,
+  CardEditButton,
+  CardDeleteButton,
+} from '@/src/styledComponents';
+import { ProductCardProps } from '@/src/types/propsTypes';
+import AdminProductFormView from '@/src/views/AdminProductFormView';
 
 export default function ProductCard({ product, onDelete }: ProductCardProps) {
   const [openUpdate, setOpenUpdate] = useState(false);
@@ -26,6 +25,7 @@ export default function ProductCard({ product, onDelete }: ProductCardProps) {
   const { items, updateItemQuantity } = useCart();
   const itemInCart = items.find((i) => i.id === product.id);
   const quantity = itemInCart?.quantity ?? 0;
+  const totalUds = product.pots_count * quantity;
 
   return (
     <PanelCard
@@ -34,16 +34,16 @@ export default function ProductCard({ product, onDelete }: ProductCardProps) {
         maxWidth: 350,
       }}
     >
-      <Stack sx={{ height: "100%", p: 0.5 }} justifyContent="space-between">
+      <Stack sx={{ height: '100%', p: 0.5 }} justifyContent="space-between">
         <Stack spacing={2.5}>
           <Stack spacing={1}>
             <Typography
               sx={{
                 lineHeight: 1.35,
-                display: "-webkit-box",
+                display: '-webkit-box',
                 WebkitLineClamp: 2,
-                WebkitBoxOrient: "vertical",
-                overflow: "hidden",
+                WebkitBoxOrient: 'vertical',
+                overflow: 'hidden',
                 fontWeight: 600,
                 fontSize: 20,
               }}
@@ -53,9 +53,9 @@ export default function ProductCard({ product, onDelete }: ProductCardProps) {
             {!isUnknownUser && (
               <Typography
                 variant="body2"
-                color={product.available > 0 ? "primary" : "error"}
+                color={product.available > 0 ? 'primary' : 'error'}
               >
-                En Stock: {product.available}
+                En Stock: {product.available - quantity}
               </Typography>
             )}
           </Stack>
@@ -65,11 +65,11 @@ export default function ProductCard({ product, onDelete }: ProductCardProps) {
               sx={{
                 width: 96,
                 height: 96,
-                border: "1px solid",
+                border: '1px solid',
                 borderRadius: 1,
                 borderColor: (theme) => theme.palette.grey[200],
                 bgcolor: (theme) => theme.palette.grey[200],
-                overflow: "hidden",
+                overflow: 'hidden',
               }}
             >
               <ProductImages
@@ -84,7 +84,7 @@ export default function ProductCard({ product, onDelete }: ProductCardProps) {
           <Stack spacing={1}>
             {product.comment && (
               <Stack spacing={0.5}>
-                <Typography variant="body2" sx={{ fontWeight: "bold" }}>
+                <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
                   Detalles:
                 </Typography>
                 <Typography variant="body2">{product.comment}</Typography>
@@ -126,35 +126,39 @@ export default function ProductCard({ product, onDelete }: ProductCardProps) {
             </Stack>
           )}
           {isUser && (
-            <Stack
-              direction="row"
-              spacing={1}
-              alignItems="center"
-              sx={{ mt: 2 }}
-            >
-              <Typography variant="body2">Pedir:</Typography>
-              <IncrementDecrementButtons
-                inStock={product.available}
-                quantity={quantity}
-                onChange={(q) =>
-                  updateItemQuantity(
-                    {
-                      id: product.id,
-                      title: product.title,
-                      price: product.price,
-                      available: product.available,
-                    },
-                    q,
-                  )
-                }
-              />
+            <Stack spacing={2} sx={{ mt: 2 }}>
+              <Stack direction="row" spacing={1} alignItems="center">
+                <Typography variant="body1">Pedir:</Typography>
+                <IncrementDecrementButtons
+                  inStock={product.available}
+                  quantity={quantity}
+                  onChange={(q) =>
+                    updateItemQuantity(
+                      {
+                        id: product.id,
+                        title: product.title,
+                        price: product.price,
+                        available: product.available,
+                        pots_count: product.pots_count,
+                      },
+                      q,
+                    )
+                  }
+                />
+              </Stack>
+              <Typography variant="body1">
+                {totalUds
+                  ? `Total : ${quantity} Cajas x ${product.pots_count} Uds = 
+                ${totalUds} Uds`
+                  : 'Total: 0 Uds'}
+              </Typography>
             </Stack>
           )}
         </Stack>
       </Stack>
 
       {openUpdate && (
-        <AdminProductForm
+        <AdminProductFormView
           open={openUpdate}
           onClose={() => setOpenUpdate(false)}
           product={product}
