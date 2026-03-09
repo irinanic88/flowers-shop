@@ -2,7 +2,7 @@ import { AlertColor } from '@mui/material';
 import { Session, User } from '@supabase/auth-js';
 
 import { supabase } from '@/lib/supabase';
-import { ALERT_MESSAGES_DICT, RESET_PASSWORD_URL_dev } from '@/src/constants';
+import { ALERT_MESSAGES_DICT, RESET_PASSWORD_URL } from '@/src/constants';
 import { useRequest } from '@/src/hooks/useRequest';
 import { ProductForm } from '@/src/types/propsTypes';
 import {
@@ -43,7 +43,7 @@ export const useResetPassword = () => {
     request(
       async () =>
         supabase.auth.resetPasswordForEmail(email, {
-          redirectTo: RESET_PASSWORD_URL_dev,
+          redirectTo: RESET_PASSWORD_URL,
         }),
       ALERT_MESSAGES_DICT.success.resetPasswordEmail,
     );
