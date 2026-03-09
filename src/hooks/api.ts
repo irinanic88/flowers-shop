@@ -82,7 +82,7 @@ export const useInviteToken = () => {
   const { request } = useRequest();
 
   const checkInviteToken = (token: string) =>
-    request<{ inviteId: string }>(async () => {
+    request<string>(async () => {
       const res = await supabase.functions.invoke('check-invite', {
         body: { invite: token },
       });
