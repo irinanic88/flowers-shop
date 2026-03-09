@@ -4,7 +4,7 @@ import { DisponibilityType, OrderStatusType } from '@/src/types/types';
 
 export const orderStatusesDict: Record<OrderStatusType, string> = {
   approved: 'aprobado',
-  cancelled: 'cancelado',
+  cancelled: 'rechazado',
   pending: 'pendiente',
 };
 
@@ -57,7 +57,7 @@ export const ALERT_MESSAGES_DICT = {
     productUpdated: (title: string) => `Artículo ${title} actualizado!`,
     productDeleted: (title: string) => `Artículo ${title} eliminado.`,
     orderApproved: 'Pedido aprobado',
-    orderCancelled: 'Pedido cancelado',
+    orderCancelled: 'Pedido rechazado',
   },
 
   error: {

@@ -11,7 +11,7 @@ serve(async (req: Request) => {
     const statusText =
       order.status === 'approved'
         ? '✅ Tu pedido fue aprobado'
-        : '❌ Tu pedido fue cancelado';
+        : '❌ Tu pedido fue rechazado';
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;

@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import {
   Table,
@@ -10,11 +10,11 @@ import {
   TablePagination,
   Paper,
   TableSortLabel,
-} from '@mui/material';
+} from "@mui/material";
 
-import { PreodersTableProps } from '@/src/types/propsTypes';
+import { PreodersTableProps } from "@/src/types/propsTypes";
 
-import { PreordersRow } from './PreordersRow';
+import { PreordersRow } from "./PreordersRow";
 
 export function PreordersTable({
   orders,
@@ -42,9 +42,9 @@ export function PreordersTable({
             {isAdmin && (
               <TableCell>
                 <TableSortLabel
-                  active={sortBy === 'user'}
+                  active={sortBy === "user"}
                   direction={sortDir}
-                  onClick={() => toggleSort('user')}
+                  onClick={() => toggleSort("user")}
                 >
                   Usuario
                 </TableSortLabel>
@@ -53,9 +53,9 @@ export function PreordersTable({
 
             <TableCell>
               <TableSortLabel
-                active={sortBy === 'status'}
+                active={sortBy === "status"}
                 direction={sortDir}
-                onClick={() => toggleSort('status')}
+                onClick={() => toggleSort("status")}
               >
                 Estado
               </TableSortLabel>
@@ -65,9 +65,9 @@ export function PreordersTable({
 
             <TableCell>
               <TableSortLabel
-                active={sortBy === 'date'}
+                active={sortBy === "date"}
                 direction={sortDir}
-                onClick={() => toggleSort('date')}
+                onClick={() => toggleSort("date")}
               >
                 Fecha
               </TableSortLabel>
@@ -76,7 +76,7 @@ export function PreordersTable({
             <TableCell>Comentarios</TableCell>
 
             {isAdmin && <TableCell align="center">Aprobar</TableCell>}
-            {isAdmin && <TableCell align="center">Cancelar</TableCell>}
+            {isAdmin && <TableCell align="center">Rechazar</TableCell>}
           </TableRow>
         </TableHead>
         <TableBody>

@@ -16,7 +16,7 @@ interface Props {
   onChangeComment: (v: string) => void;
   onClose: () => void;
   onSave: () => void;
-  submitButton: 'Aprobar' | 'Cancelar';
+  submitButton: 'Aprobar' | 'Rechazar';
 }
 
 export function PreordersStatusDialog({
