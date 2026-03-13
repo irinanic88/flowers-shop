@@ -1,10 +1,11 @@
-'use client';
+"use client";
 
-import EditIcon from '@mui/icons-material/Edit';
-import LogoutIcon from '@mui/icons-material/Logout';
-import MenuIcon from '@mui/icons-material/Menu';
-import PersonIcon from '@mui/icons-material/Person';
-import PersonAddAlt1Icon from '@mui/icons-material/PersonAddAlt1';
+import EditIcon from "@mui/icons-material/Edit";
+import LogoutIcon from "@mui/icons-material/Logout";
+import MenuIcon from "@mui/icons-material/Menu";
+import PersonIcon from "@mui/icons-material/Person";
+import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
+import QuestionMarkIcon from "@mui/icons-material/QuestionMark";
 import {
   ListItemIcon,
   ListItemText,
@@ -12,29 +13,31 @@ import {
   MenuItem,
   Stack,
   Typography,
-} from '@mui/material';
-import React, { useEffect, useState } from 'react';
+} from "@mui/material";
+import React, { useEffect, useState } from "react";
 
-import { supabase } from '@/lib/supabase';
-import AuthForm from '@/src/components/auth/AuthForm';
-import InviteDialog from '@/src/components/auth/InviteDialog';
-import Layout from '@/src/components/common/Layout';
-import Loader from '@/src/components/common/Loader';
-import RedirectionLink from '@/src/components/common/RedirectionLink';
-import ProductsPage from '@/src/components/products/ProductsPage';
-import { useAuth } from '@/src/context/AuthContext';
+import { supabase } from "@/lib/supabase";
+import AuthForm from "@/src/components/auth/AuthForm";
+import InviteDialog from "@/src/components/auth/InviteDialog";
+import Layout from "@/src/components/common/Layout";
+import Loader from "@/src/components/common/Loader";
+import RedirectionLink from "@/src/components/common/RedirectionLink";
+import ProductsPage from "@/src/components/products/ProductsPage";
+import HelpView from "@/src/views/HelpView";
+import { useAuth } from "@/src/context/AuthContext";
 import {
   RoundIconButton,
   SecondaryRoundIconButton,
   WelcomeBox,
-} from '@/src/styledComponents';
-import UpdateUserView from '@/src/views/UpdateUserView';
-import UsersTabs from '@/src/views/UsersTabs';
-import UserView from '@/src/views/UserView';
+} from "@/src/styledComponents";
+import UpdateUserView from "@/src/views/UpdateUserView";
+import UsersTabs from "@/src/views/UsersTabs";
+import UserView from "@/src/views/UserView";
 
 export default function Page() {
   const [openUserForm, setOpenUserForm] = useState(false);
   const [openAuthForm, setOpenAuthForm] = useState(false);
+  const [openHelpView, setOpenHelpView] = useState(false);
   const [openInviteDialog, setOpenInviteDialog] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [inviteUrl, setInviteUrl] = useState<string | null>(null);
@@ -49,16 +52,16 @@ export default function Page() {
   } = useAuth();
 
   useEffect(() => {
-    if (typeof window === 'undefined') return;
+    if (typeof window === "undefined") return;
 
     const hash = window.location.hash;
 
     if (
-      hash.includes('error=access_denied') ||
-      hash.includes('error_code=otp_expired')
+      hash.includes("error=access_denied") ||
+      hash.includes("error_code=otp_expired")
     ) {
-      window.history.replaceState(null, '', window.location.pathname);
-      document.title = 'APS';
+      window.history.replaceState(null, "", window.location.pathname);
+      document.title = "APS";
     }
   }, []);
 
@@ -67,7 +70,7 @@ export default function Page() {
   }
 
   const fetchUrl = async () => {
-    const { data } = await supabase.functions.invoke('create-invite');
+    const { data } = await supabase.functions.invoke("create-invite");
 
     if (data) {
       setInviteUrl(data.inviteUrl);
@@ -76,8 +79,8 @@ export default function Page() {
 
   const actions = [
     {
-      value: 'invite',
-      label: 'Crear invitacion',
+      value: "invite",
+      label: "Crear invitacion",
       icon: <PersonAddAlt1Icon fontSize="small" />,
       onClick: () => {
         void fetchUrl();
@@ -86,15 +89,15 @@ export default function Page() {
       visibility: isAdmin,
     },
     {
-      value: 'edit',
-      label: 'Editar perfil',
+      value: "edit",
+      label: "Editar perfil",
       icon: <EditIcon fontSize="small" />,
       onClick: () => setOpenUserForm(true),
       visibility: true,
     },
     {
-      value: 'logout',
-      label: 'Salir',
+      value: "logout",
+      label: "Salir",
       icon: <LogoutIcon fontSize="small" />,
       onClick: async () => {
         await supabase.auth.signOut();
@@ -122,8 +125,8 @@ export default function Page() {
                   anchorEl={anchorEl}
                   open={openSelect}
                   onClose={() => setAnchorEl(null)}
-                  anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-                  transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+                  anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                  transformOrigin={{ vertical: "top", horizontal: "right" }}
                 >
                   {actions
                     .filter(({ visibility }) => visibility)
@@ -154,7 +157,7 @@ export default function Page() {
       {isAdmin && <UsersTabs />}
       {isUser && <UserView />}
       {isUnknownUser && (
-        <Stack sx={{ width: '100%' }} alignItems="center">
+        <Stack sx={{ width: "100%" }} alignItems="center">
           <WelcomeBox spacing={2} sx={{ mt: 2 }}>
             <Typography variant="h5" color="text.primary">
               Bienvenido a Andrés Plant Select! 🌿
@@ -166,19 +169,19 @@ export default function Page() {
             </Typography>
 
             <Typography variant="body1" color="text.secondary">
-              Para ver los precios y realizar pedidos anticipados,{' '}
+              Para ver los precios y realizar pedidos anticipados,{" "}
               <RedirectionLink
-                linkText={''}
-                linkTitle={'Inicia session'}
+                linkText={""}
+                linkTitle={"Inicia session"}
                 onLinkClick={() => setOpenAuthForm(true)}
-              />{' '}
+              />{" "}
               o <strong>regístrate con una invitación</strong>.
             </Typography>
 
             <RedirectionLink
-              linkText={'Primera vez aquí?'}
-              linkTitle={'Aprende cómo funciona la aplicación'}
-              onLinkClick={() => {}}
+              linkText={"Primera vez aquí?"}
+              linkTitle={"Aprende cómo funciona la aplicación"}
+              onLinkClick={() => setOpenHelpView(true)}
             />
           </WelcomeBox>
 
@@ -197,13 +200,17 @@ export default function Page() {
         <AuthForm open={openAuthForm} onClose={() => setOpenAuthForm(false)} />
       )}
 
+      {openHelpView && (
+        <HelpView open={openHelpView} onClose={() => setOpenHelpView(false)} />
+      )}
+
       {openInviteDialog && inviteUrl && (
         <InviteDialog
           link={inviteUrl}
           open={openInviteDialog}
           onClose={() => {
             setOpenInviteDialog(false);
-            setInviteUrl('');
+            setInviteUrl("");
           }}
         />
       )}
