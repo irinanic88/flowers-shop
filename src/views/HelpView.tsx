@@ -1,16 +1,26 @@
 "use client";
 
 import { AppDrawer } from "@/src/components/common/AppDrawer.tsx";
+import { orderStatusesDict, statusColorsDict } from "@/src/constants.ts";
+import BlockIcon from "@mui/icons-material/Block";
+import GrassIcon from "@mui/icons-material/Grass";
+import HeightIcon from "@mui/icons-material/Height";
 import Inventory2Icon from "@mui/icons-material/Inventory2";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import PendingIcon from "@mui/icons-material/Pending";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import CancelIcon from "@mui/icons-material/Cancel";
+import EuroIcon from "@mui/icons-material/Euro";
 import TableRowsIcon from "@mui/icons-material/TableRows";
 import PersonIcon from "@mui/icons-material/Person";
-import { Stack, Typography, Box } from "@mui/material";
+import ImageIcon from "@mui/icons-material/Image";
+import { Stack, Typography, Box, Badge, Fab } from "@mui/material";
 
-import { WelcomeBox } from "@/src/styledComponents";
+import {
+  RoundIconButton,
+  StyledChip,
+  WelcomeBox,
+} from "@/src/styledComponents";
+import Image from "next/image";
+import React from "react";
 
 export default function HelpView({
   open,
@@ -21,9 +31,7 @@ export default function HelpView({
 }) {
   return (
     <AppDrawer open={open} onClose={onClose} title="Cómo usar la aplicación">
-      <Stack sx={{ width: "100%" }} alignItems="center">
-        <Typography variant="h5"></Typography>
-
+      <Stack sx={{ width: "100%" }} alignItems="center" spacing={2.5}>
         <Typography variant="body1" color="text.secondary">
           Esta aplicación te permite consultar el catálogo de plantas, reservar
           productos y seguir el estado de tus pedidos.
@@ -42,33 +50,38 @@ export default function HelpView({
           </Typography>
 
           <Stack pl={2} spacing={0.5}>
-            <Typography variant="body2">• precio por unidad</Typography>
-            <Typography variant="body2">• cantidad disponible</Typography>
-            <Typography variant="body2">• diámetro de la maceta</Typography>
-            <Typography variant="body2">• altura aproximada</Typography>
-            <Typography variant="body2">
-              • número de unidades por caja
-            </Typography>
-            <Typography variant="body2">
-              • fotografías del producto (al hacer clic en la imagen puedes
-              verla en tamaño grande)
-            </Typography>
+            <Stack direction="row" spacing={1}>
+              <EuroIcon fontSize="small" sx={{ width: 15 }} />
+              <Typography variant="body2">precio por unidad</Typography>
+            </Stack>
+            <Stack direction="row" spacing={1}>
+              <Inventory2Icon fontSize="small" sx={{ width: 15 }} />
+              <Typography variant="body2">
+                cantidad de unidades disponible
+              </Typography>
+            </Stack>
+            <Stack direction="row" spacing={1}>
+              <BlockIcon fontSize="small" sx={{ width: 15 }} />
+              <Typography variant="body2">diámetro de la maceta</Typography>
+            </Stack>
+            <Stack direction="row" spacing={1}>
+              <HeightIcon fontSize="small" sx={{ width: 15 }} />
+              <Typography variant="body2">altura aproximada</Typography>
+            </Stack>
+            <Stack direction="row" spacing={1}>
+              <GrassIcon fontSize="small" sx={{ width: 15 }} />
+              <Typography variant="body2">
+                número de unidades por caja
+              </Typography>
+            </Stack>
+            <Stack direction="row" spacing={1}>
+              <ImageIcon fontSize="small" sx={{ width: 15 }} />
+              <Typography variant="body2">
+                fotografías del producto (al hacer clic en la imagen puedes
+                verla en tamaño grande)
+              </Typography>
+            </Stack>
           </Stack>
-
-          <Box
-            sx={{
-              height: 220,
-              border: "1px solid",
-              borderColor: "grey.300",
-              borderRadius: 1,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              color: "text.secondary",
-            }}
-          >
-            Imagen del catálogo
-          </Box>
         </Stack>
 
         {/* CARRITO */}
@@ -98,21 +111,6 @@ export default function HelpView({
           <Typography variant="body2" color="text.secondary">
             Cuando confirmes el pedido, los productos quedarán reservados.
           </Typography>
-
-          <Box
-            sx={{
-              height: 220,
-              border: "1px solid",
-              borderColor: "grey.300",
-              borderRadius: 1,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              color: "text.secondary",
-            }}
-          >
-            Imagen del carrito
-          </Box>
         </Stack>
 
         {/* ESTADO */}
@@ -127,20 +125,13 @@ export default function HelpView({
           </Typography>
 
           <Stack direction="row" spacing={3}>
-            <Stack direction="row" spacing={1} alignItems="center">
-              <PendingIcon color="warning" fontSize="small" />
-              <Typography variant="body2">Pending</Typography>
-            </Stack>
-
-            <Stack direction="row" spacing={1} alignItems="center">
-              <CheckCircleIcon color="success" fontSize="small" />
-              <Typography variant="body2">Approved</Typography>
-            </Stack>
-
-            <Stack direction="row" spacing={1} alignItems="center">
-              <CancelIcon color="error" fontSize="small" />
-              <Typography variant="body2">Cancelled</Typography>
-            </Stack>
+            {Object.keys(orderStatusesDict).map((status) => (
+              <StyledChip
+                label={orderStatusesDict[status]}
+                color={statusColorsDict[status]}
+                variant="outlined"
+              />
+            ))}
           </Stack>
 
           <Typography variant="body2" color="text.secondary">
@@ -164,21 +155,6 @@ export default function HelpView({
           <Typography variant="body2" color="text.secondary">
             También puedes filtrar los pedidos por estado.
           </Typography>
-
-          <Box
-            sx={{
-              height: 220,
-              border: "1px solid",
-              borderColor: "grey.300",
-              borderRadius: 1,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              color: "text.secondary",
-            }}
-          >
-            Imagen de la tabla de pedidos
-          </Box>
         </Stack>
 
         {/* PERFIL */}
