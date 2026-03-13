@@ -10,7 +10,7 @@ export default function CustomAlert({ alertState, onClose }: CustomAlertProps) {
   return (
     <Snackbar
       open
-      autoHideDuration={alertState.duration || 5000}
+      autoHideDuration={alertState.duration || 3000}
       onClose={onClose}
       sx={{
         alignItems: 'flex-start',

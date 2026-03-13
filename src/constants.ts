@@ -33,39 +33,36 @@ export const AuthTitlesDict = {
     linkTitle: 'Ir al registro',
   },
 };
-// DEV
-// export const RESET_PASSWORD_URL = 'http://localhost:3000/reset-password';
-// export const REGISTER_URL = 'http://localhost:3000/register';
+
 export const RESET_PASSWORD_URL =
   'https://andresplantselect.netlify.app/reset-password';
-export const REGISTER_URL = 'https://andresplantselect.netlify.app/register';
 
 export const ALERT_MESSAGES_DICT = {
   success: {
     cart:
-      'Pedido enviado con éxito!\n' +
+      'Pedido enviado con éxito.\n' +
       'Tu pedido está en estado pendiente.\n' +
       'Los artículos han sido reservados hasta que el administrador lo apruebe o lo cancele.\n' +
-      'Puedes consultar el estado y los detalles en la tabla de pedidos',
-    passwordUpdated: 'Contraseña actualizada',
-    nameUpdated: 'Nombre actualizado',
-    accountCreated: 'Tu cuenta ha sido creada correctamente!',
+      'Puedes consultar el estado y los detalles en la tabla de pedidos.',
+    passwordUpdated: 'Contraseña actualizada.',
+    nameUpdated: 'Nombre actualizado.',
+    accountCreated: 'Tu cuenta ha sido creada correctamente.',
     resetPasswordEmail:
       'Si el correo está registrado, recibirás un email con instrucciones para restablecer tu contraseña.',
-    productCreated: (title: string) => `Artículo ${title} agregado!`,
-    productUpdated: (title: string) => `Artículo ${title} actualizado!`,
+    productCreated: (title: string) => `Artículo ${title} agregado.`,
+    productUpdated: (title: string) => `Artículo ${title} actualizado.`,
     productDeleted: (title: string) => `Artículo ${title} eliminado.`,
-    orderApproved: 'Pedido aprobado',
-    orderCancelled: 'Pedido rechazado',
+    orderApproved: 'Pedido aprobado.',
+    orderCancelled: 'Pedido rechazado.',
   },
 
   error: {
-    unknown: 'Error desconocido',
-    notAuthenticated: 'Usuario no autenticado',
-    cartEmpty: 'La preorden está vacía',
-    inviteInvalid: 'El enlace de invitación no es válido o ha expirado',
-    network: 'Error de conexión',
-    server: 'Error del servidor',
+    unknown: 'Error desconocido.',
+    notAuthenticated: 'Usuario no autenticado.',
+    cartEmpty: 'La preorden está vacía.',
+    inviteInvalid: 'El enlace de invitación no es válido o ha expirado.',
+    network: 'Error de conexión.',
+    server: 'Error del servidor.',
   },
 } as const;
 

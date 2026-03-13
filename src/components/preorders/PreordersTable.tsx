@@ -12,25 +12,25 @@ import {
   TableSortLabel,
 } from '@mui/material';
 
-import { PreodersTableProps } from '@/src/types/propsTypes';
+import { useAuth } from '@/src/context/AuthContext';
+import { usePreordersContext } from '@/src/context/PreordersContext';
 
 import { PreordersRow } from './PreordersRow';
 
-export function PreordersTable({
-  orders,
-  expandedOrderId,
-  toggleExpand,
-  isAdmin,
-  sortBy,
-  sortDir,
-  toggleSort,
-  openStatusDialog,
-  page,
-  rowsPerPage,
-  total,
-  setPage,
-  setRowsPerPage,
-}: PreodersTableProps) {
+export function PreordersTable() {
+  const {
+    paginated: orders,
+    sortBy,
+    sortDir,
+    toggleSort,
+    page,
+    rowsPerPage,
+    setPage,
+    setRowsPerPage,
+    sortedOrders,
+  } = usePreordersContext();
+  const { isAdmin } = useAuth();
+
   return (
     <TableContainer component={Paper}>
       <Table>
@@ -87,23 +87,14 @@ export function PreordersTable({
               </TableCell>
             </TableRow>
           ) : (
-            orders.map((order) => (
-              <PreordersRow
-                key={order.id}
-                order={order}
-                expanded={expandedOrderId === order.id}
-                toggleExpand={toggleExpand}
-                isAdmin={isAdmin}
-                openStatusDialog={openStatusDialog}
-              />
-            ))
+            orders.map((order) => <PreordersRow key={order.id} order={order} />)
           )}
         </TableBody>
       </Table>
 
       <TablePagination
         component="div"
-        count={total}
+        count={sortedOrders.length}
         page={page}
         rowsPerPage={rowsPerPage}
         onPageChange={(_, newPage) => setPage(newPage)}

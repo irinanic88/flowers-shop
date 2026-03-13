@@ -14,16 +14,17 @@ import {
 
 import { PreordersTableContent } from '@/src/components/preorders/PreordersTableContent';
 import { orderStatusesDict, statusColorsDict } from '@/src/constants';
+import { useAuth } from '@/src/context/AuthContext';
+import { usePreordersContext } from '@/src/context/PreordersContext';
 import { StyledChip, RoundIconButton } from '@/src/styledComponents';
-import { PreodersRowProps } from '@/src/types/propsTypes';
+import { OrderType } from '@/src/types/types';
 
-export function PreordersRow({
-  order,
-  expanded,
-  toggleExpand,
-  isAdmin,
-  openStatusDialog,
-}: PreodersRowProps) {
+export function PreordersRow({ order }: { order: OrderType }) {
+  const { isAdmin } = useAuth();
+  const { toggleExpand, expandedOrderId, openDialog } = usePreordersContext();
+
+  const expanded = expandedOrderId === order.id;
+
   return (
     <>
       <TableRow hover>
@@ -73,7 +74,7 @@ export function PreordersRow({
           <TableCell align="center">
             <RoundIconButton
               disabled={order.status !== 'pending'}
-              onClick={() => openStatusDialog(order, 'approved')}
+              onClick={() => openDialog(order, 'approved')}
             >
               <CheckIcon />
             </RoundIconButton>
@@ -84,7 +85,7 @@ export function PreordersRow({
           <TableCell align="center">
             <RoundIconButton
               disabled={order.status !== 'pending'}
-              onClick={() => openStatusDialog(order, 'cancelled')}
+              onClick={() => openDialog(order, 'cancelled')}
             >
               <ClearIcon />
             </RoundIconButton>

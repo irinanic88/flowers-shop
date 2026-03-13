@@ -8,27 +8,45 @@ import {
   Stack,
 } from '@mui/material';
 
+import { useAlert } from '@/src/context/AlertContext';
+import { useOrders } from '@/src/context/OrdersContext';
+import { usePreordersContext } from '@/src/context/PreordersContext';
+import { useUpdateOrderStatus } from '@/src/hooks/api';
 import { PrimaryButton, SecondaryButton } from '@/src/styledComponents';
 
-interface Props {
-  open: boolean;
-  comment: string;
-  onChangeComment: (v: string) => void;
-  onClose: () => void;
-  onSave: () => void;
-  submitButton: 'Aprobar' | 'Rechazar';
-}
+export function PreordersStatusDialog() {
+  const {
+    dialogOpen,
+    selectedOrder,
+    nextStatus,
+    adminComment,
+    closeDialog,
+    setAdminComment,
+  } = usePreordersContext();
 
-export function PreordersStatusDialog({
-  open,
-  comment,
-  onChangeComment,
-  onClose,
-  onSave,
-  submitButton,
-}: Props) {
+  const { showAlert } = useAlert();
+  const { updateOrderStatus } = useUpdateOrderStatus();
+  const { refreshOrders } = useOrders();
+
+  const applyStatus = async () => {
+    if (!selectedOrder || !nextStatus) return;
+
+    const { success, error } = await updateOrderStatus(
+      selectedOrder.id,
+      nextStatus,
+      adminComment,
+    );
+
+    if (error) return showAlert(error);
+
+    if (success) showAlert(success);
+
+    closeDialog();
+    void refreshOrders();
+  };
+
   return (
-    <Dialog open={open} onClose={onClose} fullWidth>
+    <Dialog open={dialogOpen} onClose={closeDialog} fullWidth>
       <DialogContent>
         <Typography sx={{ mb: 1 }}>Comentario del administrador:</Typography>
 
@@ -36,13 +54,15 @@ export function PreordersStatusDialog({
           fullWidth
           multiline
           rows={3}
-          value={comment}
-          onChange={(e) => onChangeComment(e.target.value)}
+          value={adminComment}
+          onChange={(e) => setAdminComment(e.target.value)}
         />
 
         <Stack direction="row" justifyContent="center" spacing={1} mt={2}>
-          <SecondaryButton onClick={onClose}>Cerrar</SecondaryButton>
-          <PrimaryButton onClick={onSave}>{submitButton}</PrimaryButton>
+          <SecondaryButton onClick={closeDialog}>Cerrar</SecondaryButton>
+          <PrimaryButton onClick={applyStatus}>
+            {nextStatus === 'approved' ? 'Aprobar' : 'Rechazar'}
+          </PrimaryButton>
         </Stack>
       </DialogContent>
     </Dialog>

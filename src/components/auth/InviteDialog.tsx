@@ -7,11 +7,10 @@ import {
   DialogContent,
   Typography,
   IconButton,
-  Snackbar,
-  Alert,
 } from '@mui/material';
 import React, { useState } from 'react';
 
+import { useAlert } from '@/src/context/AlertContext';
 import { SecondaryRoundIconButton } from '@/src/styledComponents';
 
 type InviteDialogProps = {
@@ -26,7 +25,8 @@ export default function InviteDialog({
   onClose,
 }: InviteDialogProps) {
   const [copied, setCopied] = useState(false);
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
+
+  const { showAlert, clearAlert } = useAlert();
 
   const handleCopy = async () => {
     try {
@@ -45,10 +45,14 @@ export default function InviteDialog({
       }
 
       setCopied(true);
-      setSnackbarOpen(true);
+      showAlert({
+        severity: 'success',
+        message: 'Enlace copiado',
+      });
 
       setTimeout(() => {
         setCopied(false);
+        void clearAlert();
       }, 2000);
     } catch (err) {
       console.error('Copy failed', err);
@@ -90,21 +94,6 @@ export default function InviteDialog({
           </Stack>
         </DialogContent>
       </Dialog>
-
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={2500}
-        onClose={() => setSnackbarOpen(false)}
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-      >
-        <Alert
-          severity="success"
-          variant="filled"
-          onClose={() => setSnackbarOpen(false)}
-        >
-          Enlace copiado
-        </Alert>
-      </Snackbar>
     </>
   );
 }

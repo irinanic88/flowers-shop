@@ -24,8 +24,6 @@ interface ProductImagesProps {
 export default function ProductImages({ images, title }: ProductImagesProps) {
   const [index, setIndex] = useState(0);
   const [open, setOpen] = useState(false);
-  const [fade, setFade] = useState(false);
-  const [animating, setAnimating] = useState(false);
   const startX = useRef<number | null>(null);
 
   const theme = useTheme();
@@ -35,29 +33,13 @@ export default function ProductImages({ images, title }: ProductImagesProps) {
   const hasMany = images?.length > 1;
 
   const next = () => {
-    if (animating || !hasMany) return;
-
-    setAnimating(true);
-    setFade(true);
-
-    setTimeout(() => {
-      setIndex((prev) => (prev + 1) % images.length);
-      setFade(false);
-      setAnimating(false);
-    }, 200);
+    if (!hasMany || index === images.length - 1) return;
+    setIndex((prev) => prev + 1);
   };
 
   const prev = () => {
-    if (animating || !hasMany) return;
-
-    setAnimating(true);
-    setFade(true);
-
-    setTimeout(() => {
-      setIndex((prev) => (prev - 1 + images.length) % images.length);
-      setFade(false);
-      setAnimating(false);
-    }, 200);
+    if (!hasMany || index === 0) return;
+    setIndex((prev) => prev - 1);
   };
 
   const handleTouchStart = (e: React.TouchEvent) => {
@@ -75,8 +57,6 @@ export default function ProductImages({ images, title }: ProductImagesProps) {
   const handleClose = () => {
     setOpen(false);
     setIndex(0);
-    setFade(false);
-    setAnimating(false);
     startX.current = null;
   };
 
@@ -214,7 +194,6 @@ export default function ProductImages({ images, title }: ProductImagesProps) {
               width: '90%',
               height: '90%',
               transition: 'opacity 0.2s ease',
-              opacity: fade ? 0 : 1,
             }}
             onTouchStart={handleTouchStart}
             onTouchEnd={handleTouchEnd}
@@ -251,6 +230,7 @@ export default function ProductImages({ images, title }: ProductImagesProps) {
             <>
               <IconButton
                 onClick={prev}
+                disabled={index === 0}
                 sx={{
                   position: 'absolute',
                   left: 16,
@@ -258,6 +238,9 @@ export default function ProductImages({ images, title }: ProductImagesProps) {
                   transform: 'translateY(-50%)',
                   bgcolor: 'rgba(255,255,255,0.6)',
                   '&:hover': { bgcolor: 'rgba(255,255,255,0.9)' },
+                  '&.Mui-disabled': {
+                    opacity: 0,
+                  },
                 }}
               >
                 <ArrowBackIosNewIcon />
@@ -265,6 +248,7 @@ export default function ProductImages({ images, title }: ProductImagesProps) {
 
               <IconButton
                 onClick={next}
+                disabled={index === images.length - 1}
                 sx={{
                   position: 'absolute',
                   right: 16,
@@ -272,6 +256,9 @@ export default function ProductImages({ images, title }: ProductImagesProps) {
                   transform: 'translateY(-50%)',
                   bgcolor: 'rgba(255,255,255,0.6)',
                   '&:hover': { bgcolor: 'rgba(255,255,255,0.9)' },
+                  '&.Mui-disabled': {
+                    opacity: 0,
+                  },
                 }}
               >
                 <ArrowForwardIosIcon />

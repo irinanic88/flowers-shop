@@ -1,41 +1,36 @@
 'use client';
 
-import CloseIcon from '@mui/icons-material/Close';
 import DownloadIcon from '@mui/icons-material/Download';
 import TuneIcon from '@mui/icons-material/Tune';
-import { Stack, Button } from '@mui/material';
-import { any, isNotNil } from 'ramda';
+import { Stack } from '@mui/material';
+import { useTheme, useMediaQuery } from '@mui/material';
+import { useState } from 'react';
 
-import { DateRangePicker } from '@/src/components/common/DateRangePicker';
 import { PreordersFilters } from '@/src/components/preorders/PreordersFilters';
+import { useAuth } from '@/src/context/AuthContext';
+import { usePreordersContext } from '@/src/context/PreordersContext';
 import { exportOrdersToExcel } from '@/src/helpers/exportToExcel';
 import {
   SecondaryRoundIconButton,
   PrimaryButton,
 } from '@/src/styledComponents';
-import { PreordersToolbarProps } from '@/src/types/propsTypes';
-import { OrderStatusType } from '@/src/types/types';
 
-export function PreordersToolbar({
-  isAdmin,
-  sortedOrders,
-  filters,
-  setFilters,
-  users,
-}: PreordersToolbarProps) {
-  const { statusFilter, userFilter, dateRange } = filters;
-  const { setStatusFilter, setUserFilter, setDateRange } = setFilters;
+export function PreordersToolbar() {
+  const [showFilters, setShowFilters] = useState(false);
 
-  const isAnyDatePicked = any(isNotNil, dateRange);
+  const theme = useTheme();
+  const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
+  const { sortedOrders } = usePreordersContext();
+  const { isAdmin } = useAuth();
 
   return (
     <Stack spacing={2} mb={2}>
       <Stack direction="row" justifyContent="space-between">
-        <SecondaryRoundIconButton>
+        <SecondaryRoundIconButton onClick={() => setShowFilters(!showFilters)}>
           <TuneIcon fontSize="small" />
         </SecondaryRoundIconButton>
 
-        {isAdmin && (
+        {isAdmin && isDesktop && (
           <PrimaryButton
             endIcon={<DownloadIcon />}
             onClick={() => exportOrdersToExcel(sortedOrders)}
@@ -45,23 +40,7 @@ export function PreordersToolbar({
         )}
       </Stack>
 
-      <PreordersFilters
-        statusFilter={statusFilter}
-        onStatusChange={(v) => setStatusFilter(v as OrderStatusType | 'all')}
-        userFilter={userFilter}
-        onUserChange={(v) => setUserFilter(v)}
-        users={users}
-      />
-
-      <Stack direction="row" spacing={1}>
-        <DateRangePicker value={dateRange} onChange={setDateRange} />
-
-        {isAnyDatePicked && (
-          <Button onClick={() => setDateRange([null, null])}>
-            <CloseIcon />
-          </Button>
-        )}
-      </Stack>
+      {showFilters && <PreordersFilters />}
     </Stack>
   );
 }
