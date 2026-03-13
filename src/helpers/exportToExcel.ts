@@ -1,107 +1,187 @@
 import * as XLSX from 'xlsx-js-style';
 
-import { orderStatusesDict } from '@/src/constants';
 import { OrderType } from '@/src/types/types';
 
-const headerStyle = {
-  font: { bold: true },
-  alignment: { horizontal: 'center' },
+type ExcelCell = {
+  v: string | number;
+  s: XLSX.CellStyle;
 };
 
-const totalStyle = {
-  font: { bold: true },
-  alignment: {
-    wrapText: true,
-    vertical: 'top',
-  },
-};
+function createOrderRow(
+  order: OrderType | undefined,
+  r: number,
+  maxItems: number,
+  baseStyle: XLSX.CellStyle,
+  headerStyle: XLSX.CellStyle,
+  clientStyle: XLSX.CellStyle,
+) {
+  const empty = (): ExcelCell => ({ v: '', s: baseStyle });
 
-const metaValueStyle = {
-  alignment: { horizontal: 'left' },
-};
+  if (!order) return [empty(), empty(), empty()];
 
-export function exportOrdersToExcel(orders: OrderType[]) {
-  const rows: unknown[][] = [];
+  if (r === 0)
+    return [
+      { v: order.profile_name?.toUpperCase() ?? '—', s: clientStyle },
+      empty(),
+      empty(),
+    ];
 
-  orders.forEach((order, orderIndex) => {
-    rows.push([
-      {
-        v: `ORDER #${order.id}`,
-        s: { font: { bold: true } },
-      },
-    ]);
-
-    rows.push([{ v: order.profile_name || '—', s: metaValueStyle }]);
-
-    rows.push([
-      {
-        v: new Date(order.created_at).toLocaleString(),
-        s: metaValueStyle,
-      },
-    ]);
-
-    rows.push([
-      {
-        v: orderStatusesDict[order.status],
-        s: metaValueStyle,
-      },
-    ]);
-
-    if (order.comment) {
-      rows.push([
-        {
-          v: `Comentario cliente: ${order.comment}`,
-          s: metaValueStyle,
-        },
-      ]);
-    }
-
-    if (order.admin_comment) {
-      rows.push([
-        {
-          v: `Comentario administrador: ${order.admin_comment}`,
-          s: metaValueStyle,
-        },
-      ]);
-    }
-
-    rows.push([]);
-
-    rows.push([
+  if (r === 1)
+    return [
+      { v: 'Uds', s: headerStyle },
       { v: 'Articulo', s: headerStyle },
-      { v: 'Cantidad', s: headerStyle },
-      { v: 'Precio', s: headerStyle },
-      { v: 'Total', s: headerStyle },
-    ]);
+      { v: '', s: headerStyle },
+    ];
 
-    order.items.forEach((item) => {
-      rows.push([
-        { v: item.title },
-        { v: item.quantity },
-        { v: item.price },
-        { v: item.price * item.quantity },
-      ]);
+  const item = order.items[r - 2];
+  if (!item) return [empty(), empty(), empty()];
+
+  const units = item.quantity * item.pots_count;
+
+  return [
+    {
+      v: units,
+      s: { ...baseStyle, alignment: { horizontal: 'center' as const } },
+    },
+    { v: item.title, s: baseStyle },
+    empty(),
+  ];
+}
+
+function applyOrderBorders(
+  ws: XLSX.WorkSheet,
+  orders: OrderType[],
+  ordersPerRow: number,
+  blockWidth: number,
+) {
+  const thick = { style: 'medium' as const, color: { rgb: '000000' } };
+
+  let rowPointer = 0;
+
+  for (let i = 0; i < orders.length; i += ordersPerRow) {
+    const group = orders.slice(i, i + ordersPerRow);
+    const maxItems = Math.max(...group.map((o) => o.items.length));
+
+    const startRow = rowPointer;
+    const endRow = rowPointer + maxItems + 1;
+
+    group.forEach((_, g) => {
+      const startCol = g * blockWidth;
+      const endCol = startCol + 2;
+
+      for (let r = startRow; r <= endRow; r++) {
+        for (let c = startCol; c <= endCol; c++) {
+          const ref = XLSX.utils.encode_cell({ r, c });
+          const cell = ws[ref];
+
+          if (!cell?.s?.border) continue;
+
+          const border = { ...cell.s.border };
+
+          if (r === startRow) border.top = thick;
+          if (r === endRow) border.bottom = thick;
+          if (c === startCol) border.left = thick;
+          if (c === endCol) border.right = thick;
+
+          cell.s = {
+            ...cell.s,
+            border,
+          };
+        }
+      }
     });
 
-    rows.push([
-      { v: 'TOTAL', s: totalStyle },
-      '',
-      '',
-      { v: order.total, s: totalStyle },
-    ]);
+    rowPointer += maxItems + 2;
+  }
+}
 
-    if (orderIndex < orders.length - 1) {
-      rows.push([]);
-      rows.push([]);
+export function exportOrdersToExcel(orders: OrderType[]) {
+  const ordersPerRow = 3;
+  const blockWidth = 3;
+
+  const thinBorder = {
+    top: { style: 'thin' as const, color: { rgb: '000000' } },
+    bottom: { style: 'thin' as const, color: { rgb: '000000' } },
+    left: { style: 'thin' as const, color: { rgb: '000000' } },
+    right: { style: 'thin' as const, color: { rgb: '000000' } },
+  };
+
+  const baseStyle: XLSX.CellStyle = {
+    font: { sz: 12 },
+    border: { ...thinBorder },
+  };
+
+  const headerStyle: XLSX.CellStyle = {
+    font: { bold: true, sz: 12 },
+    alignment: { horizontal: 'center' as const },
+    border: thinBorder,
+  };
+
+  const clientStyle: XLSX.CellStyle = {
+    font: { bold: true, underline: true, sz: 12 },
+    alignment: { horizontal: 'left' },
+    border: thinBorder,
+  };
+
+  const rows: ExcelCell[][] = [];
+  const merges: XLSX.Range[] = [];
+
+  let currentRow = 0;
+
+  for (let i = 0; i < orders.length; i += ordersPerRow) {
+    const group = orders.slice(i, i + ordersPerRow);
+    const maxItems = Math.max(...group.map((o) => o.items.length));
+    const groupHeight = maxItems + 2;
+
+    for (let r = 0; r < groupHeight; r++) {
+      const row: ExcelCell[] = [];
+
+      group.forEach((order, g) => {
+        const block = createOrderRow(
+          order,
+          r,
+          maxItems,
+          baseStyle,
+          headerStyle,
+          clientStyle,
+        );
+
+        row.push(...block);
+
+        if (r === 0) {
+          merges.push({
+            s: { r: currentRow, c: g * blockWidth },
+            e: { r: currentRow, c: g * blockWidth + 2 },
+          });
+        }
+      });
+
+      rows.push(row);
+      currentRow++;
     }
-  });
+  }
 
   const ws = XLSX.utils.aoa_to_sheet(rows);
 
-  ws['!cols'] = [{ wch: 40 }, { wch: 18 }, { wch: 18 }, { wch: 20 }];
+  ws['!cols'] = [
+    { wch: 5 },
+    { wch: 35 },
+    { wch: 5 },
+    { wch: 5 },
+    { wch: 35 },
+    { wch: 5 },
+    { wch: 5 },
+    { wch: 35 },
+    { wch: 5 },
+  ];
+
+  ws['!merges'] = merges;
+
+  applyOrderBorders(ws, orders, ordersPerRow, blockWidth);
 
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, 'Pedidos');
 
-  XLSX.writeFile(wb, 'preorders.xlsx');
+  const date = new Date().toISOString().split('T')[0];
+  XLSX.writeFile(wb, `pedidos_${date}.xlsx`);
 }

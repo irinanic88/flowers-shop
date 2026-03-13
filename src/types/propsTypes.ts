@@ -4,10 +4,7 @@ import {
   AlertType,
   AnyFormField,
   CartItem,
-  OrderStatusType,
   OrderType,
-  PreordersFiltersType,
-  PreordersSetFiltersType,
   ProductType,
 } from '@/src/types/types';
 
@@ -84,38 +81,6 @@ export type PanelCardFormLayoutProps = {
   submit: { title: string; handler: () => void };
   alert: AlertType;
   setAlert: (v: AlertType) => void;
-};
-
-export type PreodersRowProps = {
-  order: OrderType;
-  expanded: boolean;
-  toggleExpand: (orderId: number) => void;
-  isAdmin: boolean;
-  openStatusDialog: (order: OrderType, status: OrderStatusType) => void;
-};
-
-export type PreodersTableProps = {
-  expandedOrderId: number | null;
-  sortBy: string;
-  sortDir?: 'asc' | 'desc';
-  toggleSort: (field: 'date' | 'user' | 'status') => void;
-  page: number;
-  rowsPerPage: number;
-  total: number;
-  setPage: (v: number) => void;
-  setRowsPerPage: (v: number) => void;
-  orders: OrderType[];
-  toggleExpand: (orderId: number) => void;
-  isAdmin: boolean;
-  openStatusDialog: (order: OrderType, status: OrderStatusType) => void;
-};
-
-export type PreordersToolbarProps = {
-  sortedOrders: OrderType[];
-  filters: PreordersFiltersType;
-  setFilters: PreordersSetFiltersType;
-  users: string[];
-  isAdmin: boolean;
 };
 
 export type CartItemSummaryProps = {

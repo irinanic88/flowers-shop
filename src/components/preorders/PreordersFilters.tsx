@@ -1,26 +1,20 @@
-import { Stack } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
+import { Button, Stack } from '@mui/material';
+import { any, isNotNil } from 'ramda';
 
+import { DateRangePicker } from '@/src/components/common/DateRangePicker';
 import { FilterSelect } from '@/src/components/common/FilterSelect';
 import { orderStatusesDict } from '@/src/constants';
 import { useAuth } from '@/src/context/AuthContext';
-import { OrderStatusType } from '@/src/types/types';
+import { usePreordersContext } from '@/src/context/PreordersContext';
 
-type PreordersFiltersProps = {
-  statusFilter: OrderStatusType | 'all';
-  onStatusChange: (v: string) => void;
-  userFilter: string | 'all';
-  onUserChange: (v: string) => void;
-  users: string[];
-};
-
-export function PreordersFilters({
-  statusFilter,
-  onStatusChange,
-  userFilter,
-  onUserChange,
-  users,
-}: PreordersFiltersProps) {
+export function PreordersFilters() {
   const { isAdmin } = useAuth();
+  const { filters, setFilters, users } = usePreordersContext();
+  const { statusFilter, userFilter, dateRange } = filters;
+  const { setStatusFilter, setUserFilter, setDateRange } = setFilters;
+
+  const isAnyDatePicked = any(isNotNil, dateRange);
 
   return (
     <Stack spacing={1}>
@@ -28,7 +22,7 @@ export function PreordersFilters({
         label="Estado"
         value={statusFilter}
         options={orderStatusesDict}
-        onChange={onStatusChange}
+        onChange={(v) => setStatusFilter(v)}
       />
 
       {isAdmin && (
@@ -36,9 +30,18 @@ export function PreordersFilters({
           label="Usuario"
           value={userFilter}
           options={Object.fromEntries(users.map((u) => [u, u]))}
-          onChange={onUserChange}
+          onChange={(v) => setUserFilter(v)}
         />
       )}
+
+      <Stack direction="row">
+        <DateRangePicker value={dateRange} onChange={(v) => setDateRange(v)} />
+        {isAnyDatePicked && (
+          <Button onClick={() => setDateRange([null, null])}>
+            <CloseIcon />
+          </Button>
+        )}
+      </Stack>
     </Stack>
   );
 }
