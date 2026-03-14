@@ -3,9 +3,9 @@ import { ChipProps } from '@mui/material';
 import { DisponibilityType, OrderStatusType } from '@/src/types/types';
 
 export const orderStatusesDict: Record<OrderStatusType, string> = {
+  pending: 'pendiente',
   approved: 'aprobado',
   cancelled: 'rechazado',
-  pending: 'pendiente',
 };
 
 export const availabilityStatusesDict: Record<DisponibilityType, string> = {

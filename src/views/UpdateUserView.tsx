@@ -1,5 +1,6 @@
 'use client';
 
+import EditNoteIcon from '@mui/icons-material/EditNote';
 import { Stack } from '@mui/material';
 import React from 'react';
 
@@ -14,7 +15,12 @@ interface UpdateUserProps {
 
 export default function UpdateUserView({ open, onClose }: UpdateUserProps) {
   return (
-    <AppDrawer open={open} onClose={onClose} title="Configuración de usuario">
+    <AppDrawer
+      open={open}
+      onClose={onClose}
+      title="Configuración de usuario"
+      icon={<EditNoteIcon />}
+    >
       <Stack sx={{ height: '100%' }} justifyContent="center" spacing={2}>
         <NameUpdateForm />
         <PasswordUpdateForm />

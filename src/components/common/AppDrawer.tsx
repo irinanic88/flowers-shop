@@ -8,32 +8,13 @@ import CustomAlert from '@/src/components/common/CustomAlert';
 import Loader from '@/src/components/common/Loader';
 import { useLoading } from '@/src/context/LoadingContext';
 import { PrimaryButton, SecondaryButton } from '@/src/styledComponents';
-import { AlertType } from '@/src/types/types';
-
-interface AppDrawerProps {
-  alertState?: AlertType;
-  setAlertState?: (state: AlertType) => void;
-  open: boolean;
-  onClose?: () => void;
-  primaryButton?: {
-    disabled?: boolean;
-    handleSubmit: () => void;
-    title: string;
-  };
-  secondaryButton?: {
-    disabled?: boolean;
-    handleSubmit: () => void;
-    title: string;
-  };
-  title?: string;
-  children: React.ReactNode;
-  header?: React.ReactNode;
-}
+import { AppDrawerProps } from '@/src/types/propsTypes';
 
 export function AppDrawer({
   open,
   onClose,
   title,
+  icon,
   header,
   children,
   alertState,
@@ -70,7 +51,10 @@ export function AppDrawer({
             backgroundColor: 'background.paper',
           }}
         >
-          <Typography variant="h6">{title}</Typography>
+          <Stack direction="row" spacing={1.5} alignItems="center">
+            {icon && <Box>{icon}</Box>}
+            <Typography variant="h6">{title}</Typography>
+          </Stack>
 
           {onClose && (
             <IconButton onClick={onClose}>

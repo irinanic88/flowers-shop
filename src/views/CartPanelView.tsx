@@ -1,5 +1,6 @@
 'use client';
 
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { Stack } from '@mui/material';
 import { useState } from 'react';
 
@@ -54,6 +55,7 @@ export default function CartPanelView({ open, onClose }: CartPanelProps) {
       open={open}
       onClose={onClose}
       title={TITLES.titles.cart}
+      icon={<ShoppingCartIcon />}
       primaryButton={{
         title: TITLES.buttons.cart.submit,
         handleSubmit,

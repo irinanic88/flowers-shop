@@ -1,5 +1,6 @@
 'use client';
 
+import GrassIcon from '@mui/icons-material/Grass';
 import React, { useMemo, useState } from 'react';
 
 import { AppDrawer } from '@/src/components/common/AppDrawer';
@@ -71,6 +72,7 @@ export default function AdminProductFormView({
       open={open}
       onClose={onClose}
       title={isEdit ? 'Editar articulo' : 'Agregar articulo'}
+      icon={<GrassIcon />}
       primaryButton={{
         title: isEdit ? 'Guardar cambios' : 'Agregar',
         disabled: !isFormValid,

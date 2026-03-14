@@ -16,7 +16,6 @@ import {
 import React, { useEffect, useState } from 'react';
 
 import { supabase } from '@/lib/supabase';
-import AuthForm from '@/src/components/auth/AuthForm';
 import InviteDialog from '@/src/components/auth/InviteDialog';
 import Layout from '@/src/components/common/Layout';
 import Loader from '@/src/components/common/Loader';
@@ -28,6 +27,8 @@ import {
   SecondaryRoundIconButton,
   WelcomeBox,
 } from '@/src/styledComponents';
+import AuthView from '@/src/views/AuthView';
+import HelpView from '@/src/views/HelpView';
 import UpdateUserView from '@/src/views/UpdateUserView';
 import UsersTabs from '@/src/views/UsersTabs';
 import UserView from '@/src/views/UserView';
@@ -35,6 +36,7 @@ import UserView from '@/src/views/UserView';
 export default function Page() {
   const [openUserForm, setOpenUserForm] = useState(false);
   const [openAuthForm, setOpenAuthForm] = useState(false);
+  const [openHelpView, setOpenHelpView] = useState(false);
   const [openInviteDialog, setOpenInviteDialog] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [inviteUrl, setInviteUrl] = useState<string | null>(null);
@@ -166,7 +168,7 @@ export default function Page() {
             </Typography>
 
             <Typography variant="body1" color="text.secondary">
-              Para ver los precios y realizar pedidos anticipados,{' '}
+              Para ver los precios y realizar pedidos anticipados, <br />
               <RedirectionLink
                 linkText={''}
                 linkTitle={'Inicia session'}
@@ -178,7 +180,7 @@ export default function Page() {
             <RedirectionLink
               linkText={'Primera vez aquí?'}
               linkTitle={'Aprende cómo funciona la aplicación'}
-              onLinkClick={() => {}}
+              onLinkClick={() => setOpenHelpView(true)}
             />
           </WelcomeBox>
 
@@ -194,7 +196,11 @@ export default function Page() {
       )}
 
       {openAuthForm && (
-        <AuthForm open={openAuthForm} onClose={() => setOpenAuthForm(false)} />
+        <AuthView open={openAuthForm} onClose={() => setOpenAuthForm(false)} />
+      )}
+
+      {openHelpView && (
+        <HelpView open={openHelpView} onClose={() => setOpenHelpView(false)} />
       )}
 
       {openInviteDialog && inviteUrl && (

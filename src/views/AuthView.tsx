@@ -1,5 +1,7 @@
 'use client';
 
+import LockOpenIcon from '@mui/icons-material/LockOpen';
+import LoginIcon from '@mui/icons-material/Login';
 import { Stack } from '@mui/material';
 import { equals } from 'ramda';
 import React, { useState } from 'react';
@@ -21,7 +23,7 @@ import {
   SignInFormType,
 } from '@/src/types/types';
 
-export default function AuthForm({ open, onClose }: AuthFormProps) {
+export default function AuthView({ open, onClose }: AuthFormProps) {
   const [mode, setMode] = useState<AuthMode>('signIn');
   const [authForm, setAuthForm] = useState<Record<string, string>>({});
   const [isFormValid, setIsFormValid] = useState(false);
@@ -72,11 +74,14 @@ export default function AuthForm({ open, onClose }: AuthFormProps) {
     onClose();
   };
 
+  const iconTitle = isSignIn ? <LoginIcon /> : <LockOpenIcon />;
+
   return (
     <AppDrawer
       open={open}
       onClose={onClose}
       title={title}
+      icon={iconTitle}
       primaryButton={{
         disabled: !isFormValid || cooldown > 0,
         handleSubmit,
@@ -110,15 +115,26 @@ export default function AuthForm({ open, onClose }: AuthFormProps) {
         )}
 
         {isForgotPassword && (
-          <CommonForm<ForgotPasswordFormType>
-            fillForm={(form, isValid) => {
-              setAuthForm(form);
-              setIsFormValid(isValid);
-            }}
-            formConfig={
-              RequestResetPasswordFormConfig as FormField<ForgotPasswordFormType>[]
-            }
-          />
+          <Stack spacing={2}>
+            <CommonForm<ForgotPasswordFormType>
+              fillForm={(form, isValid) => {
+                setAuthForm(form);
+                setIsFormValid(isValid);
+              }}
+              formConfig={
+                RequestResetPasswordFormConfig as FormField<ForgotPasswordFormType>[]
+              }
+            />
+            <RedirectionLink
+              linkText=""
+              linkTitle="Volver atras"
+              onLinkClick={() => {
+                setAuthForm({});
+                setIsFormValid(false);
+                setMode('signIn');
+              }}
+            />
+          </Stack>
         )}
       </Stack>
     </AppDrawer>

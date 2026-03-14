@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import React, { ReactNode } from 'react';
 
 import {
   AlertType,
@@ -98,4 +98,25 @@ export type AlertContextType = {
   alert: AlertType;
   showAlert: (alert: NonNullable<AlertType>) => void;
   clearAlert: () => void;
+};
+
+export type AppDrawerProps = {
+  alertState?: AlertType;
+  setAlertState?: (state: AlertType) => void;
+  open: boolean;
+  onClose?: () => void;
+  icon?: React.ReactNode;
+  primaryButton?: {
+    disabled?: boolean;
+    handleSubmit: () => void;
+    title: string;
+  };
+  secondaryButton?: {
+    disabled?: boolean;
+    handleSubmit: () => void;
+    title: string;
+  };
+  title?: string;
+  children: React.ReactNode;
+  header?: React.ReactNode;
 };
