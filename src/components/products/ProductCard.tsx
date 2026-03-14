@@ -3,7 +3,7 @@
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import { Typography, Box, Stack, Divider } from '@mui/material';
-import React, { useState } from 'react';
+import React from 'react';
 
 import IncrementDecrementButtons from '@/src/components/common/IncrementDecrementButtons';
 import ProductImages from '@/src/components/products/ProductImages';
@@ -16,16 +16,32 @@ import {
   CardDeleteButton,
 } from '@/src/styledComponents';
 import { ProductCardProps } from '@/src/types/propsTypes';
-import AdminProductFormView from '@/src/views/AdminProductFormView';
 
-export default function ProductCard({ product, onDelete }: ProductCardProps) {
-  const [openUpdate, setOpenUpdate] = useState(false);
-
-  const { isAdmin, isUser, isUnknownUser } = useAuth();
+export default function ProductCard({
+  product,
+  onDelete,
+  onEdit,
+}: ProductCardProps) {
+  const { isAdmin, isUser } = useAuth();
   const { items, updateItemQuantity } = useCart();
-  const itemInCart = items.find((i) => i.id === product.id);
-  const quantity = itemInCart?.quantity ?? 0;
-  const totalUds = product.pots_count * quantity;
+
+  const cartItem = items.find((i) => i.id === product.id);
+  const quantity = cartItem?.quantity ?? 0;
+  const totalUnits = product.pots_count * quantity;
+  const availableStock = product.available - quantity;
+
+  const handleQuantityChange = (q: number) => {
+    updateItemQuantity(
+      {
+        id: product.id,
+        title: product.title,
+        price: product.price,
+        available: product.available,
+        pots_count: product.pots_count,
+      },
+      q,
+    );
+  };
 
   return (
     <PanelCard
@@ -50,14 +66,13 @@ export default function ProductCard({ product, onDelete }: ProductCardProps) {
             >
               {product.title}
             </Typography>
-            {!isUnknownUser && (
-              <Typography
-                variant="body2"
-                color={product.available > 0 ? 'primary' : 'error'}
-              >
-                En Stock: {product.available - quantity}
-              </Typography>
-            )}
+
+            <Typography
+              variant="body2"
+              color={product.available > 0 ? 'primary' : 'error'}
+            >
+              Disponible: {availableStock}
+            </Typography>
           </Stack>
 
           <Stack direction="row" spacing={2} alignItems="flex-start">
@@ -78,7 +93,7 @@ export default function ProductCard({ product, onDelete }: ProductCardProps) {
               />
             </Box>
 
-            <ProductInfo product={product} showPrice={!isUnknownUser} />
+            <ProductInfo product={product} />
           </Stack>
 
           <Stack spacing={1}>
@@ -103,7 +118,7 @@ export default function ProductCard({ product, onDelete }: ProductCardProps) {
               sx={{ mt: 2 }}
             >
               <CardEditButton
-                onClick={() => setOpenUpdate(true)}
+                onClick={() => onEdit(product)}
                 startIcon={<EditIcon fontSize="small" />}
               >
                 Editar
@@ -132,38 +147,19 @@ export default function ProductCard({ product, onDelete }: ProductCardProps) {
                 <IncrementDecrementButtons
                   inStock={product.available}
                   quantity={quantity}
-                  onChange={(q) =>
-                    updateItemQuantity(
-                      {
-                        id: product.id,
-                        title: product.title,
-                        price: product.price,
-                        available: product.available,
-                        pots_count: product.pots_count,
-                      },
-                      q,
-                    )
-                  }
+                  onChange={handleQuantityChange}
                 />
               </Stack>
               <Typography variant="body1">
-                {totalUds
+                {totalUnits
                   ? `Total : ${quantity} Cajas x ${product.pots_count} Uds = 
-                ${totalUds} Uds`
+                ${totalUnits} Uds`
                   : 'Total: 0 Uds'}
               </Typography>
             </Stack>
           )}
         </Stack>
       </Stack>
-
-      {openUpdate && (
-        <AdminProductFormView
-          open={openUpdate}
-          onClose={() => setOpenUpdate(false)}
-          product={product}
-        />
-      )}
     </PanelCard>
   );
 }

@@ -1,90 +1,73 @@
-'use client';
-
-import { Stack, Typography } from '@mui/material';
-import { useState } from 'react';
+import { Box } from '@mui/material';
+import React, { useState } from 'react';
 
 import DeleteProductDialog from '@/src/components/products/DeleteProductDialog';
-import { ProductsFilters } from '@/src/components/products/ProductsFilters';
 import ProductsGrid from '@/src/components/products/ProductsGrid';
-import { useAlert } from '@/src/context/AlertContext';
-import { useAuth } from '@/src/context/AuthContext';
-import { useProducts } from '@/src/context/ProductsContext';
-import { useDeleteProduct } from '@/src/hooks/api';
-import { useFilteredProducts } from '@/src/hooks/useFilteredProducts';
-import type { DisponibilityType, ProductType } from '@/src/types/types';
+import ProductsTable from '@/src/components/products/ProductsTable';
+import { ProductsPageProps } from '@/src/types/propsTypes';
+import { ProductType } from '@/src/types/types';
+import AdminProductFormView from '@/src/views/AdminProductFormView';
 
-export default function ProductsPage() {
+export default function ProductsPage({
+  products,
+  viewMode,
+  sortBy,
+  sortDir,
+  toggleSort,
+}: ProductsPageProps) {
   const [selectedProduct, setSelectedProduct] = useState<ProductType | null>(
     null,
   );
-  const [availabilityFilter, setAvailabilityFilter] = useState<
-    DisponibilityType | 'all'
-  >('all');
-  const [searchTerm, setSearchTerm] = useState('');
-  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [actionsState, setActionsState] = useState({
+    edit: false,
+    delete: false,
+  });
 
-  const { products } = useProducts();
-  const { isUnknownUser, isAdmin } = useAuth();
-  const { showAlert } = useAlert();
-  const { deleteProduct } = useDeleteProduct();
-
-  const filteredProducts = useFilteredProducts(
-    products,
-    availabilityFilter,
-    searchTerm,
-    isAdmin,
-  );
-
-  const handleDeleteProduct = async () => {
-    if (!selectedProduct) return;
-
-    const { error, success } = await deleteProduct(selectedProduct);
-
-    if (error) return showAlert(error);
-    if (success) showAlert(success);
-
-    setOpenDeleteDialog(false);
+  const handleUpdateTrigger = (
+    p: ProductType | null,
+    dialog: keyof typeof actionsState,
+    dialogState: boolean,
+  ) => {
+    setSelectedProduct(p);
+    setActionsState((prev) => ({ ...prev, [dialog]: dialogState }));
   };
 
   return (
-    <>
-      <Stack spacing={2} sx={{ width: '100%' }}>
-        {isUnknownUser && (
-          <Typography sx={{ textAlign: 'center', my: 4 }} variant="h4">
-            Disponible para pedir
-          </Typography>
-        )}
+    <Box>
+      {viewMode === 'cards' && (
+        <ProductsGrid
+          products={products}
+          onDelete={(p) => handleUpdateTrigger(p, 'delete', true)}
+          onEdit={(p) => handleUpdateTrigger(p, 'edit', true)}
+        />
+      )}
 
-        {isAdmin && (
-          <ProductsFilters
-            availabilityFilter={availabilityFilter}
-            searchFilter={searchTerm}
-            onAvailabilityChange={setAvailabilityFilter}
-            onSearchChange={setSearchTerm}
-          />
-        )}
+      {viewMode === 'table' && (
+        <ProductsTable
+          products={products}
+          onDelete={(p) => handleUpdateTrigger(p, 'delete', true)}
+          onEdit={(p) => handleUpdateTrigger(p, 'edit', true)}
+          sortBy={sortBy}
+          sortDir={sortDir}
+          toggleSort={toggleSort}
+        />
+      )}
 
-        {filteredProducts.length > 0 ? (
-          <ProductsGrid
-            products={filteredProducts}
-            onDelete={(product) => {
-              setSelectedProduct(product);
-              setOpenDeleteDialog(true);
-            }}
-          />
-        ) : (
-          <Typography textAlign="center" color="text.secondary">
-            No hay productos disponibles por el momento.
-          </Typography>
-        )}
-      </Stack>
+      {actionsState.delete && selectedProduct && (
+        <DeleteProductDialog
+          product={selectedProduct}
+          open={actionsState.delete}
+          onClose={() => handleUpdateTrigger(null, 'delete', false)}
+        />
+      )}
 
-      <DeleteProductDialog
-        product={selectedProduct}
-        open={openDeleteDialog}
-        onClose={() => setOpenDeleteDialog(false)}
-        onConfirm={handleDeleteProduct}
-      />
-    </>
+      {actionsState.edit && selectedProduct && (
+        <AdminProductFormView
+          open={actionsState.edit}
+          onClose={() => handleUpdateTrigger(null, 'edit', false)}
+          product={selectedProduct}
+        />
+      )}
+    </Box>
   );
 }

@@ -12,29 +12,23 @@ import React from 'react';
 
 import { FilterSelect } from '@/src/components/common/FilterSelect';
 import { availabilityStatusesDict } from '@/src/constants';
-import { DisponibilityType } from '@/src/types/types';
-
-type ProductsFiltersProps = {
-  availabilityFilter: DisponibilityType | 'all';
-  onAvailabilityChange: (v: DisponibilityType | 'all') => void;
-  onSearchChange: (v: string) => void;
-  searchFilter: string;
-};
+import { ProductsFiltersProps } from '@/src/types/propsTypes';
 
 export function ProductsFilters({
   availabilityFilter,
+  isProductListEmpty,
   onAvailabilityChange,
   searchFilter,
   onSearchChange,
 }: ProductsFiltersProps) {
   return (
-    <Stack spacing={2}>
+    <Stack spacing={2} sx={{ width: '100%' }}>
       <OutlinedInput
         size="small"
         value={searchFilter}
         placeholder="Buscar articulos"
         onChange={(e) => onSearchChange(e.target.value)}
-        sx={{ width: { xs: '100%', md: '350px' } }}
+        sx={{ width: { xs: '100%', md: '350px' }, borderRadius: 12 }}
         startAdornment={
           <InputAdornment position="start">
             <SearchIcon />
@@ -54,12 +48,14 @@ export function ProductsFilters({
           ) : null
         }
       />
-      <FilterSelect
-        label="Disponibilidad"
-        value={availabilityFilter}
-        options={availabilityStatusesDict}
-        onChange={onAvailabilityChange}
-      />
+      {!isProductListEmpty && (
+        <FilterSelect
+          label="Disponibilidad"
+          value={availabilityFilter}
+          options={availabilityStatusesDict}
+          onChange={onAvailabilityChange}
+        />
+      )}
     </Stack>
   );
 }

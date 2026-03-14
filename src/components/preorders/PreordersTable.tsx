@@ -5,7 +5,6 @@ import {
   TableBody,
   TableHead,
   TableRow,
-  TableCell,
   TableContainer,
   TablePagination,
   Paper,
@@ -14,6 +13,7 @@ import {
 
 import { useAuth } from '@/src/context/AuthContext';
 import { usePreordersContext } from '@/src/context/PreordersContext';
+import { TableHeaderCell } from '@/src/styledComponents';
 
 import { PreordersRow } from './PreordersRow';
 
@@ -36,34 +36,16 @@ export function PreordersTable() {
       <Table>
         <TableHead>
           <TableRow>
-            <TableCell />
-            <TableCell>ID</TableCell>
+            <TableHeaderCell />
+            <TableHeaderCell>ID</TableHeaderCell>
 
-            {isAdmin && (
-              <TableCell>
-                <TableSortLabel
-                  active={sortBy === 'user'}
-                  direction={sortDir}
-                  onClick={() => toggleSort('user')}
-                >
-                  Usuario
-                </TableSortLabel>
-              </TableCell>
-            )}
+            {isAdmin && <TableHeaderCell>Usuario</TableHeaderCell>}
 
-            <TableCell>
-              <TableSortLabel
-                active={sortBy === 'status'}
-                direction={sortDir}
-                onClick={() => toggleSort('status')}
-              >
-                Estado
-              </TableSortLabel>
-            </TableCell>
+            <TableHeaderCell>Estado</TableHeaderCell>
 
-            <TableCell>Total</TableCell>
+            <TableHeaderCell>Total</TableHeaderCell>
 
-            <TableCell>
+            <TableHeaderCell>
               <TableSortLabel
                 active={sortBy === 'date'}
                 direction={sortDir}
@@ -71,20 +53,24 @@ export function PreordersTable() {
               >
                 Fecha
               </TableSortLabel>
-            </TableCell>
+            </TableHeaderCell>
 
-            <TableCell>Comentarios</TableCell>
+            <TableHeaderCell>Comentarios</TableHeaderCell>
 
-            {isAdmin && <TableCell align="center">Aprobar</TableCell>}
-            {isAdmin && <TableCell align="center">Rechazar</TableCell>}
+            {isAdmin && (
+              <TableHeaderCell align="center">Aprobar</TableHeaderCell>
+            )}
+            {isAdmin && (
+              <TableHeaderCell align="center">Rechazar</TableHeaderCell>
+            )}
           </TableRow>
         </TableHead>
         <TableBody>
           {orders.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={isAdmin ? 9 : 6} align="center">
+              <TableHeaderCell colSpan={isAdmin ? 9 : 6} align="center">
                 No hay pedidos todavía
-              </TableCell>
+              </TableHeaderCell>
             </TableRow>
           ) : (
             orders.map((order) => <PreordersRow key={order.id} order={order} />)

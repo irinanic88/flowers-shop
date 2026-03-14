@@ -6,6 +6,7 @@ import { ProductsGridProps } from '@/src/types/propsTypes';
 export default function ProductsGrid({
   products,
   onDelete,
+  onEdit,
 }: ProductsGridProps) {
   return (
     <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
@@ -22,7 +23,8 @@ export default function ProductsGrid({
             <ProductCard
               key={product.id}
               product={product}
-              onDelete={onDelete}
+              onDelete={(p) => onDelete(p)}
+              onEdit={(p) => onEdit(p)}
             />
           ))}
         </Box>
