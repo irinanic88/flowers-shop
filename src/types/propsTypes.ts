@@ -1,12 +1,13 @@
-import React, { ReactNode } from 'react';
+import React, { ReactNode } from "react";
 
 import {
   AlertType,
   AnyFormField,
   CartItem,
+  MenuAction,
   OrderType,
   ProductType,
-} from '@/src/types/types';
+} from "@/src/types/types";
 
 export interface AdminProductFormProps {
   open: boolean;
@@ -40,7 +41,7 @@ export interface ProductCardProps {
 export type CartContextType = {
   items: CartItem[];
   updateItemQuantity: (
-    product: Omit<CartItem, 'quantity'>,
+    product: Omit<CartItem, "quantity">,
     quantity: number,
   ) => void;
   removeFromCart: (id: string) => void;
@@ -64,7 +65,7 @@ export type AuthFormProps = {
   onClose: () => void;
 };
 
-export type AuthMode = 'signIn' | 'forgotPassword';
+export type AuthMode = "signIn" | "forgotPassword";
 
 export interface CartItemCardProps {
   item: CartItem;
@@ -119,4 +120,29 @@ export type AppDrawerProps = {
   title?: string;
   children: React.ReactNode;
   header?: React.ReactNode;
+};
+
+export type UserMenuProps = {
+  anchorEl: HTMLElement | null;
+  onClose: () => void;
+  actions: MenuAction[];
+};
+
+export type HeaderActionsProps = {
+  actions: MenuAction[];
+  name?: string;
+  isUnknownUser: boolean;
+  onLogin: () => void;
+};
+
+export type DeleteProductDialogProps = {
+  product: ProductType | null;
+  open: boolean;
+  onClose: () => void;
+  onConfirm: () => void;
+};
+
+export type ProductsGridProps = {
+  products: ProductType[];
+  onDelete: (product: ProductType) => void;
 };

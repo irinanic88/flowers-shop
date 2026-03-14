@@ -53,7 +53,7 @@ export default function Layout({ actions, children }: LayoutProps) {
           flex: 1,
         }}
         px={{ xs: 3, md: 5 }}
-        pb={10}
+        pb={3}
         alignItems="center"
       >
         {alert && <CustomAlert alertState={alert} onClose={clearAlert} />}
