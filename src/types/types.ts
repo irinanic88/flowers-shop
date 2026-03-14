@@ -1,5 +1,5 @@
-import { AlertColor } from "@mui/material";
-import React from "react";
+import { AlertColor } from '@mui/material';
+import React from 'react';
 
 export interface ProductType {
   id: string;
@@ -18,7 +18,7 @@ export interface ProductType {
 export interface UserType {
   id: string;
   name?: string;
-  role?: "user" | "admin";
+  role?: 'user' | 'admin';
   created_at?: string;
   email?: string;
 }
@@ -60,8 +60,8 @@ export interface OrderItem {
   pots_count: number;
 }
 
-export type OrderStatusType = "pending" | "approved" | "cancelled";
-export type DisponibilityType = "available" | "outOfStock";
+export type OrderStatusType = 'pending' | 'approved' | 'cancelled';
+export type DisponibilityType = 'available' | 'outOfStock';
 
 export interface OrderType {
   id: number;
@@ -82,12 +82,12 @@ export type AlertType = {
 } | null;
 
 export type InputFieldType =
-  | "text"
-  | "number"
-  | "password"
-  | "textarea"
-  | "images"
-  | "confirm";
+  | 'text'
+  | 'number'
+  | 'password'
+  | 'textarea'
+  | 'images'
+  | 'confirm';
 
 export type FormField<Form> = {
   disabled?: boolean;

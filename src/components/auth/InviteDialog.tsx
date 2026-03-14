@@ -1,4 +1,3 @@
-import CloseIcon from '@mui/icons-material/Close';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import {
   Stack,
@@ -6,12 +5,14 @@ import {
   DialogTitle,
   DialogContent,
   Typography,
-  IconButton,
 } from '@mui/material';
 import React, { useState } from 'react';
 
 import { useAlert } from '@/src/context/AlertContext';
-import { SecondaryRoundIconButton } from '@/src/styledComponents';
+import {
+  SecondaryButton,
+  SecondaryRoundIconButton,
+} from '@/src/styledComponents';
 
 type InviteDialogProps = {
   link: string;
@@ -63,17 +64,7 @@ export default function InviteDialog({
     <>
       <Dialog open={open} onClose={onClose}>
         <DialogTitle>
-          <Stack
-            alignItems="center"
-            justifyContent="space-between"
-            direction="row"
-          >
-            <Typography variant="h6">Enlace de invitación</Typography>
-
-            <IconButton onClick={onClose}>
-              <CloseIcon fontSize="small" />
-            </IconButton>
-          </Stack>
+          <Typography variant="h6">Enlace de invitación</Typography>
         </DialogTitle>
 
         <DialogContent sx={{ p: 3 }}>
@@ -91,6 +82,9 @@ export default function InviteDialog({
             <SecondaryRoundIconButton disabled={copied} onClick={handleCopy}>
               <ContentCopyIcon fontSize="small" />
             </SecondaryRoundIconButton>
+          </Stack>
+          <Stack alignItems="center" mt={2}>
+            <SecondaryButton onClick={onClose}>Cerrar</SecondaryButton>
           </Stack>
         </DialogContent>
       </Dialog>

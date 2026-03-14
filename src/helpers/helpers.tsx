@@ -1,7 +1,8 @@
-import React from "react";
-import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
+import { supabase } from "@/lib/supabase";
 import EditIcon from "@mui/icons-material/Edit";
 import LogoutIcon from "@mui/icons-material/Logout";
+import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
+import React from "react";
 
 export function getMenuActions({
   isAdmin,

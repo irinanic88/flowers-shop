@@ -134,3 +134,15 @@ export type HeaderActionsProps = {
   isUnknownUser: boolean;
   onLogin: () => void;
 };
+
+export type DeleteProductDialogProps = {
+  product: ProductType | null;
+  open: boolean;
+  onClose: () => void;
+  onConfirm: () => void;
+};
+
+export type ProductsGridProps = {
+  products: ProductType[];
+  onDelete: (product: ProductType) => void;
+};

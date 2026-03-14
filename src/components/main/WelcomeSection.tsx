@@ -1,7 +1,8 @@
-import RedirectionLink from "@/src/components/common/RedirectionLink.tsx";
-import { WelcomeBox } from "@/src/styledComponents.tsx";
-import { Stack, Typography } from "@mui/material";
-import React from "react";
+import { Typography } from '@mui/material';
+import React from 'react';
+
+import RedirectionLink from '@/src/components/common/RedirectionLink';
+import { WelcomeBox } from '@/src/styledComponents';
 
 export default function WelcomeSection({
   onLogin,
@@ -11,7 +12,7 @@ export default function WelcomeSection({
   onHelp: () => void;
 }) {
   return (
-    <WelcomeBox spacing={2} sx={{ mt: 2, height: "100%" }}>
+    <WelcomeBox spacing={2} sx={{ mt: 2, height: '100%' }}>
       <Typography variant="h5">Bienvenido a Andrés Plant Select! 🌿</Typography>
 
       <Typography color="text.secondary">
@@ -26,7 +27,7 @@ export default function WelcomeSection({
           linkText=""
           linkTitle="Inicia sesión"
           onLinkClick={onLogin}
-        />{" "}
+        />{' '}
         o <strong>regístrate con una invitación</strong>.
       </Typography>
 

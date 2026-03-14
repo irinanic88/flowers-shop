@@ -1,29 +1,15 @@
 "use client";
 
-import InviteDialog from "@/src/components/auth/InviteDialog.tsx";
-import HeaderActions from "@/src/components/main/HeaderActions.tsx";
-import UserMenu from "@/src/components/main/UserMenu.tsx";
-import WelcomeSection from "@/src/components/main/WelcomeSection.tsx";
-import { getMenuActions } from "@/src/helpers/helpers.tsx";
-import EditIcon from "@mui/icons-material/Edit";
-import LogoutIcon from "@mui/icons-material/Logout";
-import MenuIcon from "@mui/icons-material/Menu";
-import PersonIcon from "@mui/icons-material/Person";
-import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
-import {
-  ListItemIcon,
-  ListItemText,
-  Menu,
-  MenuItem,
-  Stack,
-  Typography,
-} from "@mui/material";
 import React, { useEffect, useState } from "react";
 
 import { supabase } from "@/lib/supabase";
+import InviteDialog from "@/src/components/auth/InviteDialog";
 import Layout from "@/src/components/common/Layout";
 import Loader from "@/src/components/common/Loader";
+import HeaderActions from "@/src/components/main/HeaderActions";
+import WelcomeSection from "@/src/components/main/WelcomeSection";
 import { useAuth } from "@/src/context/AuthContext";
+import { getMenuActions } from "@/src/helpers/helpers";
 import AuthView from "@/src/views/AuthView";
 import HelpView from "@/src/views/HelpView";
 import UpdateUserView from "@/src/views/UpdateUserView";
@@ -93,7 +79,7 @@ export default function Page() {
     <Layout
       actions={
         <HeaderActions
-          name={name}
+          name={name as string}
           isUnknownUser={isUnknownUser}
           onLogin={() => openDialog("auth")}
           actions={actions}
@@ -119,10 +105,10 @@ export default function Page() {
 
       {dialogs.help && <HelpView open onClose={() => closeDialog("help")} />}
 
-      {dialogs.invite && (
+      {dialogs.invite && inviteUrl && (
         <InviteDialog
           link={inviteUrl}
-          open={open}
+          open
           onClose={() => closeDialog("invite")}
         />
       )}

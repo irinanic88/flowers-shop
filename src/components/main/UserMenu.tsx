@@ -1,8 +1,9 @@
-"use client";
+'use client';
 
-import { UserMenuProps } from "@/src/types/propsTypes";
-import { Menu, MenuItem, ListItemIcon, ListItemText } from "@mui/material";
-import React from "react";
+import { Menu, MenuItem, ListItemIcon, ListItemText } from '@mui/material';
+import React from 'react';
+
+import { UserMenuProps } from '@/src/types/propsTypes';
 
 export default function UserMenu({
   anchorEl,
@@ -14,8 +15,8 @@ export default function UserMenu({
       anchorEl={anchorEl}
       open={Boolean(anchorEl)}
       onClose={onClose}
-      anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-      transformOrigin={{ vertical: "top", horizontal: "right" }}
+      anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+      transformOrigin={{ vertical: 'top', horizontal: 'right' }}
     >
       {actions
         .filter(({ visibility }) => visibility)
