@@ -121,17 +121,33 @@ export default function HelpView({
           </Stack>
 
           <Typography variant="body2" color="text.secondary">
-            Cuando realizas un pedido su estado inicial será:
+            Cuando realizas un pedido su estado inicial será
+          </Typography>
+          <StyledChip
+            label={orderStatusesDict.pending}
+            color={statusColorsDict.pending}
+            variant="outlined"
+            sx={{ width: 100 }}
+          />
+          <Typography variant="body2" color="text.secondary">
+            Esto significa que el pedido ha sido recibido y los productos quedan
+            reservados para ti temporalmente mientras el administrador revisa el
+            pedido. <br /> Después el administrador podrá: <br /> Aprobar el
+            pedido → El pedido será preparado. <br /> Rechazar el pedido → El
+            pedido no podrá ser realizado.
           </Typography>
 
           <Stack direction="row" spacing={3}>
-            {Object.keys(orderStatusesDict).map((status) => (
-              <StyledChip
-                label={orderStatusesDict[status]}
-                color={statusColorsDict[status]}
-                variant="outlined"
-              />
-            ))}
+            <StyledChip
+              label={orderStatusesDict.approved}
+              color={statusColorsDict.approved}
+              variant="outlined"
+            />{" "}
+            <StyledChip
+              label={orderStatusesDict.cancelled}
+              color={statusColorsDict.cancelled}
+              variant="outlined"
+            />
           </Stack>
 
           <Typography variant="body2" color="text.secondary">

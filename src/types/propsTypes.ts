@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import React, { ReactNode } from "react";
 
 import {
   AlertType,
@@ -6,7 +6,7 @@ import {
   CartItem,
   OrderType,
   ProductType,
-} from '@/src/types/types';
+} from "@/src/types/types";
 
 export interface AdminProductFormProps {
   open: boolean;
@@ -40,7 +40,7 @@ export interface ProductCardProps {
 export type CartContextType = {
   items: CartItem[];
   updateItemQuantity: (
-    product: Omit<CartItem, 'quantity'>,
+    product: Omit<CartItem, "quantity">,
     quantity: number,
   ) => void;
   removeFromCart: (id: string) => void;
@@ -64,7 +64,7 @@ export type AuthFormProps = {
   onClose: () => void;
 };
 
-export type AuthMode = 'signIn' | 'forgotPassword';
+export type AuthMode = "signIn" | "forgotPassword";
 
 export interface CartItemCardProps {
   item: CartItem;
@@ -98,4 +98,25 @@ export type AlertContextType = {
   alert: AlertType;
   showAlert: (alert: NonNullable<AlertType>) => void;
   clearAlert: () => void;
+};
+
+export type AppDrawerProps = {
+  alertState?: AlertType;
+  setAlertState?: (state: AlertType) => void;
+  open: boolean;
+  onClose?: () => void;
+  icon?: React.ReactNode;
+  primaryButton?: {
+    disabled?: boolean;
+    handleSubmit: () => void;
+    title: string;
+  };
+  secondaryButton?: {
+    disabled?: boolean;
+    handleSubmit: () => void;
+    title: string;
+  };
+  title?: string;
+  children: React.ReactNode;
+  header?: React.ReactNode;
 };

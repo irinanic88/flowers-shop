@@ -17,7 +17,7 @@ import {
 import React, { useEffect, useState } from "react";
 
 import { supabase } from "@/lib/supabase";
-import AuthForm from "@/src/components/auth/AuthForm";
+import AuthView from "@/src/views/AuthView.tsx";
 import InviteDialog from "@/src/components/auth/InviteDialog";
 import Layout from "@/src/components/common/Layout";
 import Loader from "@/src/components/common/Loader";
@@ -169,7 +169,7 @@ export default function Page() {
             </Typography>
 
             <Typography variant="body1" color="text.secondary">
-              Para ver los precios y realizar pedidos anticipados,{" "}
+              Para ver los precios y realizar pedidos anticipados, <br />
               <RedirectionLink
                 linkText={""}
                 linkTitle={"Inicia session"}
@@ -197,7 +197,7 @@ export default function Page() {
       )}
 
       {openAuthForm && (
-        <AuthForm open={openAuthForm} onClose={() => setOpenAuthForm(false)} />
+        <AuthView open={openAuthForm} onClose={() => setOpenAuthForm(false)} />
       )}
 
       {openHelpView && (

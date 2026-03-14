@@ -1,11 +1,12 @@
-'use client';
+"use client";
 
-import { Stack } from '@mui/material';
-import React from 'react';
+import { Stack } from "@mui/material";
+import React from "react";
 
-import NameUpdateForm from '@/src/components/auth/NameUpdateForm';
-import PasswordUpdateForm from '@/src/components/auth/PasswordUpdateForm';
-import { AppDrawer } from '@/src/components/common/AppDrawer';
+import NameUpdateForm from "@/src/components/auth/NameUpdateForm";
+import PasswordUpdateForm from "@/src/components/auth/PasswordUpdateForm";
+import { AppDrawer } from "@/src/components/common/AppDrawer";
+import EditNoteIcon from "@mui/icons-material/EditNote";
 
 interface UpdateUserProps {
   open: boolean;
@@ -14,8 +15,13 @@ interface UpdateUserProps {
 
 export default function UpdateUserView({ open, onClose }: UpdateUserProps) {
   return (
-    <AppDrawer open={open} onClose={onClose} title="Configuración de usuario">
-      <Stack sx={{ height: '100%' }} justifyContent="center" spacing={2}>
+    <AppDrawer
+      open={open}
+      onClose={onClose}
+      title="Configuración de usuario"
+      icon={<EditNoteIcon />}
+    >
+      <Stack sx={{ height: "100%" }} justifyContent="center" spacing={2}>
         <NameUpdateForm />
         <PasswordUpdateForm />
       </Stack>

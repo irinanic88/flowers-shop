@@ -1,39 +1,20 @@
-'use client';
+"use client";
 
-import CloseIcon from '@mui/icons-material/Close';
-import { Drawer, Box, IconButton, Typography, Stack } from '@mui/material';
-import React from 'react';
+import { AppDrawerProps } from "@/src/types/propsTypes";
+import CloseIcon from "@mui/icons-material/Close";
+import { Drawer, Box, IconButton, Typography, Stack } from "@mui/material";
+import React from "react";
 
-import CustomAlert from '@/src/components/common/CustomAlert';
-import Loader from '@/src/components/common/Loader';
-import { useLoading } from '@/src/context/LoadingContext';
-import { PrimaryButton, SecondaryButton } from '@/src/styledComponents';
-import { AlertType } from '@/src/types/types';
-
-interface AppDrawerProps {
-  alertState?: AlertType;
-  setAlertState?: (state: AlertType) => void;
-  open: boolean;
-  onClose?: () => void;
-  primaryButton?: {
-    disabled?: boolean;
-    handleSubmit: () => void;
-    title: string;
-  };
-  secondaryButton?: {
-    disabled?: boolean;
-    handleSubmit: () => void;
-    title: string;
-  };
-  title?: string;
-  children: React.ReactNode;
-  header?: React.ReactNode;
-}
+import CustomAlert from "@/src/components/common/CustomAlert";
+import Loader from "@/src/components/common/Loader";
+import { useLoading } from "@/src/context/LoadingContext";
+import { PrimaryButton, SecondaryButton } from "@/src/styledComponents";
 
 export function AppDrawer({
   open,
   onClose,
   title,
+  icon,
   header,
   children,
   alertState,
@@ -50,9 +31,9 @@ export function AppDrawer({
       onClose={onClose}
       PaperProps={{
         sx: {
-          backgroundColor: 'secondary',
-          maxWidth: '400px',
-          width: '100%',
+          backgroundColor: "secondary",
+          maxWidth: "400px",
+          width: "100%",
         },
       }}
     >
@@ -60,17 +41,20 @@ export function AppDrawer({
         <Box
           sx={{
             p: 2,
-            borderBottom: '1px solid #eee',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            position: 'sticky',
+            borderBottom: "1px solid #eee",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            position: "sticky",
             top: 0,
             zIndex: 10,
-            backgroundColor: 'background.paper',
+            backgroundColor: "background.paper",
           }}
         >
-          <Typography variant="h6">{title}</Typography>
+          <Stack direction="row" spacing={1.5} alignItems="center">
+            {icon && <Box>{icon}</Box>}
+            <Typography variant="h6">{title}</Typography>
+          </Stack>
 
           {onClose && (
             <IconButton onClick={onClose}>
@@ -82,7 +66,7 @@ export function AppDrawer({
 
       {header}
 
-      <Stack sx={{ position: 'relative', height: '100vh' }}>
+      <Stack sx={{ position: "relative", height: "100vh" }}>
         {alertState && (
           <CustomAlert
             alertState={alertState}
@@ -93,13 +77,13 @@ export function AppDrawer({
         {loading ? (
           <Loader />
         ) : (
-          <Stack alignItems="center" sx={{ width: '100%', height: '100%' }}>
+          <Stack alignItems="center" sx={{ width: "100%", height: "100%" }}>
             <Stack
               sx={{
-                height: '100%',
+                height: "100%",
                 p: 2,
-                overflowY: 'auto',
-                width: { xs: '100%', md: 400 },
+                overflowY: "auto",
+                width: { xs: "100%", md: 400 },
               }}
               justifyContent="space-between"
             >
