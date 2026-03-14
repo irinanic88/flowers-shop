@@ -1,37 +1,32 @@
-"use client";
+'use client';
 
-import { AppDrawer } from "@/src/components/common/AppDrawer.tsx";
-import { orderStatusesDict, statusColorsDict } from "@/src/constants.ts";
-import BlockIcon from "@mui/icons-material/Block";
-import GrassIcon from "@mui/icons-material/Grass";
-import HeightIcon from "@mui/icons-material/Height";
-import Inventory2Icon from "@mui/icons-material/Inventory2";
-import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-import PendingIcon from "@mui/icons-material/Pending";
-import EuroIcon from "@mui/icons-material/Euro";
-import TableRowsIcon from "@mui/icons-material/TableRows";
-import PersonIcon from "@mui/icons-material/Person";
-import ImageIcon from "@mui/icons-material/Image";
-import { Stack, Typography, Box, Badge, Fab } from "@mui/material";
+import BlockIcon from '@mui/icons-material/Block';
+import EuroIcon from '@mui/icons-material/Euro';
+import GrassIcon from '@mui/icons-material/Grass';
+import HeightIcon from '@mui/icons-material/Height';
+import ImageIcon from '@mui/icons-material/Image';
+import Inventory2Icon from '@mui/icons-material/Inventory2';
+import PendingIcon from '@mui/icons-material/Pending';
+import PersonIcon from '@mui/icons-material/Person';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import TableRowsIcon from '@mui/icons-material/TableRows';
+import { Stack, Typography } from '@mui/material';
+import React from 'react';
 
-import {
-  RoundIconButton,
-  StyledChip,
-  WelcomeBox,
-} from "@/src/styledComponents";
-import Image from "next/image";
-import React from "react";
+import { AppDrawer } from '@/src/components/common/AppDrawer';
+import { orderStatusesDict, statusColorsDict } from '@/src/constants';
+import { StyledChip } from '@/src/styledComponents';
 
 export default function HelpView({
   open,
   onClose,
 }: {
   open: boolean;
-  onClose: (v: boolean) => void;
+  onClose: () => void;
 }) {
   return (
     <AppDrawer open={open} onClose={onClose} title="Cómo usar la aplicación">
-      <Stack sx={{ width: "100%" }} alignItems="center" spacing={2.5}>
+      <Stack sx={{ width: '100%' }} alignItems="center" spacing={2.5}>
         <Typography variant="body1" color="text.secondary">
           Esta aplicación te permite consultar el catálogo de plantas, reservar
           productos y seguir el estado de tus pedidos.
@@ -142,7 +137,7 @@ export default function HelpView({
               label={orderStatusesDict.approved}
               color={statusColorsDict.approved}
               variant="outlined"
-            />{" "}
+            />{' '}
             <StyledChip
               label={orderStatusesDict.cancelled}
               color={statusColorsDict.cancelled}

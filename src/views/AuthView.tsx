@@ -1,37 +1,37 @@
-"use client";
+'use client';
 
-import { Stack } from "@mui/material";
-import { equals } from "ramda";
-import React, { useState } from "react";
+import LockOpenIcon from '@mui/icons-material/LockOpen';
+import LoginIcon from '@mui/icons-material/Login';
+import { Stack } from '@mui/material';
+import { equals } from 'ramda';
+import React, { useState } from 'react';
 
-import { AppDrawer } from "@/src/components/common/AppDrawer";
-import RedirectionLink from "@/src/components/common/RedirectionLink";
-import CommonForm from "@/src/components/form/CommonForm";
+import { AppDrawer } from '@/src/components/common/AppDrawer';
+import RedirectionLink from '@/src/components/common/RedirectionLink';
+import CommonForm from '@/src/components/form/CommonForm';
 import {
   AuthFormConfig,
   RequestResetPasswordFormConfig,
-} from "@/src/components/form/formConfigs";
-import { AuthTitlesDict } from "@/src/constants";
-import { useAlert } from "@/src/context/AlertContext";
-import { useResetPassword, useSignIn } from "@/src/hooks/api";
-import { AuthFormProps, AuthMode } from "@/src/types/propsTypes";
+} from '@/src/components/form/formConfigs';
+import { AuthTitlesDict } from '@/src/constants';
+import { useAlert } from '@/src/context/AlertContext';
+import { useResetPassword, useSignIn } from '@/src/hooks/api';
+import { AuthFormProps, AuthMode } from '@/src/types/propsTypes';
 import {
   ForgotPasswordFormType,
   FormField,
   SignInFormType,
-} from "@/src/types/types";
-import LoginIcon from "@mui/icons-material/Login";
-import LockOpenIcon from "@mui/icons-material/LockOpen";
+} from '@/src/types/types';
 
 export default function AuthView({ open, onClose }: AuthFormProps) {
-  const [mode, setMode] = useState<AuthMode>("signIn");
+  const [mode, setMode] = useState<AuthMode>('signIn');
   const [authForm, setAuthForm] = useState<Record<string, string>>({});
   const [isFormValid, setIsFormValid] = useState(false);
   const [cooldown, setCooldown] = useState(0);
 
-  const isSignIn = equals(mode, "signIn");
-  const isForgotPassword = equals(mode, "forgotPassword");
-  const title = AuthTitlesDict[mode].title || "";
+  const isSignIn = equals(mode, 'signIn');
+  const isForgotPassword = equals(mode, 'forgotPassword');
+  const title = AuthTitlesDict[mode].title || '';
 
   const { signIn } = useSignIn();
   const { resetPassword } = useResetPassword();
@@ -91,7 +91,7 @@ export default function AuthView({ open, onClose }: AuthFormProps) {
             : AuthTitlesDict[mode].submitButton,
       }}
     >
-      <Stack sx={{ height: "100%" }} justifyContent="center">
+      <Stack sx={{ height: '100%' }} justifyContent="center">
         {isSignIn && (
           <Stack spacing={2}>
             <CommonForm<SignInFormType>
@@ -108,7 +108,7 @@ export default function AuthView({ open, onClose }: AuthFormProps) {
               onLinkClick={() => {
                 setAuthForm({});
                 setIsFormValid(false);
-                setMode("forgotPassword");
+                setMode('forgotPassword');
               }}
             />
           </Stack>
@@ -131,7 +131,7 @@ export default function AuthView({ open, onClose }: AuthFormProps) {
               onLinkClick={() => {
                 setAuthForm({});
                 setIsFormValid(false);
-                setMode("signIn");
+                setMode('signIn');
               }}
             />
           </Stack>

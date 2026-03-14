@@ -1,4 +1,4 @@
-import React, { ReactNode } from "react";
+import React, { ReactNode } from 'react';
 
 import {
   AlertType,
@@ -6,7 +6,7 @@ import {
   CartItem,
   OrderType,
   ProductType,
-} from "@/src/types/types";
+} from '@/src/types/types';
 
 export interface AdminProductFormProps {
   open: boolean;
@@ -40,7 +40,7 @@ export interface ProductCardProps {
 export type CartContextType = {
   items: CartItem[];
   updateItemQuantity: (
-    product: Omit<CartItem, "quantity">,
+    product: Omit<CartItem, 'quantity'>,
     quantity: number,
   ) => void;
   removeFromCart: (id: string) => void;
@@ -64,7 +64,7 @@ export type AuthFormProps = {
   onClose: () => void;
 };
 
-export type AuthMode = "signIn" | "forgotPassword";
+export type AuthMode = 'signIn' | 'forgotPassword';
 
 export interface CartItemCardProps {
   item: CartItem;
