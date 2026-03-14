@@ -1,4 +1,5 @@
-import { AlertColor } from '@mui/material';
+import { AlertColor } from "@mui/material";
+import React from "react";
 
 export interface ProductType {
   id: string;
@@ -17,7 +18,7 @@ export interface ProductType {
 export interface UserType {
   id: string;
   name?: string;
-  role?: 'user' | 'admin';
+  role?: "user" | "admin";
   created_at?: string;
   email?: string;
 }
@@ -59,8 +60,8 @@ export interface OrderItem {
   pots_count: number;
 }
 
-export type OrderStatusType = 'pending' | 'approved' | 'cancelled';
-export type DisponibilityType = 'available' | 'outOfStock';
+export type OrderStatusType = "pending" | "approved" | "cancelled";
+export type DisponibilityType = "available" | "outOfStock";
 
 export interface OrderType {
   id: number;
@@ -81,12 +82,12 @@ export type AlertType = {
 } | null;
 
 export type InputFieldType =
-  | 'text'
-  | 'number'
-  | 'password'
-  | 'textarea'
-  | 'images'
-  | 'confirm';
+  | "text"
+  | "number"
+  | "password"
+  | "textarea"
+  | "images"
+  | "confirm";
 
 export type FormField<Form> = {
   disabled?: boolean;
@@ -105,22 +106,6 @@ export type ValidationRule<Form = unknown> = (
   form: Form,
 ) => string | null;
 
-export type ValidationSchema<Form> = {
-  [K in keyof Form]?: ValidationRule<Form>[];
-};
-
-export type PreordersFiltersType = {
-  statusFilter: OrderStatusType | 'all';
-  userFilter: string;
-  dateRange: [Date | null, Date | null];
-};
-
-export type PreordersSetFiltersType = {
-  setStatusFilter: (value: OrderStatusType | 'all') => void;
-  setUserFilter: (value: string) => void;
-  setDateRange: (value: [Date | null, Date | null]) => void;
-};
-
 export type AnyFormField = FormField<Record<string, unknown>>;
 
 export type RequestResult<T> = {
@@ -129,6 +114,10 @@ export type RequestResult<T> = {
   data: T | null;
 };
 
-export type FormWithPassword = {
-  password?: unknown;
+export type MenuAction = {
+  value: string;
+  label: string;
+  icon: React.ReactNode;
+  onClick: () => void;
+  visibility: boolean;
 };

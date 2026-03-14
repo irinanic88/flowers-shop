@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import { Divider, Stack } from '@mui/material';
-import React, { ReactNode } from 'react';
+import { Divider, Stack } from "@mui/material";
+import React, { ReactNode } from "react";
 
-import CustomAlert from '@/src/components/common/CustomAlert';
-import Loader from '@/src/components/common/Loader';
-import Logo from '@/src/components/common/Logo';
-import { useAlert } from '@/src/context/AlertContext';
-import { useLoading } from '@/src/context/LoadingContext';
+import CustomAlert from "@/src/components/common/CustomAlert";
+import Loader from "@/src/components/common/Loader";
+import Logo from "@/src/components/common/Logo";
+import { useAlert } from "@/src/context/AlertContext";
+import { useLoading } from "@/src/context/LoadingContext";
 
 interface LayoutProps {
   actions: ReactNode;
@@ -21,7 +21,7 @@ export default function Layout({ actions, children }: LayoutProps) {
   return (
     <Stack
       sx={{
-        height: '100vh',
+        height: "100vh",
       }}
     >
       <Stack
@@ -30,7 +30,7 @@ export default function Layout({ actions, children }: LayoutProps) {
         alignItems="center"
         spacing={2}
         sx={{
-          width: '100%',
+          width: "100%",
           flexShrink: 0,
         }}
         px={{ xs: 2, md: 5 }}
@@ -53,7 +53,7 @@ export default function Layout({ actions, children }: LayoutProps) {
           flex: 1,
         }}
         px={{ xs: 3, md: 5 }}
-        pb={10}
+        pb={3}
         alignItems="center"
       >
         {alert && <CustomAlert alertState={alert} onClose={clearAlert} />}
