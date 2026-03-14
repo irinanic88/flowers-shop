@@ -121,3 +121,7 @@ export type MenuAction = {
   onClick: () => void;
   visibility: boolean;
 };
+
+export type ProductsViewType = 'cards' | 'table';
+
+export type ProductSortKey = 'title' | 'available' | 'price';

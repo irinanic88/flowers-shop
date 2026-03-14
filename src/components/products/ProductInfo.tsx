@@ -7,26 +7,16 @@ import React from 'react';
 
 import { ProductType } from '@/src/types/types';
 
-interface ProductInfoProps {
-  product: ProductType;
-  showPrice: boolean;
-}
-
-export default function ProductInfo({
-  product,
-  showPrice = false,
-}: ProductInfoProps) {
+export default function ProductInfo({ product }: { product: ProductType }) {
   return (
     <Box>
       <Stack>
-        {showPrice && (
-          <Typography
-            sx={{ pl: 0.5, fontWeight: 600, fontSize: 20 }}
-            color="primary"
-          >
-            {product.price} €
-          </Typography>
-        )}
+        <Typography
+          sx={{ pl: 0.5, fontWeight: 600, fontSize: 20 }}
+          color="primary"
+        >
+          {product.price} €
+        </Typography>
 
         <Stack spacing={1} alignItems="flex-start" sx={{ mt: 0.5 }}>
           <Stack direction="row" spacing={0.5}>

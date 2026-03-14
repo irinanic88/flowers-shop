@@ -1,4 +1,12 @@
-import { Card, IconButton, Stack, Box, Chip } from '@mui/material';
+import {
+  Card,
+  IconButton,
+  Stack,
+  Box,
+  Chip,
+  ToggleButton,
+  TableCell,
+} from '@mui/material';
 import Button from '@mui/material/Button';
 import { styled } from '@mui/material/styles';
 
@@ -190,4 +198,50 @@ export const FilterPillBox = styled(Box)(({ theme }) => ({
 export const StyledChip = styled(Chip)(() => ({
   borderRadius: 999,
   height: 24,
+}));
+
+export const TogglePillButton = styled(ToggleButton)(({ theme }) => ({
+  borderRadius: 999,
+  borderColor: theme.palette.divider,
+  padding: theme.spacing(0.5, 1),
+  minWidth: 36,
+  height: 32,
+
+  color: theme.palette.text.secondary,
+  backgroundColor: 'transparent',
+
+  transition:
+    'background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease',
+
+  '&:hover': {
+    backgroundColor: theme.palette.action.hover,
+    color: theme.palette.primary.main,
+  },
+
+  '&.Mui-selected': {
+    backgroundColor: theme.palette.primary.main,
+    color: theme.palette.primary.contrastText,
+    borderColor: theme.palette.primary.main,
+
+    '&:hover': {
+      backgroundColor: theme.palette.primary.dark,
+      borderColor: theme.palette.primary.dark,
+    },
+  },
+}));
+
+export const TableHeaderCell = styled(TableCell)(({ theme }) => ({
+  fontSize: 13,
+  fontWeight: 600,
+  letterSpacing: '0.04em',
+  color: theme.palette.text.secondary,
+
+  '& .MuiTableSortLabel-root': {
+    fontWeight: 600,
+    fontSize: 13,
+  },
+
+  '& .MuiTableSortLabel-icon': {
+    opacity: 0.6,
+  },
 }));

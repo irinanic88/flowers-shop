@@ -1,20 +1,20 @@
-"use client";
+'use client';
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 
-import { supabase } from "@/lib/supabase";
-import InviteDialog from "@/src/components/auth/InviteDialog";
-import Layout from "@/src/components/common/Layout";
-import Loader from "@/src/components/common/Loader";
-import HeaderActions from "@/src/components/main/HeaderActions";
-import WelcomeSection from "@/src/components/main/WelcomeSection";
-import { useAuth } from "@/src/context/AuthContext";
-import { getMenuActions } from "@/src/helpers/helpers";
-import AuthView from "@/src/views/AuthView";
-import HelpView from "@/src/views/HelpView";
-import UpdateUserView from "@/src/views/UpdateUserView";
-import UsersTabs from "@/src/views/UsersTabs";
-import UserView from "@/src/views/UserView";
+import { supabase } from '@/lib/supabase';
+import InviteDialog from '@/src/components/auth/InviteDialog';
+import Layout from '@/src/components/common/Layout';
+import Loader from '@/src/components/common/Loader';
+import HeaderActions from '@/src/components/main/HeaderActions';
+import WelcomeSection from '@/src/components/main/WelcomeSection';
+import { useAuth } from '@/src/context/AuthContext';
+import { getMenuActions } from '@/src/helpers/helpers';
+import AuthView from '@/src/views/AuthView';
+import HelpView from '@/src/views/HelpView';
+import UpdateUserView from '@/src/views/UpdateUserView';
+import UsersTabs from '@/src/views/UsersTabs';
+import UserView from '@/src/views/UserView';
 
 export default function Page() {
   const [dialogs, setDialogs] = useState({
@@ -35,16 +35,16 @@ export default function Page() {
   } = useAuth();
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
+    if (typeof window === 'undefined') return;
 
     const hash = window.location.hash;
 
     if (
-      hash.includes("error=access_denied") ||
-      hash.includes("error_code=otp_expired")
+      hash.includes('error=access_denied') ||
+      hash.includes('error_code=otp_expired')
     ) {
-      window.history.replaceState(null, "", window.location.pathname);
-      document.title = "APS";
+      window.history.replaceState(null, '', window.location.pathname);
+      document.title = 'APS';
     }
   }, []);
 
@@ -59,7 +59,7 @@ export default function Page() {
   }
 
   const fetchUrl = async () => {
-    const { data } = await supabase.functions.invoke("create-invite");
+    const { data } = await supabase.functions.invoke('create-invite');
 
     if (data) {
       setInviteUrl(data.inviteUrl);
@@ -68,10 +68,10 @@ export default function Page() {
 
   const actions = getMenuActions({
     isAdmin,
-    openUser: () => openDialog("user"),
+    openUser: () => openDialog('user'),
     openInvite: async () => {
       await fetchUrl();
-      openDialog("invite");
+      openDialog('invite');
     },
   });
 
@@ -81,7 +81,7 @@ export default function Page() {
         <HeaderActions
           name={name as string}
           isUnknownUser={isUnknownUser}
-          onLogin={() => openDialog("auth")}
+          onLogin={() => openDialog('auth')}
           actions={actions}
         />
       }
@@ -91,25 +91,25 @@ export default function Page() {
 
       {isUnknownUser && (
         <WelcomeSection
-          onLogin={() => openDialog("auth")}
-          onHelp={() => openDialog("help")}
+          onLogin={() => openDialog('auth')}
+          onHelp={() => openDialog('help')}
         />
       )}
 
       {/* dialogs */}
       {dialogs.user && (
-        <UpdateUserView open onClose={() => closeDialog("user")} />
+        <UpdateUserView open onClose={() => closeDialog('user')} />
       )}
 
-      {dialogs.auth && <AuthView open onClose={() => closeDialog("auth")} />}
+      {dialogs.auth && <AuthView open onClose={() => closeDialog('auth')} />}
 
-      {dialogs.help && <HelpView open onClose={() => closeDialog("help")} />}
+      {dialogs.help && <HelpView open onClose={() => closeDialog('help')} />}
 
       {dialogs.invite && inviteUrl && (
         <InviteDialog
           link={inviteUrl}
           open
-          onClose={() => closeDialog("invite")}
+          onClose={() => closeDialog('invite')}
         />
       )}
     </Layout>
